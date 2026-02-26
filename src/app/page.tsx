@@ -58,7 +58,7 @@ export default function Home() {
       </main>
 
       <footer className="relative z-10 mt-auto py-8 text-slate-500 text-sm text-center">
-        Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.02 Potenciando el futuro del deporte.
+        Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.04 Potenciando el futuro del deporte.
       </footer>
     </div>
   );

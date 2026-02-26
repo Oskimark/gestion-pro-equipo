@@ -5,15 +5,34 @@ export type Player = {
   shirt_number?: number;
   birth_date?: string;
   position?: string;
+
+  // Gear (Indumentaria)
   shirt_size?: string;
   short_size?: string;
   socks_size?: string;
-  parent_names?: string;
-  emergency_phones?: string;
+  long_jersey_size?: string;
+  long_shorts_size?: string;
+  jacket_size?: string;
+  shoe_size?: string;
+
+  // Contact (Contacto)
+  father_name?: string;
+  father_phone?: string;
+  mother_name?: string;
+  mother_phone?: string;
+  referent_name?: string;
+  referent_phone?: string;
   address?: string;
-  medical_card_expiry?: string;
+
+  // Documents (Documentos - replace health section)
+  id_card_num?: string;
+  id_card_expiry?: string;
+  health_card_expiry?: string;
+  permit_info?: string;
+  permit_expiry?: string;
   health_insurance?: string;
   allergies?: string;
+
   created_at: string;
 };
 
