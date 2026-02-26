@@ -1,65 +1,66 @@
+import Link from "next/link";
 import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-primary text-white">
+      {/* Background Graphic elements */}
+      <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20 pointer-events-none">
+        <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] bg-accent rounded-full blur-[120px]"></div>
+        <div className="absolute bottom-[-10%] left-[-10%] w-[50%] h-[50%] bg-secondary/30 rounded-full blur-[100px]"></div>
+      </div>
+
+      <main className="relative z-10 container mx-auto px-6 py-12 flex flex-col items-center text-center">
+        {/* Placeholder for Escudo/Logo */}
+        <div className="mb-12 transition-transform hover:scale-110 duration-500 cursor-pointer">
+          <div className="w-40 h-40 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shadow-2xl relative">
+            {/* Escudo del club (Placeholder Image) */}
+            <div className="text-4xl font-bold text-secondary">LOGO</div>
+            <div className="absolute inset-0 rounded-full border-2 border-secondary animate-pulse opacity-50"></div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 text-white drop-shadow-md">
+          GESTIÓN <span className="text-secondary">PRO EQUIPO</span>
+        </h1>
+
+        <p className="text-xl md:text-2xl text-slate-300 max-w-2xl mb-12 font-medium">
+          La plataforma definitiva para el control deportivo, administrativo y financiero de tu equipo.
+        </p>
+
+        <div className="flex flex-col sm:flex-row gap-6">
+          <Link href="/login" className="btn-primary flex items-center gap-2 group">
+            Acceso Administración
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5 group-hover:translate-x-1 transition-transform">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+            </svg>
+          </Link>
+          <button className="btn-secondary">
+            Saber Más
+          </button>
+        </div>
+
+        {/* Feature Highlights */}
+        <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
+          <div className="glass-morphism p-6 rounded-2xl text-left border-l-4 border-secondary">
+            <h3 className="text-xl font-bold mb-2">Gestión de Jugadores</h3>
+            <p className="text-slate-400 text-sm">Centraliza toda la información deportiva, médica y de contacto.</p>
+          </div>
+          <div className="glass-morphism p-6 rounded-2xl text-left border-l-4 border-accent">
+            <h3 className="text-xl font-bold mb-2">Control de Pagos</h3>
+            <p className="text-slate-400 text-sm">Visualiza estados de cuenta con nuestro sistema de semáforos inteligente.</p>
+          </div>
+          <div className="glass-morphism p-6 rounded-2xl text-left border-l-4 border-white/50">
+            <h3 className="text-xl font-bold mb-2">Competición</h3>
+            <p className="text-slate-400 text-sm">Calendario de partidos, resultados y goleadores en un solo lugar.</p>
+          </div>
         </div>
       </main>
+
+      <footer className="relative z-10 mt-auto py-8 text-slate-500 text-sm">
+        © 2026 Gestión Pro Equipo - Potenciando el futuro del deporte.
+      </footer>
     </div>
   );
 }
+

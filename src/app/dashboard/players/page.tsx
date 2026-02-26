@@ -1,0 +1,138 @@
+"use client";
+
+import { useState } from "react";
+import {
+    Search,
+    Plus,
+    Filter,
+    MoreVertical,
+    User,
+    Eye,
+    Edit2,
+    Trash2
+} from "lucide-react";
+import Link from "next/link";
+
+// Mock Data for UI demonstration
+const mockPlayers = [
+    { id: "1", full_name: "Juan Pérez", shirt_number: 10, position: "Delantero", birth_date: "2012-05-15" },
+    { id: "2", full_name: "Mateo García", shirt_number: 5, position: "Mediocampista", birth_date: "2012-01-20" },
+    { id: "3", full_name: "Thiago Silva", shirt_number: 1, position: "Portero", birth_date: "2013-08-10" },
+    { id: "4", full_name: "Lucas Martínez", shirt_number: 4, position: "Defensa", birth_date: "2012-11-05" },
+    { id: "5", full_name: "Bautista Rodríguez", shirt_number: 7, position: "Extremo", birth_date: "2012-03-30" },
+];
+
+export default function PlayersPage() {
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const calculateAge = (birthDate: string) => {
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
+    const filteredPlayers = mockPlayers.filter(p =>
+        p.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        p.shirt_number.toString() === searchTerm
+    );
+
+    return (
+        <div className="space-y-6 animate-in fade-in duration-500">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-extrabold text-foreground">Gestión de Jugadores</h1>
+                    <p className="text-muted-foreground">Listado completo del plantel actual.</p>
+                </div>
+                <Link href="/dashboard/players/new" className="btn-primary flex items-center gap-2 self-start sm:self-auto">
+                    <Plus className="h-5 w-5" />
+                    Nuevo Jugador
+                </Link>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+                <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre o dorsal..."
+                        className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border bg-card text-foreground focus:ring-2 focus:ring-secondary/50 focus:border-secondary outline-none transition-all"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+                <button className="btn-secondary flex items-center gap-2">
+                    <Filter className="h-5 w-5" />
+                    Filtros
+                </button>
+            </div>
+
+            <div className="glass-morphism rounded-2xl border border-border/40 overflow-hidden shadow-sm">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="border-b border-border/40 bg-slate-50/50 dark:bg-white/5">
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Jugador</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Dorsal</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Edad</th>
+                                <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/20">
+                            {filteredPlayers.map((player) => (
+                                <tr key={player.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors group">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-border text-slate-400 group-hover:border-secondary transition-colors">
+                                                <User className="h-6 w-6" />
+                                            </div>
+                                            <span className="font-bold text-foreground">{player.full_name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-secondary/10 text-secondary font-extrabold border border-secondary/20">
+                                            {player.shirt_number}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                            {player.position}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap font-medium text-muted-foreground">
+                                        {calculateAge(player.birth_date)} años
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center gap-2">
+                                            <Link href={`/dashboard/players/detail/${player.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-accent transition-colors">
+                                                <Eye className="h-5 w-5" />
+                                            </Link>
+                                            <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors">
+                                                <Edit2 className="h-5 w-5" />
+                                            </button>
+                                            <button className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors">
+                                                <Trash2 className="h-5 w-5" />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+
+                {filteredPlayers.length === 0 && (
+                    <div className="py-20 text-center">
+                        <User className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                        <p className="text-muted-foreground font-medium">No se encontraron jugadores que coincidan con la búsqueda.</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
