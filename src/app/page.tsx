@@ -57,10 +57,11 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="relative z-10 mt-auto py-8 text-slate-500 text-sm">
-        © 2026 Gestión Pro Equipo - Potenciando el futuro del deporte.
+      <footer className="relative z-10 mt-auto py-8 text-slate-500 text-sm text-center">
+        Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.01 Potenciando el futuro del deporte.
       </footer>
     </div>
   );
 }
+
 

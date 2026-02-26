@@ -88,6 +88,10 @@ export default function LoginPage() {
                         ¿No tienes cuenta? <button className="text-secondary font-bold hover:underline">Contacta al Administrador</button>
                     </p>
                 </div>
+
+                <footer className="mt-12 text-slate-500 text-xs text-center opacity-70">
+                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.01 Potenciando el futuro del deporte.
+                </footer>
             </div>
         </div>
     );
