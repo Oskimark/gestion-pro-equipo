@@ -2,20 +2,33 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowRight, Loader2 } from "lucide-react";
+import { Lock, Mail, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [error, setError] = useState<string | null>(null);
 
-    const handleLogin = (e: React.FormEvent) => {
+    const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simulación de login para el prototipo
-        setTimeout(() => {
+        setError(null);
+
+        const { error: authError } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+        });
+
+        if (authError) {
+            setError("Credenciales inválidas. Por favor, revisa tu correo y contraseña.");
+            setLoading(false);
+        } else {
             router.push("/dashboard");
-        }, 1500);
+        }
     };
 
     return (
@@ -39,6 +52,13 @@ export default function LoginPage() {
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
+                        {error && (
+                            <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-xl flex items-center gap-3 text-sm animate-in fade-in slide-in-from-top-2 duration-300">
+                                <AlertCircle className="h-5 w-5 shrink-0" />
+                                {error}
+                            </div>
+                        )}
+
                         <div className="space-y-2">
                             <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Correo Electrónico</label>
                             <div className="relative group">
@@ -46,6 +66,8 @@ export default function LoginPage() {
                                 <input
                                     type="email"
                                     required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
                                     placeholder="admin@proequipo.com"
                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
                                 />
@@ -62,6 +84,8 @@ export default function LoginPage() {
                                 <input
                                     type="password"
                                     required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
                                     placeholder="••••••••"
                                     className="w-full bg-white/5 border border-white/10 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all"
                                 />
@@ -90,7 +114,7 @@ export default function LoginPage() {
                 </div>
 
                 <footer className="mt-12 text-slate-500 text-xs text-center opacity-70">
-                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.01 Potenciando el futuro del deporte.
+                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.02 Potenciando el futuro del deporte.
                 </footer>
             </div>
         </div>
