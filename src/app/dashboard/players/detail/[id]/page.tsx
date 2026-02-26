@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, use } from "react";
 import {
     ArrowLeft,
     User,
@@ -19,7 +19,8 @@ const tabs = [
     { id: "health", name: "Salud", icon: HeartPulse },
 ];
 
-export default function PlayerDetailPage({ params }: { params: { id: string } }) {
+export default function PlayerDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const resolvedParams = use(params);
     const [activeTab, setActiveTab] = useState("sports");
 
     return (
@@ -30,7 +31,7 @@ export default function PlayerDetailPage({ params }: { params: { id: string } })
                 </Link>
                 <div>
                     <h1 className="text-2xl font-extrabold text-foreground">Perfil del Jugador</h1>
-                    <p className="text-sm text-muted-foreground">ID: {params.id}</p>
+                    <p className="text-sm text-muted-foreground">ID: {resolvedParams.id}</p>
                 </div>
             </div>
 
@@ -75,8 +76,8 @@ export default function PlayerDetailPage({ params }: { params: { id: string } })
                                     key={tab.id}
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 px-6 py-4 text-sm font-bold transition-all relative ${activeTab === tab.id
-                                            ? "text-accent"
-                                            : "text-muted-foreground hover:text-foreground"
+                                        ? "text-accent"
+                                        : "text-muted-foreground hover:text-foreground"
                                         }`}
                                 >
                                     <tab.icon className={`h-4 w-4 ${activeTab === tab.id ? "text-accent" : "text-muted-foreground"}`} />
