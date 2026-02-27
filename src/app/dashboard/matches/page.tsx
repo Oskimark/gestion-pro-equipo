@@ -61,7 +61,7 @@ export default function MatchesPage() {
                     <h3 className="text-xl font-bold text-foreground">Historial Reciente</h3>
                     <div className="grid grid-cols-1 gap-4">
                         {matches.map((match) => (
-                            <div key={match.id} className="glass-morphism rounded-2xl p-6 border border-border/40 flex items-center justify-between group hover:border-secondary/30 transition-all">
+                            <div key={match.id} className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-secondary/40 transition-all group relative overflow-hidden flex items-center justify-between">
                                 <div className="flex items-center gap-6">
                                     <div className="hidden sm:flex flex-col items-center justify-center w-16 h-16 rounded-xl bg-slate-100 dark:bg-white/5 border border-border/20">
                                         <span className="text-[10px] font-bold text-muted-foreground uppercase">{new Date(match.date).toLocaleString('es', { month: 'short' })}</span>

@@ -49,7 +49,7 @@ export default function RegisterPage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-primary p-6 overflow-hidden relative">
                 <div className="relative z-10 w-full max-w-md">
-                    <div className="glass-morphism rounded-3xl border border-white/10 p-10 text-center">
+                    <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden text-center">
                         <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 mx-auto mb-6">
                             <CheckCircle2 className="h-10 w-10" />
                         </div>
@@ -73,7 +73,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="relative z-10 w-full max-w-md">
-                <div className="glass-morphism rounded-3xl border border-white/10 p-8 md:p-10 shadow-2xl">
+                <div className="bg-white dark:bg-slate-950 p-8 md:p-10 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden shadow-2xl">
                     <div className="text-center mb-8">
                         <Link href="/" className="inline-block mb-6">
                             <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center p-2 shadow-xl shadow-black/40 mx-auto transition-transform hover:scale-110">

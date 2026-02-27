@@ -33,7 +33,7 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {stats.map((stat) => (
-                    <div key={stat.name} className="glass-morphism rounded-2xl p-6 border border-border/40 hover:border-secondary/50 transition-all hover:translate-y-[-4px] group">
+                    <div key={stat.name} className="bg-white dark:bg-slate-950 p-6 rounded-2xl border border-border/40 hover:border-secondary/50 transition-all hover:translate-y-[-4px] group relative overflow-hidden">
                         <div className="flex items-center justify-between">
                             <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
                                 <stat.icon className="h-6 w-6" />
@@ -50,7 +50,7 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* Placeholder for Recent Activity/Notices */}
-                <div className="glass-morphism rounded-2xl border border-border/40 p-6">
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-secondary" />
                         Últimos Resultados
@@ -69,7 +69,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Placeholder for Financial Summary */}
-                <div className="glass-morphism rounded-2xl border border-border/40 p-6">
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                         <CreditCard className="h-5 w-5 text-accent" />
                         Resumen de Cobros

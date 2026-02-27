@@ -109,7 +109,7 @@ export default function PlayersPage() {
                 </button>
             </div>
 
-            <div className="glass-morphism rounded-2xl border border-border/40 overflow-hidden shadow-sm">
+            <div className="bg-white dark:bg-slate-950 rounded-2xl border border-border/40 overflow-hidden shadow-sm relative">
                 <div className="overflow-x-auto">
                     {loading ? (
                         <div className="py-20 flex flex-col items-center justify-center gap-4 text-muted-foreground">

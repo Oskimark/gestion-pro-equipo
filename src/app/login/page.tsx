@@ -40,7 +40,7 @@ export default function LoginPage() {
             </div>
 
             <div className="relative z-10 w-full max-w-md">
-                <div className="glass-morphism rounded-3xl border border-white/10 p-8 md:p-10 shadow-2xl">
+                <div className="bg-white dark:bg-slate-950 p-8 md:p-10 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden shadow-2xl">
                     <div className="text-center mb-8">
                         <Link href="/" className="inline-block mb-6">
                             <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center p-2 shadow-xl shadow-black/40 mx-auto transition-transform hover:scale-110">

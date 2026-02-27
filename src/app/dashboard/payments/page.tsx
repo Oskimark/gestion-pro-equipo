@@ -48,15 +48,15 @@ export default function PaymentsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="glass-morphism p-6 rounded-2xl border border-border/40">
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Total Pendiente</p>
                     <p className="text-3xl font-extrabold text-red-500">${totalPending}</p>
                 </div>
-                <div className="glass-morphism p-6 rounded-2xl border border-border/40">
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Recaudación Mes</p>
                     <p className="text-3xl font-extrabold text-green-500">$5000</p>
                 </div>
-                <div className="glass-morphism p-6 rounded-2xl border border-border/40">
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Pagos al Día</p>
                     <p className="text-3xl font-extrabold text-accent">65%</p>
                 </div>
@@ -77,8 +77,8 @@ export default function PaymentsPage() {
                             key={s}
                             onClick={() => setFilter(s)}
                             className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${filter === s
-                                    ? "bg-secondary text-primary"
-                                    : "bg-white/50 dark:bg-white/5 text-muted-foreground hover:text-foreground border border-border/20"
+                                ? "bg-secondary text-primary"
+                                : "bg-white/50 dark:bg-white/5 text-muted-foreground hover:text-foreground border border-border/20"
                                 }`}
                         >
                             {s}
@@ -87,7 +87,7 @@ export default function PaymentsPage() {
                 </div>
             </div>
 
-            <div className="glass-morphism rounded-2xl border border-border/40 overflow-hidden">
+            <div className="bg-white dark:bg-slate-950 rounded-2xl border border-border/40 overflow-hidden relative">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>

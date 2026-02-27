@@ -26,7 +26,7 @@ export default function ContactPage() {
                     <img src="/images/stadium-bg.png" alt="bg" className="w-full h-full object-cover" />
                 </div>
                 <div className="relative z-10 w-full max-w-md">
-                    <div className="glass-morphism rounded-3xl border border-white/10 p-10 text-center shadow-2xl">
+                    <div className="bg-white dark:bg-slate-950 p-10 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden text-center shadow-2xl">
                         <div className="w-20 h-20 rounded-full bg-secondary/20 flex items-center justify-center text-secondary mx-auto mb-6">
                             <CheckCircle2 className="h-10 w-10 text-secondary" />
                         </div>
@@ -66,7 +66,7 @@ export default function ContactPage() {
                     </div>
                 </div>
 
-                <div className="glass-morphism rounded-3xl border border-white/10 p-8 md:p-10 shadow-2xl">
+                <div className="bg-white dark:bg-slate-950 p-8 md:p-10 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden shadow-2xl">
                     <div className="mb-8">
                         <h1 className="text-3xl font-black text-white italic tracking-tighter uppercase">Contáctanos</h1>
                         <p className="text-slate-300 mt-2 font-medium">Club 33 Churrinches gen 2017</p>

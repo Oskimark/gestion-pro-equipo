@@ -138,7 +138,7 @@ export default function NewPlayerPage() {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Tabs Selection */}
                 <div className="lg:col-span-1 space-y-4">
-                    <div className="glass-morphism rounded-3xl border border-border/40 p-4 sticky top-8">
+                    <div className="bg-white dark:bg-slate-950 p-4 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden sticky top-8 shadow-sm">
                         <p className="px-4 pt-2 pb-4 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] border-b border-border/10 mb-4">Secciones del Formulario</p>
                         <div className="flex flex-col gap-2">
                             {tabs.map((tab) => (
@@ -166,7 +166,7 @@ export default function NewPlayerPage() {
 
                 {/* Form Content */}
                 <div className="lg:col-span-2">
-                    <div className="glass-morphism rounded-3xl border border-border/40 min-h-[500px] flex flex-col shadow-xl">
+                    <div className="bg-white dark:bg-slate-950 min-h-[500px] flex flex-col shadow-xl rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                         <div className="p-8 flex-1">
                             {activeTab === "sports" && (
                                 <div className="space-y-6 animate-in fade-in duration-300">
@@ -380,7 +380,7 @@ export default function NewPlayerPage() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         {/* ID Card */}
-                                        <div className="glass-morphism-sm p-6 rounded-3xl border border-border/20 space-y-4 bg-white/30 dark:bg-white/5">
+                                        <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="h-10 w-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 shadow-sm">
                                                     <FileText className="h-5 w-5" />
@@ -400,7 +400,7 @@ export default function NewPlayerPage() {
                                         </div>
 
                                         {/* Health Card / Ficha */}
-                                        <div className="glass-morphism-sm p-6 rounded-3xl border border-border/20 space-y-4 bg-white/30 dark:bg-white/5">
+                                        <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="h-10 w-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 shadow-sm">
                                                     <Shield className="h-5 w-5" />
@@ -420,7 +420,7 @@ export default function NewPlayerPage() {
                                         </div>
 
                                         {/* Permissions */}
-                                        <div className="glass-morphism-sm p-6 rounded-3xl border border-border/20 space-y-4 md:col-span-2 bg-white/30 dark:bg-white/5">
+                                        <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4 md:col-span-2">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="h-10 w-10 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600 shadow-sm">
                                                     <Edit2 className="h-5 w-5" />

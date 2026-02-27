@@ -197,7 +197,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Avatar & Summary */}
                 <div className="lg:col-span-1">
-                    <div className="glass-morphism rounded-3xl border border-border/40 p-10 text-center sticky top-8">
+                    <div className="bg-white dark:bg-slate-950 p-10 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden text-center sticky top-8 shadow-sm">
                         <div className="relative mx-auto w-32 h-32 mb-6">
                             <div className="w-full h-full rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-4 border-white dark:border-slate-900 shadow-xl overflow-hidden group">
                                 {photoPreview || formData.photo_url ? (
@@ -271,7 +271,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
 
                 {/* Right Column: Information Tabs */}
                 <div className="lg:col-span-2">
-                    <div className="glass-morphism rounded-3xl border border-border/40 overflow-hidden flex flex-col h-full">
+                    <div className="bg-white dark:bg-slate-950 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden flex flex-col h-full shadow-sm">
                         <div className="flex border-b border-border/40 bg-slate-50/50 dark:bg-white/5 overflow-x-auto no-scrollbar">
                             {tabs.map((tab) => (
                                 <button
@@ -469,7 +469,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         {/* ID Card */}
-                                        <div className="glass-morphism-sm p-5 rounded-2xl border border-border/20 space-y-4">
+                                        <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
                                                     <FileText className="h-4 w-4" />
@@ -489,7 +489,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                         </div>
 
                                         {/* Health Card / Ficha */}
-                                        <div className="glass-morphism-sm p-5 rounded-2xl border border-border/20 space-y-4">
+                                        <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="h-8 w-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">
                                                     <Shield className="h-4 w-4" />
@@ -509,7 +509,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                         </div>
 
                                         {/* Permissions */}
-                                        <div className="glass-morphism-sm p-5 rounded-2xl border border-border/20 space-y-4 md:col-span-2">
+                                        <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4 md:col-span-2">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <div className="h-8 w-8 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600">
                                                     <Edit2 className="h-4 w-4" />

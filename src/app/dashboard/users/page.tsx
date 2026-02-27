@@ -88,7 +88,7 @@ export default function UsersPage() {
                         <p className="font-bold">Cargando personal...</p>
                     </div>
                 ) : filteredUsers.length === 0 ? (
-                    <div className="col-span-full py-20 flex flex-col items-center justify-center text-muted-foreground glass-morphism rounded-3xl border border-dashed border-border/60">
+                    <div className="col-span-full py-20 flex flex-col items-center justify-center text-muted-foreground bg-white dark:bg-slate-950 rounded-3xl border border-dashed border-border/60">
                         <UserCircle className="h-20 w-20 opacity-10 mb-6" />
                         <h3 className="text-xl font-bold text-foreground">No hay usuarios registrados</h3>
                         <p className="mt-2 max-w-xs text-center text-sm">
@@ -97,7 +97,7 @@ export default function UsersPage() {
                     </div>
                 ) : (
                     filteredUsers.map((user) => (
-                        <div key={user.id} className="glass-morphism p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
+                        <div key={user.id} className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                             <div className="flex items-start justify-between relative z-10">
                                 <div className="flex items-center gap-4">
                                     <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
@@ -138,7 +138,7 @@ export default function UsersPage() {
                 )}
             </div>
 
-            <div className="glass-morphism p-8 rounded-3xl border border-border/40 bg-secondary/5">
+            <div className="bg-white dark:bg-slate-950 p-8 rounded-3xl border border-border/40 relative overflow-hidden bg-secondary/5">
                 <div className="flex items-center gap-4 mb-4">
                     <div className="h-12 w-12 rounded-2xl bg-secondary flex items-center justify-center text-primary shadow-lg shadow-secondary/20">
                         <UserPlus className="h-6 w-6" />
