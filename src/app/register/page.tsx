@@ -77,7 +77,7 @@ export default function RegisterPage() {
                     <div className="text-center mb-8">
                         <Link href="/" className="inline-block mb-6">
                             <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center p-2 shadow-xl shadow-black/40 mx-auto transition-transform hover:scale-110">
-                                <img src="/images/logo.png" alt="Logo 33" className="w-full h-full object-contain" />
+                                <img src="/images/33.png" alt="Logo 33" className="w-full h-full object-contain" />
                             </div>
                         </Link>
                         <h1 className="text-3xl font-black text-white italic tracking-tighter uppercase">Club 33</h1>

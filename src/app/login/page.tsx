@@ -44,7 +44,7 @@ export default function LoginPage() {
                     <div className="text-center mb-8">
                         <Link href="/" className="inline-block mb-6">
                             <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center p-2 shadow-xl shadow-black/40 mx-auto transition-transform hover:scale-110">
-                                <img src="/images/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                                <img src="/images/33.png" alt="Logo" className="w-full h-full object-contain" />
                             </div>
                         </Link>
                         <h1 className="text-3xl font-black text-white italic tracking-tighter uppercase">Club 33</h1>
@@ -114,7 +114,7 @@ export default function LoginPage() {
                 </div>
 
                 <footer className="mt-12 text-slate-400 text-xs text-center opacity-70">
-                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.10 Potenciando el futuro del deporte.
+                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.12 Potenciando el futuro del deporte.
                 </footer>
             </div>
         </div>

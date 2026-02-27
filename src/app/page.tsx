@@ -1,4 +1,3 @@
-```
 import Link from "next/link";
 import Image from "next/image";
 
@@ -14,7 +13,7 @@ export default function Home() {
       <nav className="relative z-10 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto w-full">
         <div className="flex items-center gap-3 group">
           <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1 group-hover:scale-110 transition-transform shadow-lg shadow-black/30">
-            <img src="/images/logo.png" alt="Logo 33" className="w-full h-full object-contain" />
+            <img src="/images/33.png" alt="Logo 33" className="w-full h-full object-contain" />
           </div>
           <span className="text-2xl font-black tracking-tighter text-white uppercase italic">
             Club <span className="text-secondary">33</span>
@@ -27,7 +26,7 @@ export default function Home() {
 
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center text-center px-6 max-w-4xl mx-auto">
         <div className="p-1 px-3 bg-white/10 backdrop-blur-md rounded-full border border-white/10 mb-6 animate-bounce-slow">
-            <span className="text-[10px] uppercase font-black tracking-[0.3em] text-secondary">Temporada 2026</span>
+          <span className="text-[10px] uppercase font-black tracking-[0.3em] text-secondary">Temporada 2026</span>
         </div>
         <h1 className="text-5xl md:text-8xl font-black text-white italic tracking-tighter leading-[0.9] uppercase">
           La Excelencia <br />
@@ -66,9 +65,7 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="relative z-10 mt-auto py-8 text-slate-500 text-sm text-center">
-        Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.10 Potenciando el futuro del deporte.
-      </footer>
+      Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.12 Potenciando el futuro del deporte.
     </div>
   );
 }

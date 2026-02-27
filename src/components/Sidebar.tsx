@@ -37,7 +37,7 @@ export default function Sidebar() {
             <div className="flex h-20 items-center justify-center border-b border-white/10 px-6">
                 <Link href="/dashboard" className="flex items-center gap-3 group">
                     <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1 group-hover:scale-110 transition-transform shadow-lg shadow-black/20">
-                        <img src="/images/logo.png" alt="Logo 33" className="w-full h-full object-contain" onError={(e) => {
+                        <img src="/images/33.png" alt="Logo 33" className="w-full h-full object-contain" onError={(e) => {
                             // Fallback if image not found
                             e.currentTarget.style.display = 'none';
                             e.currentTarget.parentElement!.innerHTML = '<span class="font-black text-primary text-xl">33</span>';
