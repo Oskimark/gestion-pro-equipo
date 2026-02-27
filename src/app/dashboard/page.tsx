@@ -13,15 +13,15 @@ import { playerService } from "@/services/playerService";
 import { matchService } from "@/services/matchService";
 import { Player, Match } from "@/types";
 
-import { AlertTriangle, ChevronRight, Check } from "lucide-react";
-import { getDocStatus } from "@/utils/playerUtils";
+import { AlertTriangle, ChevronRight, Check, MessageCircle } from "lucide-react";
+import { getDocStatus, generateWhatsAppLink } from "@/utils/playerUtils";
 import Link from "next/link";
 
 export default function DashboardPage() {
     const { profile, loading: profileLoading } = useProfile();
     const [counts, setCounts] = useState({ players: 0, payments: 0, goals: 0 });
     const [nextMatch, setNextMatch] = useState<Match | null>(null);
-    const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string }[]>([]);
+    const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -43,16 +43,17 @@ export default function DashboardPage() {
             });
 
             // Calculate Alerts
-            const docAlerts: { id: string; name: string; type: string; status: string }[] = [];
+            const docAlerts: { id: string; name: string; type: string; status: string; phone?: string }[] = [];
             players.forEach(p => {
                 const idStatus = getDocStatus(p.id_card_expiry);
                 const healthStatus = getDocStatus(p.health_card_expiry);
+                const phone = p.mother_phone || p.father_phone || p.referent_phone;
 
                 if (idStatus.label !== 'Al día') {
-                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Cédula', status: idStatus.label });
+                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Cédula', status: idStatus.label, phone });
                 }
                 if (healthStatus.label !== 'Al día') {
-                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Ficha Médica', status: healthStatus.label });
+                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Ficha Médica', status: healthStatus.label, phone });
                 }
             });
             setAlerts(docAlerts.slice(0, 5)); // Show only first 5 alerts
@@ -136,7 +137,23 @@ export default function DashboardPage() {
                                         <span className="font-bold text-sm text-foreground">{alert.name}</span>
                                         <span className="text-xs text-muted-foreground">{alert.type} • <span className={alert.status === 'Vencido' ? 'text-amber-500 font-bold' : 'text-red-500 font-bold'}>{alert.status}</span></span>
                                     </div>
-                                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/item:translate-x-1 transition-transform" />
+                                    <div className="flex items-center gap-2">
+                                        {alert.phone && (
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${alert.type} de ${alert.name} está ${alert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
+                                                    const link = generateWhatsAppLink(alert.phone, message);
+                                                    if (link) window.open(link, '_blank');
+                                                }}
+                                                className="p-2 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-full transition-colors flex items-center justify-center shrink-0 group/btn"
+                                                title="Avisar por WhatsApp"
+                                            >
+                                                <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                                            </button>
+                                        )}
+                                        <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/item:translate-x-1 transition-transform" />
+                                    </div>
                                 </Link>
                             ))
                         ) : (

@@ -32,3 +32,25 @@ export const calculateAge = (birthDate?: string): string => {
     }
     return age.toString();
 };
+
+export const generateWhatsAppLink = (phone?: string, message?: string): string | null => {
+    if (!phone) return null;
+
+    // Remove all non-digits
+    let cleaned = phone.replace(/\D/g, '');
+
+    // Format for Uruguay (+598) specifically
+    if (cleaned.length === 9 && cleaned.startsWith('09')) {
+        cleaned = `598${cleaned.substring(1)}`;
+    } else if (cleaned.length === 8 && cleaned.startsWith('9')) {
+        cleaned = `598${cleaned}`;
+    }
+
+    if (cleaned.length < 10) return null;
+
+    let url = `https://wa.me/${cleaned}`;
+    if (message) {
+        url += `?text=${encodeURIComponent(message)}`;
+    }
+    return url;
+};
