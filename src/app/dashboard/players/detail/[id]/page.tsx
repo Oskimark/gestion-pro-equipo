@@ -17,7 +17,9 @@ import {
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { playerService } from "@/services/playerService";
+import { uploadService } from "@/services/uploadService";
 import { Player } from "@/types";
+import { Upload } from "lucide-react";
 
 const tabs = [
     { id: "sports", name: "Deportivo", icon: Shield },
@@ -38,6 +40,8 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     const [isEditing, setIsEditing] = useState(isEditingParam);
     const [player, setPlayer] = useState<Player | null>(null);
     const [formData, setFormData] = useState<Partial<Player>>({});
+    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
     useEffect(() => {
         loadPlayer();
@@ -66,11 +70,31 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             setSaving(true);
             const updatedData = { ...formData };
+
+            // Upload photo if exists
+            if (photoFile) {
+                const publicUrl = await uploadService.uploadFile(photoFile);
+                updatedData.photo_url = publicUrl;
+
+                // Optional: Delete old photo from storage if it was a supabase URL
+                if (player?.photo_url) {
+                    await uploadService.deleteFile(player.photo_url);
+                }
+            }
+
             if (updatedData.shirt_number) {
                 updatedData.shirt_number = parseInt(updatedData.shirt_number as any);
             }
@@ -81,6 +105,8 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             const updatedPlayer = await playerService.update(resolvedParams.id, updatedData as any);
             setPlayer(updatedPlayer);
             setFormData(updatedPlayer);
+            setPhotoFile(null);
+            setPhotoPreview(null);
             setIsEditing(false);
             router.replace(`/dashboard/players/detail/${resolvedParams.id}`);
         } catch (error) {
@@ -153,16 +179,22 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                     <div className="glass-morphism rounded-3xl border border-border/40 p-10 text-center sticky top-8">
                         <div className="relative mx-auto w-32 h-32 mb-6">
                             <div className="w-full h-full rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-4 border-white dark:border-slate-900 shadow-xl overflow-hidden group">
-                                {formData.photo_url ? (
-                                    <img src={formData.photo_url} alt={formData.full_name} className="w-full h-full object-cover" />
+                                {photoPreview || formData.photo_url ? (
+                                    <img src={photoPreview || formData.photo_url || ""} alt={formData.full_name} className="w-full h-full object-cover" />
                                 ) : (
                                     <User className="h-16 w-16 text-slate-300" />
                                 )}
                                 {isEditing && (
-                                    <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                    <label className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                                         <Camera className="h-6 w-6 text-white mb-1" />
-                                        <span className="text-[10px] font-bold text-white uppercase">Editar</span>
-                                    </div>
+                                        <span className="text-[10px] font-bold text-white uppercase">Cambiar</span>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleFileChange}
+                                            className="hidden"
+                                        />
+                                    </label>
                                 )}
                             </div>
                             {formData.shirt_number && (
@@ -172,17 +204,16 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                             )}
                         </div>
 
-                        {isEditing && (
-                            <div className="mb-6 space-y-2">
-                                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-widest">URL de Foto</label>
-                                <input
-                                    type="text"
-                                    name="photo_url"
-                                    value={formData.photo_url || ""}
-                                    onChange={handleChange}
-                                    placeholder="https://..."
-                                    className="w-full text-xs p-2 bg-slate-50 dark:bg-white/5 border border-border rounded-lg outline-none focus:ring-1 focus:ring-accent"
-                                />
+                        {isEditing && photoPreview && (
+                            <div className="mb-6 animate-in zoom-in-95 duration-300">
+                                <p className="text-[10px] font-black text-secondary uppercase tracking-[0.2em] mb-2">Nueva imagen lista</p>
+                                <button
+                                    type="button"
+                                    onClick={() => { setPhotoFile(null); setPhotoPreview(null); }}
+                                    className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase border border-red-200 rounded-full px-3 py-1 bg-red-50"
+                                >
+                                    Cancelar selección
+                                </button>
                             </div>
                         )}
 
@@ -223,8 +254,8 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                     type="button"
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-2 px-6 py-4 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab.id
-                                            ? "text-accent"
-                                            : "text-muted-foreground hover:text-foreground"
+                                        ? "text-accent"
+                                        : "text-muted-foreground hover:text-foreground"
                                         }`}
                                 >
                                     <tab.icon className={`h-4 w-4 ${activeTab === tab.id ? "text-accent" : "text-muted-foreground"}`} />

@@ -114,7 +114,7 @@ export default function LoginPage() {
                 </div>
 
                 <footer className="mt-12 text-slate-500 text-xs text-center opacity-70">
-                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.04 Potenciando el futuro del deporte.
+                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.05 Potenciando el futuro del deporte.
                 </footer>
             </div>
         </div>

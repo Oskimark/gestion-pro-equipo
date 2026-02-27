@@ -10,11 +10,15 @@ import {
     FileText,
     Save,
     Loader2,
-    Edit2
+    Edit2,
+    Camera,
+    X,
+    Upload
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { playerService } from "@/services/playerService";
+import { uploadService } from "@/services/uploadService";
 import { Player } from "@/types";
 
 const tabs = [
@@ -57,9 +61,25 @@ export default function NewPlayerPage() {
         photo_url: ""
     });
 
+    const [photoFile, setPhotoFile] = useState<File | null>(null);
+    const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const removePhoto = () => {
+        setPhotoFile(null);
+        setPhotoPreview(null);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -73,6 +93,13 @@ export default function NewPlayerPage() {
         try {
             setLoading(true);
             const dataToSave = { ...formData };
+
+            // Upload photo if exists
+            if (photoFile) {
+                const publicUrl = await uploadService.uploadFile(photoFile);
+                dataToSave.photo_url = publicUrl;
+            }
+
             if (dataToSave.shirt_number) {
                 dataToSave.shirt_number = parseInt(dataToSave.shirt_number as any);
             }
@@ -149,15 +176,42 @@ export default function NewPlayerPage() {
                                             />
                                         </div>
                                         <div className="md:col-span-2">
-                                            <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">URL Foto de Perfil (Opcional)</label>
-                                            <input
-                                                type="text"
-                                                name="photo_url"
-                                                value={formData.photo_url}
-                                                onChange={handleChange}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
-                                                placeholder="https://..."
-                                            />
+                                            <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Foto de Perfil</label>
+                                            <div className="flex items-center gap-6">
+                                                <div className="relative h-24 w-24 rounded-2xl overflow-hidden bg-slate-100 dark:bg-white/5 border-2 border-dashed border-border flex items-center justify-center shrink-0">
+                                                    {photoPreview ? (
+                                                        <>
+                                                            <img src={photoPreview} alt="Preview" className="h-full w-full object-cover" />
+                                                            <button
+                                                                type="button"
+                                                                onClick={removePhoto}
+                                                                className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors"
+                                                            >
+                                                                <X className="h-3 w-3" />
+                                                            </button>
+                                                        </>
+                                                    ) : (
+                                                        <Camera className="h-8 w-8 text-muted-foreground/40" />
+                                                    )}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <label className="relative cursor-pointer bg-white dark:bg-white/5 border border-border rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-white/10 transition-all group">
+                                                        <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+                                                            <Upload className="h-4 w-4" />
+                                                        </div>
+                                                        <div className="text-left">
+                                                            <p className="text-sm font-bold text-foreground">Seleccionar Imagen</p>
+                                                            <p className="text-[10px] text-muted-foreground uppercase font-black tracking-tight">JPG, PNG o WEBP (Máx 2MB)</p>
+                                                        </div>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={handleFileChange}
+                                                            className="hidden"
+                                                        />
+                                                    </label>
+                                                </div>
+                                            </div>
                                         </div>
                                         <div>
                                             <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Número de Camiseta (Dorsal)</label>
