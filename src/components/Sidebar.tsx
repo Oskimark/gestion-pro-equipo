@@ -10,6 +10,8 @@ import {
     LayoutDashboard,
     LogOut
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -21,6 +23,12 @@ const navigation = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const router = useRouter();
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        router.push("/");
+    };
 
     return (
         <div className="flex h-full w-64 flex-col bg-primary text-white">
@@ -43,8 +51,8 @@ export default function Sidebar() {
                             key={item.name}
                             href={item.href}
                             className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all ${isActive
-                                    ? "bg-secondary text-primary shadow-lg shadow-secondary/10"
-                                    : "text-slate-400 hover:bg-white/5 hover:text-white"
+                                ? "bg-secondary text-primary shadow-lg shadow-secondary/10"
+                                : "text-slate-400 hover:bg-white/5 hover:text-white"
                                 }`}
                         >
                             <item.icon className={`h-5 w-5 ${isActive ? "text-primary" : "text-slate-500 group-hover:text-secondary transition-colors"}`} />
@@ -55,7 +63,10 @@ export default function Sidebar() {
             </nav>
 
             <div className="border-t border-white/10 p-4">
-                <button className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400">
+                <button
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold text-slate-400 transition-all hover:bg-red-500/10 hover:text-red-400"
+                >
                     <LogOut className="h-5 w-5" />
                     Cerrar Sesión
                 </button>
