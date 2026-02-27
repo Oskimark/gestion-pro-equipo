@@ -13,10 +13,15 @@ import { playerService } from "@/services/playerService";
 import { matchService } from "@/services/matchService";
 import { Player, Match } from "@/types";
 
+import { AlertTriangle, ChevronRight } from "lucide-react";
+import { getDocStatus } from "@/utils/playerUtils";
+import Link from "next/link";
+
 export default function DashboardPage() {
     const { profile, loading: profileLoading } = useProfile();
     const [counts, setCounts] = useState({ players: 0, payments: 0, goals: 0 });
     const [nextMatch, setNextMatch] = useState<Match | null>(null);
+    const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -33,9 +38,24 @@ export default function DashboardPage() {
 
             setCounts({
                 players: players.length,
-                payments: 8, // Placeholder for now until service is expanded
-                goals: 12    // Placeholder
+                payments: 8,
+                goals: 12
             });
+
+            // Calculate Alerts
+            const docAlerts: { id: string; name: string; type: string; status: string }[] = [];
+            players.forEach(p => {
+                const idStatus = getDocStatus(p.id_card_expiry);
+                const healthStatus = getDocStatus(p.health_card_expiry);
+
+                if (idStatus.label !== 'Al día') {
+                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Cédula', status: idStatus.label });
+                }
+                if (healthStatus.label !== 'Al día') {
+                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Ficha Médica', status: healthStatus.label });
+                }
+            });
+            setAlerts(docAlerts.slice(0, 5)); // Show only first 5 alerts
 
             const upcoming = matches.find(m => m.status === "Próximo");
             setNextMatch(upcoming || null);
@@ -48,7 +68,7 @@ export default function DashboardPage() {
 
     const stats = [
         { name: "Total Jugadores", value: counts.players.toString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
-        { name: "Pagos Pendientes", value: counts.payments.toString(), icon: CreditCard, color: "text-red-600", bg: "bg-red-100" },
+        { name: "Alertas Docs", value: alerts.length.toString(), icon: AlertTriangle, color: alerts.length > 0 ? "text-red-600" : "text-green-600", bg: alerts.length > 0 ? "bg-red-100" : "bg-green-100" },
         {
             name: "Próximo Partido",
             value: nextMatch
@@ -92,7 +112,47 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* Placeholder for Recent Activity/Notices */}
+                {/* Alerts Section */}
+                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-red-400/40 transition-all group relative overflow-hidden flex flex-col">
+                    <div className="flex items-center justify-between mb-6">
+                        <h3 className="text-lg font-bold flex items-center gap-2 text-red-600 dark:text-red-400">
+                            <AlertTriangle className="h-5 w-5" />
+                            Alertas de Documentación
+                        </h3>
+                        {alerts.length > 0 && (
+                            <span className="px-2 py-0.5 rounded-full bg-red-100 text-red-600 text-[10px] font-black uppercase">Crítico</span>
+                        )}
+                    </div>
+
+                    <div className="space-y-3 flex-1">
+                        {alerts.length > 0 ? (
+                            alerts.map((alert, idx) => (
+                                <Link
+                                    key={`${alert.id}-${idx}`}
+                                    href={`/dashboard/players/detail/${alert.id}`}
+                                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-border/20 hover:border-red-500/30 transition-all group/item"
+                                >
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-sm text-foreground">{alert.name}</span>
+                                        <span className="text-xs text-muted-foreground">{alert.type} • <span className={alert.status === 'Vencido' ? 'text-amber-500 font-bold' : 'text-red-500 font-bold'}>{alert.status}</span></span>
+                                    </div>
+                                    <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/item:translate-x-1 transition-transform" />
+                                </Link>
+                            ))
+                        ) : (
+                            <div className="h-full flex flex-col items-center justify-center py-8 text-center bg-slate-50/50 dark:bg-black/10 rounded-2xl border border-dashed border-border">
+                                <Check className="h-8 w-8 text-green-500 mb-2 opacity-50" />
+                                <p className="text-sm text-muted-foreground font-medium italic">Todo al día. No hay alertas pendientes.</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {alerts.length > 5 && (
+                        <p className="mt-4 text-[10px] text-center text-muted-foreground italic font-medium">Hay {alerts.length - 5} alertas más pendientes...</p>
+                    )}
+                </div>
+
+                {/* Match Highlight */}
                 <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-secondary" />

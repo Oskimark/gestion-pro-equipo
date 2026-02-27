@@ -2,8 +2,10 @@
 
 import Sidebar from "@/components/Sidebar";
 import { useProfile } from "@/hooks/useProfile";
-import { Loader2, Menu, Bell } from "lucide-react";
-import { useState } from "react";
+import { Loader2, Menu, Bell, AlertTriangle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { playerService } from "@/services/playerService";
+import { getDocStatus } from "@/utils/playerUtils";
 
 export default function DashboardLayout({
     children,
@@ -12,6 +14,24 @@ export default function DashboardLayout({
 }) {
     const { profile, loading } = useProfile();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [alertCount, setAlertCount] = useState(0);
+
+    useEffect(() => {
+        const fetchAlerts = async () => {
+            try {
+                const players = await playerService.getAll();
+                let count = 0;
+                players.forEach(p => {
+                    if (getDocStatus(p.id_card_expiry).label !== 'Al día') count++;
+                    if (getDocStatus(p.health_card_expiry).label !== 'Al día') count++;
+                });
+                setAlertCount(count);
+            } catch (error) {
+                console.error("Error fetching alerts for layout:", error);
+            }
+        };
+        fetchAlerts();
+    }, []);
 
     return (
         <div className="flex h-screen bg-background overflow-hidden font-sans">
@@ -32,9 +52,13 @@ export default function DashboardLayout({
                     </div>
 
                     <div className="flex items-center gap-3 sm:gap-4">
-                        <button className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-colors relative">
-                            <Bell className="h-5 w-5" />
-                            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-500 border-2 border-white dark:border-slate-900"></span>
+                        <button className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-colors relative group">
+                            <Bell className="h-5 w-5 group-hover:shake transition-all" />
+                            {alertCount > 0 && (
+                                <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-white dark:border-slate-900 animate-pulse">
+                                    {alertCount}
+                                </span>
+                            )}
                         </button>
 
                         <div className="flex items-center gap-3 pl-3 sm:pl-4 border-l border-border/50">
