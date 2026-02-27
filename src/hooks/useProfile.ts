@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useRouter, usePathname } from "next/navigation";
 import { UserProfile } from "@/types";
 
 export function useProfile() {
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
+    const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
         async function getProfile() {
@@ -19,15 +22,23 @@ export function useProfile() {
                         .eq("id", user.id)
                         .single();
 
+                    // Si no hay perfil o está suspendido, y no estamos en una página pública
+                    const isPublicPage = pathname === "/" || pathname === "/login" || pathname === "/register" || pathname === "/suspended";
+
+                    if (!data || data.status === 'suspended') {
+                        if (!isPublicPage) {
+                            router.push("/suspended");
+                        }
+                    }
+
                     if (data) {
                         setProfile(data);
-                    } else {
-                        // Fallback to metadata if profile doesn't exist yet
-                        setProfile({
-                            id: user.id,
-                            full_name: user.user_metadata?.full_name || "Usuario",
-                            role: "ayudante"
-                        });
+                    }
+                } else {
+                    // Si no hay usuario de auth y no es página pública, al login
+                    const isPublicPage = pathname === "/" || pathname === "/login" || pathname === "/register" || pathname === "/suspended";
+                    if (!isPublicPage) {
+                        router.push("/login");
                     }
                 }
             } catch (error) {
@@ -38,7 +49,7 @@ export function useProfile() {
         }
 
         getProfile();
-    }, []);
+    }, [pathname]);
 
     useEffect(() => {
         if (!profile?.id) return;
