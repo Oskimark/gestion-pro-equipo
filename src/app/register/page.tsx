@@ -66,21 +66,22 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-primary p-6 overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent rounded-full blur-[100px]"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary rounded-full blur-[100px]"></div>
+            {/* Background Image */}
+            <div className="absolute inset-0 z-0">
+                <img src="/images/stadium-bg.png" alt="stadium background" className="w-full h-full object-cover opacity-30 mix-blend-overlay" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/90 to-transparent"></div>
             </div>
 
             <div className="relative z-10 w-full max-w-md">
                 <div className="glass-morphism rounded-3xl border border-white/10 p-8 md:p-10 shadow-2xl">
                     <div className="text-center mb-8">
                         <Link href="/" className="inline-block mb-6">
-                            <div className="w-16 h-16 rounded-2xl bg-secondary flex items-center justify-center font-black text-primary text-2xl shadow-lg shadow-secondary/20 mx-auto transition-transform hover:scale-110">
-                                PE
+                            <div className="w-20 h-20 rounded-2xl bg-white flex items-center justify-center p-2 shadow-xl shadow-black/40 mx-auto transition-transform hover:scale-110">
+                                <img src="/images/logo.png" alt="Logo 33" className="w-full h-full object-contain" />
                             </div>
                         </Link>
-                        <h1 className="text-3xl font-extrabold text-white">Únete al Equipo</h1>
-                        <p className="text-slate-200 mt-2 font-medium">Crea tu cuenta para empezar la gestión</p>
+                        <h1 className="text-3xl font-black text-white italic tracking-tighter uppercase">Club 33</h1>
+                        <p className="text-slate-200 mt-2 font-medium">Registro de Nuevo Personal</p>
                     </div>
 
                     <form onSubmit={handleRegister} className="space-y-5">
