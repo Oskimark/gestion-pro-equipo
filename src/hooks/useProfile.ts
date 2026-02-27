@@ -40,5 +40,37 @@ export function useProfile() {
         getProfile();
     }, []);
 
+    useEffect(() => {
+        if (!profile?.id) return;
+
+        // Mark as online
+        const markOnline = async () => {
+            await supabase
+                .from("profiles")
+                .update({
+                    is_online: true,
+                    last_seen: new Date().toISOString()
+                })
+                .eq("id", profile.id);
+        };
+
+        markOnline();
+
+        // Optional: Mark as offline on window close/unmount
+        const markOffline = async () => {
+            await supabase
+                .from("profiles")
+                .update({ is_online: false })
+                .eq("id", profile.id);
+        };
+
+        window.addEventListener("beforeunload", markOffline);
+
+        return () => {
+            markOffline();
+            window.removeEventListener("beforeunload", markOffline);
+        };
+    }, [profile?.id]);
+
     return { profile, loading };
 }
