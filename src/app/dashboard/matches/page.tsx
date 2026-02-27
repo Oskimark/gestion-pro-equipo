@@ -7,8 +7,11 @@ import {
     ChevronRight,
     Clock,
     Loader2,
+    Edit2,
+    Trash2,
     Plus
 } from "lucide-react";
+import Link from "next/link";
 
 import { useState, useEffect } from "react";
 import { matchService } from "@/services/matchService";
@@ -34,6 +37,17 @@ export default function MatchesPage() {
         }
     };
 
+    const handleDelete = async (id: string, rival: string) => {
+        if (confirm(`¿Estás seguro de que deseas eliminar el partido vs ${rival}?`)) {
+            try {
+                await matchService.delete(id);
+                setMatches(matches.filter(m => m.id !== id));
+            } catch (error) {
+                alert("Error al eliminar el partido");
+            }
+        }
+    };
+
     const nextMatch = matches.find(m => m.status === "Próximo");
     const pastMatches = matches.filter(m => m.status === "Finalizado");
 
@@ -44,10 +58,10 @@ export default function MatchesPage() {
                     <h1 className="text-3xl font-extrabold text-foreground">Partidos y Resultados</h1>
                     <p className="text-muted-foreground">Calendario de competición y estadísticas.</p>
                 </div>
-                <button className="btn-primary flex items-center gap-2">
+                <Link href="/dashboard/matches/new" className="btn-primary flex items-center gap-2">
                     <Plus className="h-5 w-5" />
                     Cargar Partido
-                </button>
+                </Link>
             </div>
 
             {loading ? (
@@ -75,11 +89,18 @@ export default function MatchesPage() {
                                             <span className="flex items-center gap-2"><MapPin className="h-4 w-4" /> {nextMatch.venue || "Cancha a confirmar"}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-3xl font-bold">PE</div>
-                                        <span className="text-2xl font-bold text-secondary">VS</span>
-                                        <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-3xl font-bold text-slate-400">
-                                            {nextMatch.rival.slice(0, 3).toUpperCase()}
+                                    <div className="flex items-center gap-6">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-3xl font-bold">33</div>
+                                            <span className="text-2xl font-bold text-secondary">VS</span>
+                                            <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center text-3xl font-bold text-slate-400">
+                                                {nextMatch.rival.slice(0, 3).toUpperCase()}
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <Link href={`/dashboard/matches/edit/${nextMatch.id}`} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors" title="Editar">
+                                                <Edit2 className="h-5 w-5" />
+                                            </Link>
                                         </div>
                                     </div>
                                 </div>
@@ -115,17 +136,32 @@ export default function MatchesPage() {
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-8">
-                                            {match.status === "Finalizado" ? (
-                                                <div className="flex flex-col items-end">
-                                                    <span className="text-2xl font-mono font-black text-foreground">
-                                                        {match.score_home} - {match.score_away}
-                                                    </span>
-                                                    <span className="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Resultado</span>
-                                                </div>
-                                            ) : (
-                                                <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-accent/10 text-accent uppercase tracking-widest border border-accent/20">Pendiente</span>
-                                            )}
+                                        <div className="flex items-center gap-6">
+                                            <div className="flex items-center gap-4">
+                                                {match.status === "Finalizado" ? (
+                                                    <div className="flex flex-col items-end">
+                                                        <span className="text-2xl font-mono font-black text-foreground">
+                                                            {match.score_home} - {match.score_away}
+                                                        </span>
+                                                        <span className="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Resultado</span>
+                                                    </div>
+                                                ) : (
+                                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-accent/10 text-accent uppercase tracking-widest border border-accent/20">Pendiente</span>
+                                                )}
+                                            </div>
+
+                                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <Link href={`/dashboard/matches/edit/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors" title="Editar">
+                                                    <Edit2 className="h-5 w-5" />
+                                                </Link>
+                                                <button
+                                                    onClick={() => handleDelete(match.id, match.rival)}
+                                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors"
+                                                    title="Eliminar"
+                                                >
+                                                    <Trash2 className="h-5 w-5" />
+                                                </button>
+                                            </div>
                                             <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                                         </div>
                                     </div>
