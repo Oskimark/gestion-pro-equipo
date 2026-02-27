@@ -100,15 +100,24 @@ export default function NewPlayerPage() {
                 dataToSave.photo_url = publicUrl;
             }
 
+            // Clean data: remove empty strings or convert to null
+            Object.keys(dataToSave).forEach(key => {
+                const k = key as keyof typeof dataToSave;
+                if (dataToSave[k] === "") {
+                    delete dataToSave[k];
+                }
+            });
+
             if (dataToSave.shirt_number) {
                 dataToSave.shirt_number = parseInt(dataToSave.shirt_number as any);
             }
 
             await playerService.create(dataToSave as any);
             router.push("/dashboard/players");
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error creating player:", error);
-            alert("Error al crear el jugador");
+            const detail = error?.message || error?.details || "Error desconocido";
+            alert(`Error al crear el jugador: ${detail}`);
         } finally {
             setLoading(false);
         }

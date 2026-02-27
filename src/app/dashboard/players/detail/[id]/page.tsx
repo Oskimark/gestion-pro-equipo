@@ -95,6 +95,14 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                 }
             }
 
+            // Clean data: remove empty strings or convert to null
+            Object.keys(updatedData).forEach(key => {
+                const k = key as keyof typeof updatedData;
+                if (updatedData[k] === "") {
+                    updatedData[k] = null as any; // Use null for updates to clear fields
+                }
+            });
+
             if (updatedData.shirt_number) {
                 updatedData.shirt_number = parseInt(updatedData.shirt_number as any);
             }
@@ -109,9 +117,10 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             setPhotoPreview(null);
             setIsEditing(false);
             router.replace(`/dashboard/players/detail/${resolvedParams.id}`);
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error updating player:", error);
-            alert("Error al guardar los cambios");
+            const detail = error?.message || error?.details || "Error desconocido";
+            alert(`Error al guardar los cambios: ${detail}`);
         } finally {
             setSaving(false);
         }
