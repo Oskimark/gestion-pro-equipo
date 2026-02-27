@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Mail, User, Phone, MessageSquare, Send, CheckCircle2, ArrowLeft } from "lucide-react";
+import { Mail, User, Phone, MessageSquare, Send, CheckCircle2, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function ContactPage() {
@@ -62,7 +62,7 @@ export default function ContactPage() {
                     </Link>
                     <div className="flex items-center gap-2">
                         <img src="/images/33.png" alt="Logo" className="w-8 h-8 object-contain" />
-                        <span className="text-white font-black italic tracking-tighter text-lg">CLUB 33</span>
+                        <span className="text-white font-black italic tracking-tighter text-lg leading-tight">CLUB 33 <br /><span className="text-[10px] text-secondary uppercase block">Churrinches gen 2017</span></span>
                     </div>
                 </div>
 
@@ -134,7 +134,7 @@ export default function ContactPage() {
                             className="w-full btn-secondary h-14 flex items-center justify-center gap-3 text-lg mt-8 font-black uppercase tracking-widest"
                         >
                             {loading ? (
-                                <loader className="h-6 w-6 animate-spin text-primary" />
+                                <Loader2 className="h-6 w-6 animate-spin text-primary" />
                             ) : (
                                 <>
                                     Enviar Mensaje
