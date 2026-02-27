@@ -27,7 +27,9 @@ export type Player = {
   // Documents (Documentos - replace health section)
   id_card_num?: string;
   id_card_expiry?: string;
+  id_card_url?: string;
   health_card_expiry?: string;
+  health_card_url?: string;
   permit_info?: string;
   permit_expiry?: string;
   health_insurance?: string;

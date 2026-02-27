@@ -42,6 +42,10 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     const [formData, setFormData] = useState<Partial<Player>>({});
     const [photoFile, setPhotoFile] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const [idCardFile, setIdCardFile] = useState<File | null>(null);
+    const [idCardPreview, setIdCardPreview] = useState<string | null>(null);
+    const [healthCardFile, setHealthCardFile] = useState<File | null>(null);
+    const [healthCardPreview, setHealthCardPreview] = useState<string | null>(null);
 
     useEffect(() => {
         loadPlayer();
@@ -90,6 +94,22 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
         }
     };
 
+    const handleIdCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setIdCardFile(file);
+            setIdCardPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleHealthCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setHealthCardFile(file);
+            setHealthCardPreview(URL.createObjectURL(file));
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
@@ -104,6 +124,20 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                 // Optional: Delete old photo from storage if it was a supabase URL
                 if (player?.photo_url) {
                     await uploadService.deleteFile(player.photo_url);
+                }
+            }
+            if (idCardFile) {
+                const publicUrl = await uploadService.uploadFile(idCardFile, "player-docs");
+                updatedData.id_card_url = publicUrl;
+                if (player?.id_card_url) {
+                    await uploadService.deleteFile(player.id_card_url, "player-docs");
+                }
+            }
+            if (healthCardFile) {
+                const publicUrl = await uploadService.uploadFile(healthCardFile, "player-docs");
+                updatedData.health_card_url = publicUrl;
+                if (player?.health_card_url) {
+                    await uploadService.deleteFile(player.health_card_url, "player-docs");
                 }
             }
 
@@ -127,6 +161,10 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             setFormData(updatedPlayer);
             setPhotoFile(null);
             setPhotoPreview(null);
+            setIdCardFile(null);
+            setIdCardPreview(null);
+            setHealthCardFile(null);
+            setHealthCardPreview(null);
             setIsEditing(false);
             router.replace(`/dashboard/players/detail/${resolvedParams.id}`);
         } catch (error: any) {
@@ -485,6 +523,35 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento CI</label>
                                                     <input type="date" name="id_card_expiry" value={formData.id_card_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white dark:bg-white/5 border border-border rounded-lg p-2 text-sm" />
                                                 </div>
+                                                <div className="pt-2">
+                                                    <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
+                                                    <div className="flex items-center gap-4">
+                                                        {(idCardPreview || formData.id_card_url) ? (
+                                                            <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-border group">
+                                                                <a href={idCardPreview || formData.id_card_url || ""} target="_blank" rel="noopener noreferrer">
+                                                                    <img src={idCardPreview || formData.id_card_url || ""} alt="CI" className="h-full w-full object-cover group-hover:opacity-70 transition-opacity" />
+                                                                </a>
+                                                                {isEditing && (
+                                                                    <button type="button" onClick={() => { setIdCardFile(null); setIdCardPreview(null); setFormData(p => ({ ...p, id_card_url: null as any })); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                                                                        <X className="h-6 w-6 text-white" />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            isEditing ? (
+                                                                <label className="cursor-pointer bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all w-full">
+                                                                    <Upload className="h-4 w-4 text-muted-foreground mb-2" />
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
+                                                                    <input type="file" accept="image/*" onChange={handleIdCardChange} className="hidden" />
+                                                                </label>
+                                                            ) : (
+                                                                <div className="bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex items-center justify-center w-full">
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Sin documento</span>
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -504,6 +571,35 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento Ficha</label>
                                                     <input type="date" name="health_card_expiry" value={formData.health_card_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white dark:bg-white/5 border border-border rounded-lg p-2 text-sm" />
+                                                </div>
+                                                <div className="pt-2">
+                                                    <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
+                                                    <div className="flex items-center gap-4">
+                                                        {(healthCardPreview || formData.health_card_url) ? (
+                                                            <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-border group">
+                                                                <a href={healthCardPreview || formData.health_card_url || ""} target="_blank" rel="noopener noreferrer">
+                                                                    <img src={healthCardPreview || formData.health_card_url || ""} alt="Ficha Medica" className="h-full w-full object-cover group-hover:opacity-70 transition-opacity" />
+                                                                </a>
+                                                                {isEditing && (
+                                                                    <button type="button" onClick={() => { setHealthCardFile(null); setHealthCardPreview(null); setFormData(p => ({ ...p, health_card_url: null as any })); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                                                                        <X className="h-6 w-6 text-white" />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            isEditing ? (
+                                                                <label className="cursor-pointer bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all w-full">
+                                                                    <Upload className="h-4 w-4 text-muted-foreground mb-2" />
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
+                                                                    <input type="file" accept="image/*" onChange={handleHealthCardChange} className="hidden" />
+                                                                </label>
+                                                            ) : (
+                                                                <div className="bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex items-center justify-center w-full">
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Sin documento</span>
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>

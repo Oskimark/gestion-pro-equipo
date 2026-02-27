@@ -63,6 +63,10 @@ export default function NewPlayerPage() {
 
     const [photoFile, setPhotoFile] = useState<File | null>(null);
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+    const [idCardFile, setIdCardFile] = useState<File | null>(null);
+    const [idCardPreview, setIdCardPreview] = useState<string | null>(null);
+    const [healthCardFile, setHealthCardFile] = useState<File | null>(null);
+    const [healthCardPreview, setHealthCardPreview] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -74,6 +78,22 @@ export default function NewPlayerPage() {
             const file = e.target.files[0];
             setPhotoFile(file);
             setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleIdCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setIdCardFile(file);
+            setIdCardPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleHealthCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const file = e.target.files[0];
+            setHealthCardFile(file);
+            setHealthCardPreview(URL.createObjectURL(file));
         }
     };
 
@@ -98,6 +118,14 @@ export default function NewPlayerPage() {
             if (photoFile) {
                 const publicUrl = await uploadService.uploadFile(photoFile);
                 dataToSave.photo_url = publicUrl;
+            }
+            if (idCardFile) {
+                const publicUrl = await uploadService.uploadFile(idCardFile, "player-docs");
+                dataToSave.id_card_url = publicUrl;
+            }
+            if (healthCardFile) {
+                const publicUrl = await uploadService.uploadFile(healthCardFile, "player-docs");
+                dataToSave.health_card_url = publicUrl;
             }
 
             // Clean data: remove empty strings or convert to null
@@ -396,6 +424,25 @@ export default function NewPlayerPage() {
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento CI</label>
                                                     <input type="date" name="id_card_expiry" value={formData.id_card_expiry} onChange={handleChange} className="w-full bg-white dark:bg-white/5 border border-border rounded-xl p-2.5 text-sm" />
                                                 </div>
+                                                <div className="pt-2">
+                                                    <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
+                                                    <div className="flex items-center gap-4">
+                                                        {idCardPreview ? (
+                                                            <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-border group">
+                                                                <img src={idCardPreview} alt="Preview CI" className="h-full w-full object-cover" />
+                                                                <button type="button" onClick={() => { setIdCardFile(null); setIdCardPreview(null); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    <X className="h-6 w-6 text-white" />
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <label className="cursor-pointer bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all w-full">
+                                                                <Upload className="h-4 w-4 text-muted-foreground mb-2" />
+                                                                <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
+                                                                <input type="file" accept="image/*" onChange={handleIdCardChange} className="hidden" />
+                                                            </label>
+                                                        )}
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
@@ -415,6 +462,25 @@ export default function NewPlayerPage() {
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento Ficha</label>
                                                     <input type="date" name="health_card_expiry" value={formData.health_card_expiry} onChange={handleChange} className="w-full bg-white dark:bg-white/5 border border-border rounded-xl p-2.5 text-sm" />
+                                                </div>
+                                                <div className="pt-2">
+                                                    <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
+                                                    <div className="flex items-center gap-4">
+                                                        {healthCardPreview ? (
+                                                            <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-border group">
+                                                                <img src={healthCardPreview} alt="Preview Ficha" className="h-full w-full object-cover" />
+                                                                <button type="button" onClick={() => { setHealthCardFile(null); setHealthCardPreview(null); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                                                    <X className="h-6 w-6 text-white" />
+                                                                </button>
+                                                            </div>
+                                                        ) : (
+                                                            <label className="cursor-pointer bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all w-full">
+                                                                <Upload className="h-4 w-4 text-muted-foreground mb-2" />
+                                                                <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
+                                                                <input type="file" accept="image/*" onChange={handleHealthCardChange} className="hidden" />
+                                                            </label>
+                                                        )}
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
