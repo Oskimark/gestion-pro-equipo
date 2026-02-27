@@ -65,6 +65,18 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
         }
     };
 
+    const calculateAge = (birthDate?: string) => {
+        if (!birthDate) return "N/A";
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age;
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -240,14 +252,18 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                         </h2>
                         <p className="font-bold text-secondary uppercase tracking-widest text-xs mt-2">{formData.position}</p>
 
-                        <div className="mt-8 pt-8 border-t border-border/20 grid grid-cols-2 gap-4">
+                        <div className="mt-8 pt-8 border-t border-border/20 grid grid-cols-3 gap-2">
                             <div className="text-center">
                                 <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Dorsal</p>
                                 <p className="text-xl font-black text-foreground">{formData.shirt_number || "-"}</p>
                             </div>
                             <div className="text-center">
                                 <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Posición</p>
-                                <p className="text-xl font-black text-foreground">{formData.position?.substring(0, 3).toUpperCase() || "-"}</p>
+                                <p className="text-lg font-black text-foreground">{formData.position?.substring(0, 3).toUpperCase() || "-"}</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">Edad</p>
+                                <p className="text-xl font-black text-foreground">{calculateAge(formData.birth_date)}</p>
                             </div>
                         </div>
                     </div>
