@@ -88,9 +88,12 @@ export default function UsersPage() {
                         <p className="font-bold">Cargando personal...</p>
                     </div>
                 ) : filteredUsers.length === 0 ? (
-                    <div className="col-span-full h-64 flex flex-col items-center justify-center text-muted-foreground glass-morphism rounded-3xl">
-                        <UserCircle className="h-16 w-16 opacity-20 mb-4" />
-                        <p className="font-bold">No se encontraron usuarios</p>
+                    <div className="col-span-full py-20 flex flex-col items-center justify-center text-muted-foreground glass-morphism rounded-3xl border border-dashed border-border/60">
+                        <UserCircle className="h-20 w-20 opacity-10 mb-6" />
+                        <h3 className="text-xl font-bold text-foreground">No hay usuarios registrados</h3>
+                        <p className="mt-2 max-w-xs text-center text-sm">
+                            Si acabas de registrarte, asegúrate de que el Administrador haya configurado correctamente la base de datos.
+                        </p>
                     </div>
                 ) : (
                     filteredUsers.map((user) => (

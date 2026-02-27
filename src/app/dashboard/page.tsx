@@ -1,11 +1,16 @@
+"use client";
+
 import {
     Users,
     CreditCard,
     Calendar,
     Trophy
 } from "lucide-react";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function DashboardPage() {
+    const { profile, loading } = useProfile();
+
     const stats = [
         { name: "Total Jugadores", value: "24", icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
         { name: "Pagos Pendientes", value: "8", icon: CreditCard, color: "text-red-600", bg: "bg-red-100" },
@@ -17,7 +22,9 @@ export default function DashboardPage() {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
                 <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
-                    Bienvenido de nuevo, <span className="text-accent underline decoration-secondary decoration-4 underline-offset-4">Admin</span>
+                    Bienvenido de nuevo, <span className="text-accent underline decoration-secondary decoration-4 underline-offset-4">
+                        {loading ? "..." : (profile?.full_name || "Usuario")}
+                    </span>
                 </h1>
                 <p className="mt-2 text-muted-foreground">
                     Aquí tienes un resumen rápido de la situación actual del equipo.
