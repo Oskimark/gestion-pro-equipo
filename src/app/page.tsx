@@ -1,5 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Club 33 - Gestión Pro Equipo",
+  description: "Panel de administración para el Club 33 Churrinches gen 2017.",
+};
 
 export default function Home() {
   return (

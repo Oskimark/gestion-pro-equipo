@@ -129,7 +129,7 @@ export default function UsersPage() {
                                                 <span className="text-[10px] font-bold bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded uppercase">Suspendido</span>
                                             )}
                                         </div>
-                                        <div className="flex items-center gap-1.5 mt-1">
+                                        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                                             {user.role === "admin" ? (
                                                 <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-secondary px-2 py-0.5 bg-secondary/10 rounded-full">
                                                     <Shield size={10} /> Administrador
@@ -137,6 +137,11 @@ export default function UsersPage() {
                                             ) : (
                                                 <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded-full">
                                                     <ShieldAlert size={10} /> Ayudante
+                                                </span>
+                                            )}
+                                            {user.last_seen && !user.is_online && (
+                                                <span className="text-[10px] text-slate-500 font-medium">
+                                                    visto {new Date(user.last_seen).toLocaleDateString()}
                                                 </span>
                                             )}
                                         </div>

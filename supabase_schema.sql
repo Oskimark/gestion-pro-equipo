@@ -66,6 +66,9 @@ CREATE TABLE profiles (
     id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
     role TEXT DEFAULT 'ayudante', -- 'admin', 'ayudante'
     full_name TEXT,
+    status TEXT DEFAULT 'active', -- 'active', 'suspended'
+    is_online BOOLEAN DEFAULT false,
+    last_seen TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
