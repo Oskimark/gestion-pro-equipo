@@ -43,8 +43,9 @@ export default function Sidebar() {
                             e.currentTarget.parentElement!.innerHTML = '<span class="font-black text-primary text-xl">33</span>';
                         }} />
                     </div>
-                    <span className="text-xl font-black tracking-tighter text-white group-hover:text-secondary transition-colors">
-                        CLUB <span className="text-secondary group-hover:text-white">33</span>
+                    <span className="text-sm font-black tracking-tight text-white group-hover:text-secondary transition-colors inline-block leading-none">
+                        CLUB 33 <br />
+                        <span className="text-[10px] text-secondary group-hover:text-white uppercase">Churrinches gen 2017</span>
                     </span>
                 </Link>
             </div>

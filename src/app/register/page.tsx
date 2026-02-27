@@ -80,8 +80,8 @@ export default function RegisterPage() {
                                 <img src="/images/33.png" alt="Logo 33" className="w-full h-full object-contain" />
                             </div>
                         </Link>
-                        <h1 className="text-3xl font-black text-white italic tracking-tighter uppercase">Club 33</h1>
-                        <p className="text-slate-200 mt-2 font-medium">Registro de Nuevo Personal</p>
+                        <h1 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-tight">Club 33 <br /><span className="text-secondary text-sm">Churrinches gen 2017</span></h1>
+                        <p className="text-slate-300 mt-2 font-medium">Registro de Nuevo Personal</p>
                     </div>
 
                     <form onSubmit={handleRegister} className="space-y-5">

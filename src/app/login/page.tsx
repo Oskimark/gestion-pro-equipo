@@ -47,8 +47,8 @@ export default function LoginPage() {
                                 <img src="/images/33.png" alt="Logo" className="w-full h-full object-contain" />
                             </div>
                         </Link>
-                        <h1 className="text-3xl font-black text-white italic tracking-tighter uppercase">Club 33</h1>
-                        <p className="text-slate-200 mt-2 font-medium">Panel de Gestión Administrativa</p>
+                        <h1 className="text-2xl font-black text-white italic tracking-tighter uppercase leading-tight">Club 33 <br /><span className="text-secondary text-sm">Churrinches gen 2017</span></h1>
+                        <p className="text-slate-300 mt-2 font-medium">Panel de Gestión Administrativa</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
@@ -114,7 +114,7 @@ export default function LoginPage() {
                 </div>
 
                 <footer className="mt-12 text-slate-400 text-xs text-center opacity-70">
-                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.12 Potenciando el futuro del deporte.
+                    Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.13 Potenciando el futuro del deporte.
                 </footer>
             </div>
         </div>
