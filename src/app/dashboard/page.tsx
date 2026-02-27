@@ -11,6 +11,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useState, useEffect } from "react";
 import { playerService } from "@/services/playerService";
 import { matchService } from "@/services/matchService";
+import { settingsService } from "@/services/settingsService";
 import { Player, Match } from "@/types";
 
 import { AlertTriangle, ChevronRight, Check, MessageCircle } from "lucide-react";
@@ -31,9 +32,10 @@ export default function DashboardPage() {
     const loadDashboardData = async () => {
         try {
             setLoading(true);
-            const [players, matches] = await Promise.all([
+            const [players, matches, settings] = await Promise.all([
                 playerService.getAll(),
-                matchService.getAll()
+                matchService.getAll(),
+                settingsService.getSettings()
             ]);
 
             setCounts({
@@ -45,14 +47,14 @@ export default function DashboardPage() {
             // Calculate Alerts
             const docAlerts: { id: string; name: string; type: string; status: string; phone?: string }[] = [];
             players.forEach(p => {
-                const idStatus = getDocStatus(p.id_card_expiry);
-                const healthStatus = getDocStatus(p.health_card_expiry);
+                const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days);
+                const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days);
                 const phone = p.mother_phone || p.father_phone || p.referent_phone;
 
-                if (idStatus.label !== 'Al día') {
+                if (idStatus.label === 'Vencido' || idStatus.label === 'Por vencer' || idStatus.label === 'Faltante') {
                     docAlerts.push({ id: p.id, name: p.full_name, type: 'Cédula', status: idStatus.label, phone });
                 }
-                if (healthStatus.label !== 'Al día') {
+                if (healthStatus.label === 'Vencido' || healthStatus.label === 'Por vencer' || healthStatus.label === 'Faltante') {
                     docAlerts.push({ id: p.id, name: p.full_name, type: 'Ficha Médica', status: healthStatus.label, phone });
                 }
             });
@@ -135,7 +137,7 @@ export default function DashboardPage() {
                                 >
                                     <div className="flex flex-col">
                                         <span className="font-bold text-sm text-foreground">{alert.name}</span>
-                                        <span className="text-xs text-muted-foreground">{alert.type} • <span className={alert.status === 'Vencido' ? 'text-amber-500 font-bold' : 'text-red-500 font-bold'}>{alert.status}</span></span>
+                                        <span className="text-xs text-muted-foreground">{alert.type} • <span className={alert.status === 'Vencido' ? 'text-red-500 font-bold' : alert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{alert.status}</span></span>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         {alert.phone && (

@@ -75,3 +75,10 @@ export type UserProfile = {
   role: 'admin' | 'ayudante';
   full_name?: string;
 };
+
+export type ClubSettings = {
+  id?: string;
+  id_card_alert_days: number;
+  health_card_alert_days: number;
+  updated_at?: string;
+};

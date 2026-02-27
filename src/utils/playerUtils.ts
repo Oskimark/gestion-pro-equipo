@@ -1,6 +1,6 @@
 import { Check, X, AlertTriangle, LucideIcon } from "lucide-react";
 
-export type DocStatus = 'Al día' | 'Vencido' | 'Faltante';
+export type DocStatus = 'Al día' | 'Vencido' | 'Por vencer' | 'Faltante';
 
 export interface StatusUI {
     icon: LucideIcon;
@@ -8,15 +8,21 @@ export interface StatusUI {
     label: DocStatus;
 }
 
-export const getDocStatus = (expiryDate?: string): StatusUI => {
+export const getDocStatus = (expiryDate?: string, alertDays: number = 30): StatusUI => {
     if (!expiryDate) return { icon: X, color: "text-red-500 bg-red-500/10", label: "Faltante" };
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const expiry = new Date(expiryDate);
 
+    // Calculate the alert threshold date (e.g. 30 days before expiry)
+    const alertThreshold = new Date(expiry);
+    alertThreshold.setDate(expiry.getDate() - alertDays);
+
     if (expiry < today) {
-        return { icon: AlertTriangle, color: "text-amber-500 bg-amber-500/10", label: "Vencido" };
+        return { icon: AlertTriangle, color: "text-red-600 bg-red-600/10", label: "Vencido" };
+    } else if (today >= alertThreshold) {
+        return { icon: AlertTriangle, color: "text-amber-500 bg-amber-500/10", label: "Por vencer" };
     }
     return { icon: Check, color: "text-green-500 bg-green-500/10", label: "Al día" };
 };
