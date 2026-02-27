@@ -98,10 +98,10 @@ export default function PlayersPage() {
                         </div>
                     ) : (
                         <table className="w-full text-left">
-                            <thead>
-                                <tr className="border-b border-border/40 bg-slate-50/50 dark:bg-white/5">
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Jugador</th>
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Dorsal</th>
+                            <thead className="sticky top-0 z-30">
+                                <tr className="border-b border-border/40 bg-slate-50 dark:bg-slate-900 shadow-sm">
+                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50 dark:bg-slate-900 min-w-[180px] max-w-[180px]">Jugador</th>
+                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-[180px] z-40 bg-slate-50 dark:bg-slate-900 border-r border-border/40 sm:border-transparent sm:static sm:z-30 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.05)] sm:shadow-none">Dorsal</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Cédula</th>
@@ -111,17 +111,21 @@ export default function PlayersPage() {
                             </thead>
                             <tbody className="divide-y divide-border/20">
                                 {filteredPlayers.map((player) => (
-                                    <tr key={player.id} className="hover:bg-white/40 dark:hover:bg-white/5 transition-colors group">
-                                        <td className="px-6 py-4 whitespace-nowrap">
+                                    <tr key={player.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
+                                        <td className="px-4 py-4 whitespace-nowrap sticky left-0 z-20 bg-white dark:bg-slate-950 sm:static sm:bg-transparent min-w-[180px] max-w-[180px] overflow-hidden group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
                                             <div className="flex items-center gap-3">
-                                                <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-border text-slate-400 group-hover:border-secondary transition-colors">
-                                                    <User className="h-6 w-6" />
-                                                </div>
-                                                <span className="font-bold text-foreground">{player.full_name}</span>
+                                                {player.photo_url ? (
+                                                    <img src={player.photo_url} alt={player.full_name} className="h-10 w-10 rounded-full object-cover shrink-0 border border-border" />
+                                                ) : (
+                                                    <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-border text-slate-400 shrink-0 group-hover:border-secondary transition-colors">
+                                                        <User className="h-6 w-6" />
+                                                    </div>
+                                                )}
+                                                <span className="font-bold text-foreground truncate">{player.full_name}</span>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-secondary/10 text-secondary font-extrabold border border-secondary/20">
+                                        <td className="px-4 py-4 whitespace-nowrap sticky left-[180px] z-20 bg-white dark:bg-slate-950 border-r border-border/40 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)] sm:shadow-none sm:border-transparent sm:static sm:bg-transparent group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
+                                            <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-secondary/10 text-secondary font-extrabold border border-secondary/20 flex-shrink-0">
                                                 {player.shirt_number || "-"}
                                             </span>
                                         </td>

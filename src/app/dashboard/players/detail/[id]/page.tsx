@@ -12,7 +12,8 @@ import {
     Loader2,
     Edit2,
     X,
-    Camera
+    Camera,
+    MessageCircle
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -20,6 +21,7 @@ import { playerService } from "@/services/playerService";
 import { uploadService } from "@/services/uploadService";
 import { Player } from "@/types";
 import { Upload } from "lucide-react";
+import { generateWhatsAppLink, getDocStatus } from "@/utils/playerUtils";
 
 const tabs = [
     { id: "sports", name: "Deportivo", icon: Shield },
@@ -508,11 +510,33 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         {/* ID Card */}
                                         <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
-                                                    <FileText className="h-4 w-4" />
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
+                                                        <FileText className="h-4 w-4" />
+                                                    </div>
+                                                    <p className="text-sm font-bold text-foreground">Cédula de Identidad</p>
                                                 </div>
-                                                <p className="text-sm font-bold text-foreground">Cédula de Identidad</p>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        const phone = formData.mother_phone || formData.father_phone || formData.referent_phone;
+                                                        const message = `Hola! Te escribimos de CLUB 33. Queríamos consultarte por la Cédula de Identidad de ${formData.full_name}.`;
+                                                        if (phone) {
+                                                            const link = generateWhatsAppLink(phone, message);
+                                                            if (link) {
+                                                                window.open(link, '_blank');
+                                                                return;
+                                                            }
+                                                        }
+                                                        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                                                    }}
+                                                    className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn"
+                                                    title="Consultar por WhatsApp"
+                                                >
+                                                    <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                                                </button>
                                             </div>
                                             <div className="space-y-3">
                                                 <div>
@@ -557,11 +581,33 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
 
                                         {/* Health Card / Ficha */}
                                         <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <div className="h-8 w-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">
-                                                    <Shield className="h-4 w-4" />
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">
+                                                        <Shield className="h-4 w-4" />
+                                                    </div>
+                                                    <p className="text-sm font-bold text-foreground">Ficha de Salud / Carnet</p>
                                                 </div>
-                                                <p className="text-sm font-bold text-foreground">Ficha de Salud / Carnet</p>
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        const phone = formData.mother_phone || formData.father_phone || formData.referent_phone;
+                                                        const message = `Hola! Te escribimos de CLUB 33. Queríamos consultarte por la Ficha Médica de ${formData.full_name}.`;
+                                                        if (phone) {
+                                                            const link = generateWhatsAppLink(phone, message);
+                                                            if (link) {
+                                                                window.open(link, '_blank');
+                                                                return;
+                                                            }
+                                                        }
+                                                        window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                                                    }}
+                                                    className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn"
+                                                    title="Consultar por WhatsApp"
+                                                >
+                                                    <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                                                </button>
                                             </div>
                                             <div className="space-y-3">
                                                 <div>

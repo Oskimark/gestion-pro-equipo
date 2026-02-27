@@ -45,17 +45,17 @@ export default function DashboardPage() {
             });
 
             // Calculate Alerts
-            const docAlerts: { id: string; name: string; type: string; status: string; phone?: string }[] = [];
+            const docAlerts: { id: string; name: string; type: string; status: string; phone?: string; photo_url?: string }[] = [];
             players.forEach(p => {
                 const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days);
                 const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days);
                 const phone = p.mother_phone || p.father_phone || p.referent_phone;
 
                 if (idStatus.label === 'Vencido' || idStatus.label === 'Por vencer' || idStatus.label === 'Faltante') {
-                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Cédula', status: idStatus.label, phone });
+                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Cédula', status: idStatus.label, phone, photo_url: p.photo_url });
                 }
                 if (healthStatus.label === 'Vencido' || healthStatus.label === 'Por vencer' || healthStatus.label === 'Faltante') {
-                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Ficha Médica', status: healthStatus.label, phone });
+                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Ficha Médica', status: healthStatus.label, phone, photo_url: p.photo_url });
                 }
             });
             setAlerts(docAlerts);
@@ -135,9 +135,18 @@ export default function DashboardPage() {
                                     href={`/dashboard/players/detail/${alert.id}`}
                                     className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-border/20 hover:border-red-500/30 transition-all group/item"
                                 >
-                                    <div className="flex flex-col">
-                                        <span className="font-bold text-sm text-foreground">{alert.name}</span>
-                                        <span className="text-xs text-muted-foreground">{alert.type} • <span className={alert.status === 'Vencido' ? 'text-red-500 font-bold' : alert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{alert.status}</span></span>
+                                    <div className="flex items-center gap-3">
+                                        {alert.photo_url ? (
+                                            <img src={alert.photo_url} alt={alert.name} className="h-10 w-10 rounded-full object-cover shrink-0 border border-border" />
+                                        ) : (
+                                            <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-border text-slate-400 shrink-0">
+                                                <User className="h-6 w-6" />
+                                            </div>
+                                        )}
+                                        <div className="flex flex-col">
+                                            <span className="font-bold text-sm text-foreground">{alert.name}</span>
+                                            <span className="text-xs text-muted-foreground">{alert.type} • <span className={alert.status === 'Vencido' ? 'text-red-500 font-bold' : alert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{alert.status}</span></span>
+                                        </div>
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <button
