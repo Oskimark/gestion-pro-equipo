@@ -8,7 +8,8 @@ import {
     Calendar,
     Settings,
     LayoutDashboard,
-    LogOut
+    LogOut,
+    UserCircle
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
@@ -18,6 +19,7 @@ const navigation = [
     { name: "Jugadores", href: "/dashboard/players", icon: Users },
     { name: "Pagos", href: "/dashboard/payments", icon: CreditCard },
     { name: "Partidos", href: "/dashboard/matches", icon: Calendar },
+    { name: "Usuarios", href: "/dashboard/users", icon: UserCircle },
     { name: "Configuración", href: "/dashboard/settings", icon: Settings },
 ];
 
