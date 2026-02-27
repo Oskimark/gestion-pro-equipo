@@ -86,8 +86,26 @@ CREATE POLICY "Authenticated users can read all" ON matches FOR SELECT TO authen
 CREATE POLICY "Authenticated users can read all" ON player_stats FOR SELECT TO authenticated USING (true);
 CREATE POLICY "Authenticated users can read all" ON profiles FOR SELECT TO authenticated USING (true);
 
+-- Poliza: Usuarios pueden actualizar su propia presencia
+CREATE POLICY "Users can update own presence" ON profiles 
+FOR UPDATE TO authenticated 
+USING (auth.uid() = id)
+WITH CHECK (auth.uid() = id);
+
 -- Poliza básica: Admin puede editar todo
-CREATE POLICY "Admins can update all" ON players FOR ALL TO authenticated USING (
+CREATE POLICY "Admins can update players" ON players FOR ALL TO authenticated USING (
+  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+);
+CREATE POLICY "Admins can update payments" ON payments FOR ALL TO authenticated USING (
+  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+);
+CREATE POLICY "Admins can update matches" ON matches FOR ALL TO authenticated USING (
+  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+);
+CREATE POLICY "Admins can update player_stats" ON player_stats FOR ALL TO authenticated USING (
+  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+);
+CREATE POLICY "Admins can update profiles" ON profiles FOR ALL TO authenticated USING (
   EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
 );
 -- ... repetir para otras tablas
