@@ -59,7 +59,7 @@ export default function Home() {
         </div>
       </main>
 
-      Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.13 Potenciando el futuro del deporte.
+      Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.14 Potenciando el futuro del deporte.
     </div>
   );
 }
