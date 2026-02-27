@@ -9,7 +9,10 @@ import {
     Eye,
     Edit2,
     Trash2,
-    Loader2
+    Loader2,
+    Check,
+    X,
+    AlertTriangle
 } from "lucide-react";
 import Link from "next/link";
 import { playerService } from "@/services/playerService";
@@ -57,6 +60,18 @@ export default function PlayersPage() {
             age--;
         }
         return age;
+    };
+
+    const getDocStatus = (expiryDate?: string) => {
+        if (!expiryDate) return { icon: X, color: "text-red-500 bg-red-500/10", label: "Faltante" };
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const expiry = new Date(expiryDate);
+
+        if (expiry < today) {
+            return { icon: AlertTriangle, color: "text-amber-500 bg-amber-500/10", label: "Vencido" };
+        }
+        return { icon: Check, color: "text-green-500 bg-green-500/10", label: "Al día" };
     };
 
     const filteredPlayers = players.filter(p =>
@@ -108,7 +123,9 @@ export default function PlayersPage() {
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Jugador</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Dorsal</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Edad</th>
+                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
+                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Cédula</th>
+                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Carnet</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Acciones</th>
                                 </tr>
                             </thead>
@@ -133,8 +150,28 @@ export default function PlayersPage() {
                                                 {player.position || "N/A"}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 whitespace-nowrap font-medium text-muted-foreground">
+                                        <td className="px-6 py-4 whitespace-nowrap text-center font-medium text-muted-foreground">
                                             {calculateAge(player.birth_date)}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                                            {(() => {
+                                                const status = getDocStatus(player.id_card_expiry);
+                                                return (
+                                                    <div className={`inline-flex items-center justify-center p-1.5 rounded-full ${status.color}`} title={status.label}>
+                                                        <status.icon className="h-4 w-4" />
+                                                    </div>
+                                                );
+                                            })()}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                                            {(() => {
+                                                const status = getDocStatus(player.health_card_expiry);
+                                                return (
+                                                    <div className={`inline-flex items-center justify-center p-1.5 rounded-full ${status.color}`} title={status.label}>
+                                                        <status.icon className="h-4 w-4" />
+                                                    </div>
+                                                );
+                                            })()}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-2">
