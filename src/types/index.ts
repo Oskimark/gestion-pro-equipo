@@ -74,6 +74,9 @@ export type UserProfile = {
   id: string;
   role: 'admin' | 'ayudante';
   full_name?: string;
+  is_online?: boolean;
+  status?: 'active' | 'suspended';
+  last_seen?: string;
 };
 
 export type ClubSettings = {

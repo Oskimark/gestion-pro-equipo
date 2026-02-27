@@ -56,6 +56,22 @@ export default function UsersPage() {
         }
     };
 
+    const toggleStatus = async (userId: string, currentStatus: string) => {
+        const newStatus = currentStatus === "suspended" ? "active" : "suspended";
+        try {
+            const { error } = await supabase
+                .from("profiles")
+                .update({ status: newStatus })
+                .eq("id", userId);
+
+            if (error) throw error;
+            loadUsers();
+        } catch (error) {
+            console.error("Error updating status:", error);
+            alert("Error al actualizar el estado del usuario.");
+        }
+    };
+
     const filteredUsers = users.filter(user =>
         user.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -97,14 +113,22 @@ export default function UsersPage() {
                     </div>
                 ) : (
                     filteredUsers.map((user) => (
-                        <div key={user.id} className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
+                        <div key={user.id} className={`bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden ${user.status === 'suspended' ? 'opacity-75 grayscale-[0.5]' : ''}`}>
                             <div className="flex items-start justify-between relative z-10">
                                 <div className="flex items-center gap-4">
-                                    <div className="h-12 w-12 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform">
-                                        <UserCircle className="h-7 w-7" />
+                                    <div className="relative">
+                                        <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-white/5 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform border border-border/50">
+                                            <UserCircle className="h-8 w-8" />
+                                        </div>
+                                        <div className={`absolute -bottom-1 -right-1 h-4 w-4 rounded-full border-2 border-white dark:border-slate-950 ${user.is_online ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-slate-300'}`} title={user.is_online ? 'En línea' : 'Desconectado'}></div>
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-foreground">{user.full_name || "Usuario Sin Nombre"}</h3>
+                                        <div className="flex items-center gap-2">
+                                            <h3 className="font-bold text-foreground">{user.full_name || "Usuario Sin Nombre"}</h3>
+                                            {user.status === 'suspended' && (
+                                                <span className="text-[10px] font-bold bg-red-500/10 text-red-500 px-1.5 py-0.5 rounded uppercase">Suspendido</span>
+                                            )}
+                                        </div>
                                         <div className="flex items-center gap-1.5 mt-1">
                                             {user.role === "admin" ? (
                                                 <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-secondary px-2 py-0.5 bg-secondary/10 rounded-full">
@@ -127,9 +151,18 @@ export default function UsersPage() {
                                 >
                                     {user.role === "admin" ? "Bajar a Ayudante" : "Subir a Admin"}
                                 </button>
-                                <button className="p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
-                                    <Trash2 className="h-4 w-4" />
-                                </button>
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={() => toggleStatus(user.id, user.status || "active")}
+                                        className={`p-2 rounded-xl transition-all ${user.status === 'suspended' ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-amber-500'}`}
+                                        title={user.status === 'suspended' ? "Activar Acceso" : "Pausar Acceso"}
+                                    >
+                                        {user.status === 'suspended' ? <ShieldAlert className="h-4 w-4" /> : <Shield size={4} className="h-4 w-4" />}
+                                    </button>
+                                    <button className="p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
+                                        <Trash2 className="h-4 w-4" />
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="absolute top-0 right-0 w-32 h-32 bg-secondary/5 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform"></div>
@@ -137,6 +170,7 @@ export default function UsersPage() {
                     ))
                 )}
             </div>
+
 
             <div className="bg-white dark:bg-slate-950 p-8 rounded-3xl border border-border/40 relative overflow-hidden bg-secondary/5">
                 <div className="flex items-center gap-4 mb-4">
