@@ -79,33 +79,18 @@ ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
 ALTER TABLE player_stats ENABLE ROW LEVEL SECURITY;
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
--- Poliza básica: Autenticados pueden leer todo
-CREATE POLICY "Authenticated users can read all" ON players FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Authenticated users can read all" ON payments FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Authenticated users can read all" ON matches FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Authenticated users can read all" ON player_stats FOR SELECT TO authenticated USING (true);
-CREATE POLICY "Authenticated users can read all" ON profiles FOR SELECT TO authenticated USING (true);
+-- Política: Todos los usuarios logueados pueden ver todos los perfiles
+CREATE POLICY "profiles_select_all" ON profiles FOR SELECT TO authenticated USING (true);
 
--- Poliza: Usuarios pueden actualizar su propia presencia
-CREATE POLICY "Users can update own presence" ON profiles 
-FOR UPDATE TO authenticated 
-USING (auth.uid() = id)
-WITH CHECK (auth.uid() = id);
+-- Política: Los usuarios pueden actualizar su propia presencia
+CREATE POLICY "profiles_update_self" ON profiles FOR UPDATE TO authenticated 
+USING (auth.uid() = id);
 
--- Poliza básica: Admin puede editar todo
-CREATE POLICY "Admins can update players" ON players FOR ALL TO authenticated USING (
-  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
-);
-CREATE POLICY "Admins can update payments" ON payments FOR ALL TO authenticated USING (
-  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
-);
-CREATE POLICY "Admins can update matches" ON matches FOR ALL TO authenticated USING (
-  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
-);
-CREATE POLICY "Admins can update player_stats" ON player_stats FOR ALL TO authenticated USING (
-  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
-);
-CREATE POLICY "Admins can update profiles" ON profiles FOR ALL TO authenticated USING (
-  EXISTS (SELECT 1 FROM profiles WHERE profiles.id = auth.uid() AND profiles.role = 'admin')
+-- Política: Los administradores pueden gestionar todos los perfiles
+CREATE POLICY "profiles_admin_manage" ON profiles FOR ALL TO authenticated 
+USING (
+  auth.uid() IN (
+    SELECT id FROM profiles WHERE role = 'admin'
+  )
 );
 -- ... repetir para otras tablas
