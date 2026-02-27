@@ -48,11 +48,14 @@ export default function UsersPage() {
                 .update({ role: newRole })
                 .eq("id", userId);
 
-            if (error) throw error;
+            if (error) {
+                console.error("Supabase error (role):", error);
+                throw error;
+            }
             loadUsers();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error updating role:", error);
-            alert("No tienes permisos suficientes para cambiar roles.");
+            alert(`Error: ${error.message || "No tienes permisos suficientes."}`);
         }
     };
 
@@ -64,11 +67,38 @@ export default function UsersPage() {
                 .update({ status: newStatus })
                 .eq("id", userId);
 
-            if (error) throw error;
+            if (error) {
+                console.error("Supabase error (status):", error);
+                throw error;
+            }
             loadUsers();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error updating status:", error);
-            alert("Error al actualizar el estado del usuario.");
+            alert(`Error: ${error.message || "Error al actualizar el estado."}`);
+        }
+    };
+
+    const deleteUser = async (userId: string, userName: string) => {
+        if (!confirm(`¿Estás seguro de que quieres eliminar a ${userName}? Esta acción no se puede deshacer.`)) {
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from("profiles")
+                .delete()
+                .eq("id", userId);
+
+            if (error) {
+                console.error("Supabase error (delete):", error);
+                throw error;
+            }
+
+            setUsers(users.filter(u => u.id !== userId));
+            alert("Usuario eliminado correctamente.");
+        } catch (error: any) {
+            console.error("Error deleting user:", error);
+            alert(`Error: ${error.message || "No se pudo eliminar al usuario."}`);
         }
     };
 
@@ -164,7 +194,10 @@ export default function UsersPage() {
                                     >
                                         {user.status === 'suspended' ? <ShieldAlert className="h-4 w-4" /> : <Shield size={4} className="h-4 w-4" />}
                                     </button>
-                                    <button className="p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all">
+                                    <button
+                                        onClick={() => deleteUser(user.id, user.full_name || "este usuario")}
+                                        className="p-2 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
+                                    >
                                         <Trash2 className="h-4 w-4" />
                                     </button>
                                 </div>

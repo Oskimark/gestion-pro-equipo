@@ -76,21 +76,27 @@ CREATE TABLE profiles (
 ALTER TABLE players ENABLE ROW LEVEL SECURITY;
 ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
-ALTER TABLE player_stats ENABLE ROW LEVEL SECURITY;
+-- 1. Función de seguridad para verificar admin (evita recursión)
+CREATE OR REPLACE FUNCTION public.is_admin() 
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles 
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- 2. Políticas de la tabla Profiles
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
--- Política: Todos los usuarios logueados pueden ver todos los perfiles
-CREATE POLICY "profiles_select_all" ON profiles FOR SELECT TO authenticated USING (true);
+-- Lectura: Todos ven a todos
+CREATE POLICY "profiles_read_all" ON profiles FOR SELECT TO authenticated USING (true);
 
--- Política: Los usuarios pueden actualizar su propia presencia
-CREATE POLICY "profiles_update_self" ON profiles FOR UPDATE TO authenticated 
-USING (auth.uid() = id);
+-- Edición: Usuarios actualizan su propia presencia
+CREATE POLICY "profiles_update_self" ON profiles FOR UPDATE TO authenticated USING (auth.uid() = id);
 
--- Política: Los administradores pueden gestionar todos los perfiles
-CREATE POLICY "profiles_admin_manage" ON profiles FOR ALL TO authenticated 
-USING (
-  auth.uid() IN (
-    SELECT id FROM profiles WHERE role = 'admin'
-  )
-);
+-- Administración: Admins gestionan todo
+CREATE POLICY "profiles_admin_all" ON profiles FOR ALL TO authenticated USING (public.is_admin());
+
 -- ... repetir para otras tablas
