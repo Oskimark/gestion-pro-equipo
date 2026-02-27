@@ -6,6 +6,7 @@ import { Loader2, Menu, Bell, AlertTriangle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { playerService } from "@/services/playerService";
 import { getDocStatus } from "@/utils/playerUtils";
+import Link from "next/link";
 
 export default function DashboardLayout({
     children,
@@ -52,14 +53,14 @@ export default function DashboardLayout({
                     </div>
 
                     <div className="flex items-center gap-3 sm:gap-4">
-                        <button className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-colors relative group">
+                        <Link href="/dashboard" className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-colors relative group">
                             <Bell className="h-5 w-5 group-hover:shake transition-all" />
                             {alertCount > 0 && (
                                 <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-white dark:border-slate-900 animate-pulse">
                                     {alertCount}
                                 </span>
                             )}
-                        </button>
+                        </Link>
 
                         <div className="flex items-center gap-3 pl-3 sm:pl-4 border-l border-border/50">
                             <div className="text-right hidden sm:block">

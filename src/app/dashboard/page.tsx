@@ -58,7 +58,7 @@ export default function DashboardPage() {
                     docAlerts.push({ id: p.id, name: p.full_name, type: 'Ficha Médica', status: healthStatus.label, phone });
                 }
             });
-            setAlerts(docAlerts.slice(0, 5)); // Show only first 5 alerts
+            setAlerts(docAlerts);
 
             const upcoming = matches.find(m => m.status === "Próximo");
             setNextMatch(upcoming || null);
@@ -127,7 +127,7 @@ export default function DashboardPage() {
                         )}
                     </div>
 
-                    <div className="space-y-3 flex-1">
+                    <div className="space-y-3 flex-1 overflow-y-auto max-h-[400px] pr-2">
                         {alerts.length > 0 ? (
                             alerts.map((alert, idx) => (
                                 <Link
@@ -170,10 +170,6 @@ export default function DashboardPage() {
                             </div>
                         )}
                     </div>
-
-                    {alerts.length > 5 && (
-                        <p className="mt-4 text-[10px] text-center text-muted-foreground italic font-medium">Hay {alerts.length - 5} alertas más pendientes...</p>
-                    )}
                 </div>
 
                 {/* Match Highlight */}
