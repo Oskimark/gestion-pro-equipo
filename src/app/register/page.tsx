@@ -27,7 +27,9 @@ export default function RegisterPage() {
                 options: {
                     data: {
                         full_name: fullName,
-                    }
+                    },
+                    emailRedirectTo: `${window.location.origin}/login`,
+                    version: "1.09",
                 }
             });
 
