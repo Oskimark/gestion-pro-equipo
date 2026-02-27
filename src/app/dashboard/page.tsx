@@ -13,7 +13,7 @@ import { playerService } from "@/services/playerService";
 import { matchService } from "@/services/matchService";
 import { Player, Match } from "@/types";
 
-import { AlertTriangle, ChevronRight } from "lucide-react";
+import { AlertTriangle, ChevronRight, Check } from "lucide-react";
 import { getDocStatus } from "@/utils/playerUtils";
 import Link from "next/link";
 

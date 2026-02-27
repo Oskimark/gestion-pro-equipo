@@ -17,6 +17,7 @@ import {
 import Link from "next/link";
 import { playerService } from "@/services/playerService";
 import { Player } from "@/types";
+import { getDocStatus, calculateAge } from "@/utils/playerUtils";
 
 export default function PlayersPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -49,8 +50,6 @@ export default function PlayersPage() {
             }
         }
     };
-
-    import { getDocStatus, calculateAge } from "@/utils/playerUtils";
 
     const filteredPlayers = players.filter(p =>
         p.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
