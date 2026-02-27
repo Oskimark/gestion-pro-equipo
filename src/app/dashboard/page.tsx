@@ -4,7 +4,8 @@ import {
     Users,
     CreditCard,
     Calendar,
-    Trophy
+    Trophy,
+    User
 } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 
@@ -22,7 +23,7 @@ export default function DashboardPage() {
     const { profile, loading: profileLoading } = useProfile();
     const [counts, setCounts] = useState({ players: 0, payments: 0, goals: 0 });
     const [nextMatch, setNextMatch] = useState<Match | null>(null);
-    const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string }[]>([]);
+    const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string; photo_url?: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
