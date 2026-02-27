@@ -140,20 +140,25 @@ export default function DashboardPage() {
                                         <span className="text-xs text-muted-foreground">{alert.type} • <span className={alert.status === 'Vencido' ? 'text-red-500 font-bold' : alert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{alert.status}</span></span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        {alert.phone && (
-                                            <button
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                    const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${alert.type} de ${alert.name} está ${alert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${alert.type} de ${alert.name} está ${alert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
+                                                if (alert.phone) {
                                                     const link = generateWhatsAppLink(alert.phone, message);
-                                                    if (link) window.open(link, '_blank');
-                                                }}
-                                                className="p-2 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-full transition-colors flex items-center justify-center shrink-0 group/btn"
-                                                title="Avisar por WhatsApp"
-                                            >
-                                                <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
-                                            </button>
-                                        )}
+                                                    if (link) {
+                                                        window.open(link, '_blank');
+                                                        return;
+                                                    }
+                                                }
+                                                // Fallback: Generic share link
+                                                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+                                            }}
+                                            className="p-2 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-full transition-colors flex items-center justify-center shrink-0 group/btn"
+                                            title="Avisar por WhatsApp"
+                                        >
+                                            <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                                        </button>
                                         <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/item:translate-x-1 transition-transform" />
                                     </div>
                                 </Link>
