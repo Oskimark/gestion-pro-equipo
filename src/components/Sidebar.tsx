@@ -36,11 +36,15 @@ export default function Sidebar() {
         <div className="flex h-full w-64 flex-col bg-primary text-white">
             <div className="flex h-20 items-center justify-center border-b border-white/10 px-6">
                 <Link href="/dashboard" className="flex items-center gap-3 group">
-                    <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center font-bold text-primary group-hover:scale-110 transition-transform">
-                        PE
+                    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center p-1 group-hover:scale-110 transition-transform shadow-lg shadow-black/20">
+                        <img src="/images/logo.png" alt="Logo 33" className="w-full h-full object-contain" onError={(e) => {
+                            // Fallback if image not found
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.parentElement!.innerHTML = '<span class="font-black text-primary text-xl">33</span>';
+                        }} />
                     </div>
-                    <span className="text-xl font-extrabold tracking-tight text-white group-hover:text-secondary transition-colors">
-                        PRO <span className="text-secondary group-hover:text-white">EQUIPO</span>
+                    <span className="text-xl font-black tracking-tighter text-white group-hover:text-secondary transition-colors">
+                        CLUB <span className="text-secondary group-hover:text-white">33</span>
                     </span>
                 </Link>
             </div>
