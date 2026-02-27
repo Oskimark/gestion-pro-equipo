@@ -12,17 +12,20 @@ import {
     Loader2,
     Check,
     X,
-    AlertTriangle
+    AlertTriangle,
+    FileDown
 } from "lucide-react";
 import Link from "next/link";
 import { playerService } from "@/services/playerService";
 import { Player } from "@/types";
 import { getDocStatus, calculateAge } from "@/utils/playerUtils";
+import PlayerReportModal from "./components/PlayerReportModal";
 
 export default function PlayersPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [players, setPlayers] = useState<Player[]>([]);
     const [loading, setLoading] = useState(true);
+    const [reportPlayer, setReportPlayer] = useState<Player | null>(null);
 
     useEffect(() => {
         loadPlayers();
@@ -159,6 +162,13 @@ export default function PlayersPage() {
                                                     <Edit2 className="h-5 w-5" />
                                                 </Link>
                                                 <button
+                                                    onClick={() => setReportPlayer(player)}
+                                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-blue-500 transition-colors"
+                                                    title="Generar Reporte"
+                                                >
+                                                    <FileDown className="h-5 w-5" />
+                                                </button>
+                                                <button
                                                     onClick={() => handleDelete(player.id, player.full_name)}
                                                     className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors"
                                                 >
@@ -180,6 +190,12 @@ export default function PlayersPage() {
                     </div>
                 )}
             </div>
+
+            <PlayerReportModal
+                isOpen={!!reportPlayer}
+                onClose={() => setReportPlayer(null)}
+                player={reportPlayer}
+            />
         </div>
     );
 }
