@@ -74,7 +74,7 @@ export default function DashboardPage() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {stats.map((stat) => (
                     <div key={stat.name} className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-secondary/50 transition-all hover:translate-y-[-4px] group relative overflow-hidden">
                         <div className="flex items-center justify-between">

@@ -121,40 +121,40 @@ export default function MatchesPage() {
                                 </div>
                             ) : (
                                 matches.map((match) => (
-                                    <div key={match.id} className={`p-6 rounded-3xl border transition-all group relative overflow-hidden flex items-center justify-between ${match.status === "Finalizado"
+                                    <div key={match.id} className={`p-4 sm:p-6 rounded-3xl border transition-all group relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${match.status === "Finalizado"
                                             ? "bg-slate-50/50 dark:bg-white/[0.02] border-border/20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
                                             : "bg-white dark:bg-slate-950 border-border/40 hover:border-secondary/40 shadow-sm"
                                         }`}>
-                                        <div className="flex items-center gap-6">
-                                            <div className={`hidden sm:flex flex-col items-center justify-center w-16 h-16 rounded-xl border border-border/20 ${match.status === "Finalizado" ? "bg-slate-100/50 dark:bg-white/5" : "bg-slate-100 dark:bg-white/5"
+                                        <div className="flex items-center gap-4 sm:gap-6">
+                                            <div className={`flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl border border-border/20 shrink-0 ${match.status === "Finalizado" ? "bg-slate-100/50 dark:bg-white/5" : "bg-slate-100 dark:bg-white/5"
                                                 }`}>
                                                 <span className="text-[10px] font-bold text-muted-foreground uppercase">{new Date(match.date).toLocaleString('es', { month: 'short' })}</span>
-                                                <span className="text-xl font-extrabold text-foreground">{new Date(match.date).getDate()}</span>
+                                                <span className="text-lg sm:text-xl font-extrabold text-foreground">{new Date(match.date).getDate()}</span>
                                             </div>
-                                            <div>
-                                                <h4 className="font-extrabold text-lg text-foreground group-hover:text-accent transition-colors">vs {match.rival}</h4>
-                                                <p className="text-sm text-muted-foreground flex items-center gap-1.5 min-w-0">
-                                                    <MapPin className="h-3.5 w-3.5" />
+                                            <div className="min-w-0">
+                                                <h4 className="font-extrabold text-base sm:text-lg text-foreground group-hover:text-accent transition-colors truncate">vs {match.rival}</h4>
+                                                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5 truncate">
+                                                    <MapPin className="h-3.5 w-3.5 shrink-0" />
                                                     {match.venue}
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-6">
+                                        <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto pt-4 sm:pt-0 border-t sm:border-0 border-border/10">
                                             <div className="flex items-center gap-4">
                                                 {match.status === "Finalizado" ? (
                                                     <div className="flex flex-col items-end">
-                                                        <span className="text-2xl font-mono font-black text-foreground">
+                                                        <span className="text-xl sm:text-2xl font-mono font-black text-foreground">
                                                             {match.score_home} - {match.score_away}
                                                         </span>
                                                         <span className="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Resultado</span>
                                                     </div>
                                                 ) : (
-                                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-accent/10 text-accent uppercase tracking-widest border border-accent/20">Pendiente</span>
+                                                    <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-accent/10 text-accent uppercase tracking-widest border border-accent/20 whitespace-nowrap">Pendiente</span>
                                                 )}
                                             </div>
 
-                                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <div className="flex items-center gap-2">
                                                 <Link href={`/dashboard/matches/edit/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors" title="Editar">
                                                     <Edit2 className="h-5 w-5" />
                                                 </Link>
@@ -165,8 +165,8 @@ export default function MatchesPage() {
                                                 >
                                                     <Trash2 className="h-5 w-5" />
                                                 </button>
+                                                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform hidden sm:block" />
                                             </div>
-                                            <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform" />
                                         </div>
                                     </div>
                                 ))
