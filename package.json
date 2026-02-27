@@ -1,6 +1,6 @@
 {
   "name": "gestion33",
-  "version": "1.18.0",
+  "version": "1.18.2",
   "private": true,
   "scripts": {
     "dev": "next dev",

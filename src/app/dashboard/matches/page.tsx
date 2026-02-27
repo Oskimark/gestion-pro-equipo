@@ -121,9 +121,13 @@ export default function MatchesPage() {
                                 </div>
                             ) : (
                                 matches.map((match) => (
-                                    <div key={match.id} className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-secondary/40 transition-all group relative overflow-hidden flex items-center justify-between">
+                                    <div key={match.id} className={`p-6 rounded-3xl border transition-all group relative overflow-hidden flex items-center justify-between ${match.status === "Finalizado"
+                                            ? "bg-slate-50/50 dark:bg-white/[0.02] border-border/20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
+                                            : "bg-white dark:bg-slate-950 border-border/40 hover:border-secondary/40 shadow-sm"
+                                        }`}>
                                         <div className="flex items-center gap-6">
-                                            <div className="hidden sm:flex flex-col items-center justify-center w-16 h-16 rounded-xl bg-slate-100 dark:bg-white/5 border border-border/20">
+                                            <div className={`hidden sm:flex flex-col items-center justify-center w-16 h-16 rounded-xl border border-border/20 ${match.status === "Finalizado" ? "bg-slate-100/50 dark:bg-white/5" : "bg-slate-100 dark:bg-white/5"
+                                                }`}>
                                                 <span className="text-[10px] font-bold text-muted-foreground uppercase">{new Date(match.date).toLocaleString('es', { month: 'short' })}</span>
                                                 <span className="text-xl font-extrabold text-foreground">{new Date(match.date).getDate()}</span>
                                             </div>

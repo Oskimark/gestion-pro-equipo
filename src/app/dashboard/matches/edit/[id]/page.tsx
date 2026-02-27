@@ -45,13 +45,18 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
             const match = await matchService.getById(id);
             if (match) {
                 const dt = new Date(match.date);
-                const dateStr = dt.toISOString().split('T')[0];
-                const timeStr = dt.toTimeString().slice(0, 5);
+
+                // Extract local date and time components
+                const year = dt.getFullYear();
+                const month = String(dt.getMonth() + 1).padStart(2, '0');
+                const day = String(dt.getDate()).padStart(2, '0');
+                const hours = String(dt.getHours()).padStart(2, '0');
+                const minutes = String(dt.getMinutes()).padStart(2, '0');
 
                 setFormData({
                     rival: match.rival,
-                    date: dateStr,
-                    time: timeStr,
+                    date: `${year}-${month}-${day}`,
+                    time: `${hours}:${minutes}`,
                     venue: match.venue || "",
                     status: match.status,
                     score_home: match.score_home || 0,
@@ -76,7 +81,8 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
         e.preventDefault();
         try {
             setSaving(true);
-            const matchDateTime = `${formData.date}T${formData.time}:00`;
+            const localDate = new Date(`${formData.date}T${formData.time}:00`);
+            const matchDateTime = localDate.toISOString();
 
             const dataToUpdate = {
                 rival: formData.rival,

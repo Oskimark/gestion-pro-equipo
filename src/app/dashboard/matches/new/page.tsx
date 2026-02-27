@@ -43,8 +43,9 @@ export default function NewMatchPage() {
         try {
             setLoading(true);
 
-            // Combine date and time
-            const matchDateTime = `${formData.date}T${formData.time}:00`;
+            // Combine date and time and convert to ISO string (UTC)
+            const localDate = new Date(`${formData.date}T${formData.time}:00`);
+            const matchDateTime = localDate.toISOString();
 
             const dataToSave = {
                 rival: formData.rival,
