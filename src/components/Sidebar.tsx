@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import {
     Users,
     CreditCard,
@@ -10,9 +9,11 @@ import {
     LayoutDashboard,
     LogOut,
     X,
-    Trophy
+    Trophy,
+    UserCircle
 } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
+import { useRouter, usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 const navigation = [
