@@ -133,23 +133,23 @@ export default function DashboardPage() {
 
                     <div className="space-y-3 flex-1 overflow-y-auto max-h-[400px] pr-2">
                         {alerts.length > 0 ? (
-                            alerts.map((alert, idx) => (
+                            alerts.map((docAlert, idx) => (
                                 <Link
-                                    key={`${alert.id}-${idx}`}
-                                    href={`/dashboard/players/detail/${alert.id}`}
+                                    key={`${docAlert.id}-${idx}`}
+                                    href={`/dashboard/players/detail/${docAlert.id}`}
                                     className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-border/20 hover:border-red-500/30 transition-all group/item"
                                 >
                                     <div className="flex items-center gap-3">
-                                        {alert.photo_url ? (
-                                            <img src={alert.photo_url} alt={alert.name} className="h-10 w-10 rounded-full object-cover shrink-0 border border-border" />
+                                        {docAlert.photo_url ? (
+                                            <img src={docAlert.photo_url} alt={docAlert.name} className="h-10 w-10 rounded-full object-cover shrink-0 border border-border" />
                                         ) : (
                                             <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-border text-slate-400 shrink-0">
                                                 <User className="h-6 w-6" />
                                             </div>
                                         )}
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-sm text-foreground">{alert.name}</span>
-                                            <span className="text-xs text-muted-foreground">{alert.type} • <span className={alert.status === 'Vencido' ? 'text-red-500 font-bold' : alert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{alert.status}</span></span>
+                                            <span className="font-bold text-sm text-foreground">{docAlert.name}</span>
+                                            <span className="text-xs text-muted-foreground">{docAlert.type} • <span className={docAlert.status === 'Vencido' ? 'text-red-500 font-bold' : docAlert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{docAlert.status}</span></span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -160,9 +160,9 @@ export default function DashboardPage() {
                                                     alert("Como visitante no tienes permisos para enviar notificaciones.");
                                                     return;
                                                 }
-                                                const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${alert.type} de ${alert.name} está ${alert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
-                                                if (alert.phone) {
-                                                    const link = generateWhatsAppLink(alert.phone, message);
+                                                const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
+                                                if (docAlert.phone) {
+                                                    const link = generateWhatsAppLink(docAlert.phone, message);
                                                     if (link) {
                                                         window.open(link, '_blank');
                                                         return;
