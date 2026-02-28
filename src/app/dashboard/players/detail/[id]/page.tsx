@@ -22,12 +22,13 @@ import { uploadService } from "@/services/uploadService";
 import { Player } from "@/types";
 import { Upload } from "lucide-react";
 import { generateWhatsAppLink, getDocStatus } from "@/utils/playerUtils";
+import { useProfile } from "@/hooks/useProfile";
 
-const tabs = [
+const navigationTabs = [
     { id: "sports", name: "Deportivo", icon: Shield },
     { id: "gear", name: "Indumentaria", icon: Shirt },
-    { id: "contact", name: "Contacto", icon: Phone },
-    { id: "docs", name: "Documentos", icon: FileText },
+    { id: "contact", name: "Contacto", icon: Phone, restricted: true },
+    { id: "docs", name: "Documentos", icon: FileText, restricted: true },
 ];
 
 export default function PlayerDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -35,6 +36,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     const router = useRouter();
     const searchParams = useSearchParams();
     const isEditingParam = searchParams.get("edit") === "true";
+    const { profile, loading: profileLoading } = useProfile();
 
     const [activeTab, setActiveTab] = useState("sports");
     const [loading, setLoading] = useState(true);
@@ -49,13 +51,24 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     const [healthCardFile, setHealthCardFile] = useState<File | null>(null);
     const [healthCardPreview, setHealthCardPreview] = useState<string | null>(null);
 
+    const isVisitor = profile?.role === "visitante";
+
     useEffect(() => {
         loadPlayer();
     }, [resolvedParams.id]);
 
     useEffect(() => {
-        setIsEditing(isEditingParam);
-    }, [isEditingParam]);
+        if (isVisitor && (activeTab === "contact" || activeTab === "docs")) {
+            setActiveTab("sports");
+        }
+    }, [activeTab, isVisitor]);
+
+    useEffect(() => {
+        if (isVisitor && isEditingParam) {
+            router.replace(`/dashboard/players/detail/${resolvedParams.id}`);
+        }
+        setIsEditing(isEditingParam && !isVisitor);
+    }, [isEditingParam, isVisitor, resolvedParams.id, router]);
 
     const loadPlayer = async () => {
         try {
@@ -213,13 +226,15 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                 </div>
 
                 {!isEditing ? (
-                    <button
-                        onClick={() => setIsEditing(true)}
-                        className="btn-secondary flex items-center gap-2"
-                    >
-                        <Edit2 className="h-4 w-4" />
-                        Editar Datos
-                    </button>
+                    !isVisitor && (
+                        <button
+                            onClick={() => setIsEditing(true)}
+                            className="btn-secondary flex items-center gap-2"
+                        >
+                            <Edit2 className="h-4 w-4" />
+                            Editar Datos
+                        </button>
+                    )
                 ) : (
                     <button
                         onClick={() => {
@@ -313,23 +328,25 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                 <div className="lg:col-span-2">
                     <div className="bg-white dark:bg-slate-950 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden flex flex-col h-full shadow-sm">
                         <div className="flex border-b border-border/40 bg-slate-50/50 dark:bg-white/5 overflow-x-auto no-scrollbar">
-                            {tabs.map((tab) => (
-                                <button
-                                    key={tab.id}
-                                    type="button"
-                                    onClick={() => setActiveTab(tab.id)}
-                                    className={`flex items-center gap-2 px-6 py-4 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab.id
-                                        ? "text-accent"
-                                        : "text-muted-foreground hover:text-foreground"
-                                        }`}
-                                >
-                                    <tab.icon className={`h-4 w-4 ${activeTab === tab.id ? "text-accent" : "text-muted-foreground"}`} />
-                                    {tab.name}
-                                    {activeTab === tab.id && (
-                                        <div className="absolute bottom-0 left-0 w-full h-1 bg-accent rounded-full"></div>
-                                    )}
-                                </button>
-                            ))}
+                            {navigationTabs
+                                .filter(tab => !isVisitor || !tab.restricted)
+                                .map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        type="button"
+                                        onClick={() => setActiveTab(tab.id)}
+                                        className={`flex items-center gap-2 px-6 py-4 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === tab.id
+                                            ? "text-accent"
+                                            : "text-muted-foreground hover:text-foreground"
+                                            }`}
+                                    >
+                                        <tab.icon className={`h-4 w-4 ${activeTab === tab.id ? "text-accent" : "text-muted-foreground"}`} />
+                                        {tab.name}
+                                        {activeTab === tab.id && (
+                                            <div className="absolute bottom-0 left-0 w-full h-1 bg-accent rounded-full"></div>
+                                        )}
+                                    </button>
+                                ))}
                         </div>
 
                         <div className="p-8 flex-1 min-h-[500px]">

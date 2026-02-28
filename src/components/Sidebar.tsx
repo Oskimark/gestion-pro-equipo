@@ -9,10 +9,10 @@ import {
     Settings,
     LayoutDashboard,
     LogOut,
-    UserCircle,
-    X
+    X,
+    Trophy
 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/lib/supabase";
 
 const navigation = [
@@ -32,11 +32,20 @@ interface SidebarProps {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
     const pathname = usePathname();
     const router = useRouter();
+    const { profile } = useProfile();
 
     const handleLogout = async () => {
         await supabase.auth.signOut();
         router.push("/");
     };
+
+    const isVisitor = profile?.role === "visitante";
+    const filteredNavigation = navigation.filter(item => {
+        if (isVisitor) {
+            return !["Pagos", "Usuarios", "Configuración"].includes(item.name);
+        }
+        return true;
+    });
 
     return (
         <>
@@ -73,7 +82,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 </div>
 
                 <nav className="flex-1 space-y-1 px-3 py-6 overflow-y-auto">
-                    {navigation.map((item) => {
+                    {filteredNavigation.map((item) => {
                         const isActive = pathname === item.href;
                         return (
                             <Link

@@ -4,9 +4,28 @@ import { useState, useEffect } from "react";
 import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2 } from "lucide-react";
 import { settingsService } from "@/services/settingsService";
 import { ClubSettings } from "@/types";
+import { useProfile } from "@/hooks/useProfile";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
+    const { profile, loading: profileLoading } = useProfile();
+    const router = useRouter();
     const [settings, setSettings] = useState<ClubSettings>({ id_card_alert_days: 30, health_card_alert_days: 30 });
+
+    useEffect(() => {
+        if (!profileLoading && profile?.role === "visitante") {
+            router.push("/dashboard");
+        }
+    }, [profile, profileLoading, router]);
+
+    if (profileLoading || profile?.role === "visitante") {
+        return (
+            <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
+                <Loader2 className="h-10 w-10 animate-spin text-secondary" />
+                <p className="font-semibold text-lg">Verificando acceso...</p>
+            </div>
+        );
+    }
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);

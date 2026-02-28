@@ -16,10 +16,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { matchService } from "@/services/matchService";
 import { Match } from "@/types";
+import { useProfile } from "@/hooks/useProfile";
 
 export default function MatchesPage() {
+    const { profile } = useProfile();
     const [matches, setMatches] = useState<Match[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const isVisitor = profile?.role === "visitante";
 
     useEffect(() => {
         loadMatches();
@@ -58,10 +62,12 @@ export default function MatchesPage() {
                     <h1 className="text-3xl font-extrabold text-foreground">Partidos y Resultados</h1>
                     <p className="text-muted-foreground">Calendario de competición y estadísticas.</p>
                 </div>
-                <Link href="/dashboard/matches/new" className="btn-primary flex items-center gap-2">
-                    <Plus className="h-5 w-5" />
-                    Cargar Partido
-                </Link>
+                {!isVisitor && (
+                    <Link href="/dashboard/matches/new" className="btn-primary flex items-center gap-2">
+                        <Plus className="h-5 w-5" />
+                        Cargar Partido
+                    </Link>
+                )}
             </div>
 
             {loading ? (
@@ -97,11 +103,13 @@ export default function MatchesPage() {
                                                 {nextMatch.rival.slice(0, 3).toUpperCase()}
                                             </div>
                                         </div>
-                                        <div className="flex flex-col gap-2">
-                                            <Link href={`/dashboard/matches/edit/${nextMatch.id}`} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors" title="Editar">
-                                                <Edit2 className="h-5 w-5" />
-                                            </Link>
-                                        </div>
+                                        {!isVisitor && (
+                                            <div className="flex flex-col gap-2">
+                                                <Link href={`/dashboard/matches/edit/${nextMatch.id}`} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors" title="Editar">
+                                                    <Edit2 className="h-5 w-5" />
+                                                </Link>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -122,8 +130,8 @@ export default function MatchesPage() {
                             ) : (
                                 matches.map((match) => (
                                     <div key={match.id} className={`p-4 sm:p-6 rounded-3xl border transition-all group relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${match.status === "Finalizado"
-                                            ? "bg-slate-50/50 dark:bg-white/[0.02] border-border/20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
-                                            : "bg-white dark:bg-slate-950 border-border/40 hover:border-secondary/40 shadow-sm"
+                                        ? "bg-slate-50/50 dark:bg-white/[0.02] border-border/20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
+                                        : "bg-white dark:bg-slate-950 border-border/40 hover:border-secondary/40 shadow-sm"
                                         }`}>
                                         <div className="flex items-center gap-4 sm:gap-6">
                                             <div className={`flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl border border-border/20 shrink-0 ${match.status === "Finalizado" ? "bg-slate-100/50 dark:bg-white/5" : "bg-slate-100 dark:bg-white/5"
@@ -154,19 +162,21 @@ export default function MatchesPage() {
                                                 )}
                                             </div>
 
-                                            <div className="flex items-center gap-2">
-                                                <Link href={`/dashboard/matches/edit/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors" title="Editar">
-                                                    <Edit2 className="h-5 w-5" />
-                                                </Link>
-                                                <button
-                                                    onClick={() => handleDelete(match.id, match.rival)}
-                                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors"
-                                                    title="Eliminar"
-                                                >
-                                                    <Trash2 className="h-5 w-5" />
-                                                </button>
-                                                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform hidden sm:block" />
-                                            </div>
+                                            {!isVisitor && (
+                                                <div className="flex items-center gap-2">
+                                                    <Link href={`/dashboard/matches/edit/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors" title="Editar">
+                                                        <Edit2 className="h-5 w-5" />
+                                                    </Link>
+                                                    <button
+                                                        onClick={() => handleDelete(match.id, match.rival)}
+                                                        className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors"
+                                                        title="Eliminar"
+                                                    >
+                                                        <Trash2 className="h-5 w-5" />
+                                                    </button>
+                                                    <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:translate-x-1 transition-transform hidden sm:block" />
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))

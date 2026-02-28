@@ -12,6 +12,10 @@ import {
     Plus
 } from "lucide-react";
 
+import { useProfile } from "@/hooks/useProfile";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
 // Mock Data for Payments
 const mockPayments = [
     { id: "1", player: "Juan Pérez", category: "Cuota Social", amount: 1500, status: "Pagado", due_date: "2026-02-10" },
@@ -22,7 +26,24 @@ const mockPayments = [
 ];
 
 export default function PaymentsPage() {
+    const { profile, loading: profileLoading } = useProfile();
+    const router = useRouter();
     const [filter, setFilter] = useState("Todos");
+
+    useEffect(() => {
+        if (!profileLoading && profile?.role === "visitante") {
+            router.push("/dashboard");
+        }
+    }, [profile, profileLoading, router]);
+
+    if (profileLoading || profile?.role === "visitante") {
+        return (
+            <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
+                <Loader2 className="h-10 w-10 animate-spin text-secondary" />
+                <p className="font-semibold text-lg">Verificando acceso...</p>
+            </div>
+        );
+    }
 
     const totalPending = mockPayments
         .filter(p => p.status === "Pendiente")

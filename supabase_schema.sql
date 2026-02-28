@@ -64,14 +64,15 @@ CREATE TABLE player_stats (
 -- User Profiles (for Admin/Helper roles)
 CREATE TABLE profiles (
     id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
-    role TEXT DEFAULT 'ayudante', -- 'admin', 'ayudante', 'visitante'
+    role TEXT DEFAULT 'ayudante',
     full_name TEXT,
     phone TEXT,
     observations TEXT,
     status TEXT DEFAULT 'suspended', -- 'active', 'suspended'
     is_online BOOLEAN DEFAULT false,
     last_seen TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    CONSTRAINT profiles_role_check CHECK (role IN ('admin', 'ayudante', 'visitante'))
 );
 
 -- RLS (Row Level Security) - Simplista por ahora

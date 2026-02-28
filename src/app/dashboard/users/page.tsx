@@ -17,10 +17,29 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/types";
+import { useProfile } from "@/hooks/useProfile";
+import { useRouter } from "next/navigation";
 
 export default function UsersPage() {
+    const { profile, loading: profileLoading } = useProfile();
+    const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState<UserProfile[]>([]);
+
+    useEffect(() => {
+        if (!profileLoading && profile?.role === "visitante") {
+            router.push("/dashboard");
+        }
+    }, [profile, profileLoading, router]);
+
+    if (profileLoading || profile?.role === "visitante") {
+        return (
+            <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
+                <Loader2 className="h-10 w-10 animate-spin text-secondary" />
+                <p className="font-semibold text-lg">Verificando acceso...</p>
+            </div>
+        );
+    }
     const [searchTerm, setSearchTerm] = useState("");
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<UserProfile | null>(null);

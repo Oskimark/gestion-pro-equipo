@@ -21,11 +21,18 @@ import { Player } from "@/types";
 import { getDocStatus, calculateAge } from "@/utils/playerUtils";
 import PlayerReportModal from "./components/PlayerReportModal";
 
+import { useProfile } from "@/hooks/useProfile";
+import { useRouter } from "next/navigation";
+
 export default function PlayersPage() {
+    const { profile, loading: profileLoading } = useProfile();
+    const router = useRouter();
     const [searchTerm, setSearchTerm] = useState("");
     const [players, setPlayers] = useState<Player[]>([]);
     const [loading, setLoading] = useState(true);
     const [reportPlayer, setReportPlayer] = useState<Player | null>(null);
+
+    const isVisitor = profile?.role === "visitante";
 
     useEffect(() => {
         loadPlayers();
@@ -66,10 +73,12 @@ export default function PlayersPage() {
                     <h1 className="text-3xl font-extrabold text-foreground">Gestión de Jugadores</h1>
                     <p className="text-muted-foreground">Listado completo del plantel actual.</p>
                 </div>
-                <Link href="/dashboard/players/new" className="btn-primary flex items-center gap-2 self-start sm:self-auto">
-                    <Plus className="h-5 w-5" />
-                    Nuevo Jugador
-                </Link>
+                {!isVisitor && (
+                    <Link href="/dashboard/players/new" className="btn-primary flex items-center gap-2 self-start sm:self-auto">
+                        <Plus className="h-5 w-5" />
+                        Nuevo Jugador
+                    </Link>
+                )}
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
@@ -159,25 +168,32 @@ export default function PlayersPage() {
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-2">
-                                                <Link href={`/dashboard/players/detail/${player.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-accent transition-colors">
-                                                    <Eye className="h-5 w-5" />
-                                                </Link>
-                                                <Link href={`/dashboard/players/detail/${player.id}?edit=true`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors">
-                                                    <Edit2 className="h-5 w-5" />
-                                                </Link>
-                                                <button
-                                                    onClick={() => setReportPlayer(player)}
-                                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-blue-500 transition-colors"
-                                                    title="Generar Reporte"
-                                                >
-                                                    <FileDown className="h-5 w-5" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(player.id, player.full_name)}
-                                                    className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors"
-                                                >
-                                                    <Trash2 className="h-5 w-5" />
-                                                </button>
+                                                <div className="flex items-center gap-2">
+                                                    <Link href={`/dashboard/players/detail/${player.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-accent transition-colors" title="Ver Detalles">
+                                                        <Eye className="h-5 w-5" />
+                                                    </Link>
+                                                    {!isVisitor && (
+                                                        <>
+                                                            <Link href={`/dashboard/players/detail/${player.id}?edit=true`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors" title="Editar">
+                                                                <Edit2 className="h-5 w-5" />
+                                                            </Link>
+                                                            <button
+                                                                onClick={() => setReportPlayer(player)}
+                                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-blue-500 transition-colors"
+                                                                title="Generar Reporte"
+                                                            >
+                                                                <FileDown className="h-5 w-5" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDelete(player.id, player.full_name)}
+                                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors"
+                                                                title="Eliminar"
+                                                            >
+                                                                <Trash2 className="h-5 w-5" />
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
                                             </div>
                                         </td>
                                     </tr>
