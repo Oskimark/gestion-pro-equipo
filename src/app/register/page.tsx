@@ -53,13 +53,13 @@ export default function RegisterPage() {
             <div className="min-h-screen flex items-center justify-center bg-primary p-6 overflow-hidden relative">
                 <div className="relative z-10 w-full max-w-md">
                     <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden text-center">
-                        <div className="w-20 h-20 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 mx-auto mb-6">
+                        <div className="w-20 h-20 rounded-full bg-secondary/20 flex items-center justify-center text-secondary mx-auto mb-6">
                             <CheckCircle2 className="h-10 w-10" />
                         </div>
-                        <h2 className="text-2xl font-extrabold text-white mb-4">¡Registro Exitoso!</h2>
-                        <p className="text-slate-400 mb-8 font-medium">Hemos enviado un correo de confirmación. Por favor, verifica tu bandeja de entrada antes de iniciar sesión.</p>
-                        <Link href="/login" className="btn-primary w-full block">
-                            Ir al Login
+                        <h2 className="text-2xl font-extrabold text-white mb-4 italic uppercase tracking-tighter">Solicitud Enviada</h2>
+                        <p className="text-slate-300 mb-8 font-medium leading-relaxed">Hemos enviado tu solicitud al administrador. En cuanto apruebe tu cuenta podrás entrar.</p>
+                        <Link href="/login" className="btn-secondary w-full block">
+                            Volver al Login
                         </Link>
                     </div>
                 </div>

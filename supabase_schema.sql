@@ -64,9 +64,11 @@ CREATE TABLE player_stats (
 -- User Profiles (for Admin/Helper roles)
 CREATE TABLE profiles (
     id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
-    role TEXT DEFAULT 'ayudante', -- 'admin', 'ayudante'
+    role TEXT DEFAULT 'ayudante', -- 'admin', 'ayudante', 'visitante'
     full_name TEXT,
-    status TEXT DEFAULT 'active', -- 'active', 'suspended'
+    phone TEXT,
+    observations TEXT,
+    status TEXT DEFAULT 'suspended', -- 'active', 'suspended'
     is_online BOOLEAN DEFAULT false,
     last_seen TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()

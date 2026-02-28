@@ -72,8 +72,10 @@ export type PlayerStats = {
 
 export type UserProfile = {
   id: string;
-  role: 'admin' | 'ayudante';
+  role: 'admin' | 'ayudante' | 'visitante';
   full_name?: string;
+  phone?: string;
+  observations?: string;
   is_online?: boolean;
   status?: 'active' | 'suspended';
   last_seen?: string;

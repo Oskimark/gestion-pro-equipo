@@ -9,7 +9,11 @@ import {
     Loader2,
     Mail,
     Search,
-    UserPlus
+    UserPlus,
+    Edit,
+    Phone,
+    FileText,
+    Check
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/types";
@@ -18,6 +22,14 @@ export default function UsersPage() {
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState<UserProfile[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
+    const [editForm, setEditForm] = useState({
+        full_name: "",
+        phone: "",
+        observations: "",
+        role: "ayudante" as UserProfile['role']
+    });
 
     useEffect(() => {
         loadUsers();
@@ -37,6 +49,41 @@ export default function UsersPage() {
             console.error("Error loading users:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const openEditModal = (user: UserProfile) => {
+        setEditingUser(user);
+        setEditForm({
+            full_name: user.full_name || "",
+            phone: user.phone || "",
+            observations: user.observations || "",
+            role: user.role || "ayudante"
+        });
+        setIsEditModalOpen(true);
+    };
+
+    const handleEditSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!editingUser) return;
+
+        try {
+            const { error } = await supabase
+                .from("profiles")
+                .update({
+                    full_name: editForm.full_name,
+                    phone: editForm.phone,
+                    observations: editForm.observations,
+                    role: editForm.role
+                })
+                .eq("id", editingUser.id);
+
+            if (error) throw error;
+            setIsEditModalOpen(false);
+            loadUsers();
+        } catch (error: any) {
+            console.error("Error editing user:", error);
+            alert(`Error: ${error.message || "No se pudo actualizar el perfil."}`);
         }
     };
 
@@ -107,12 +154,13 @@ export default function UsersPage() {
     );
 
     return (
-        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-foreground">Gestión de Usuarios</h1>
-                    <p className="text-muted-foreground">Administra el personal y sus permisos de acceso.</p>
+                    <h1 className="text-3xl font-extrabold text-foreground italic uppercase tracking-tighter">Gestión de Personal</h1>
+                    <p className="text-muted-foreground">Administra el personal, sus permisos y datos de contacto.</p>
                 </div>
+
                 <div className="flex items-center gap-3">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -164,32 +212,41 @@ export default function UsersPage() {
                                                 <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-secondary px-2 py-0.5 bg-secondary/10 rounded-full">
                                                     <Shield size={10} /> Administrador
                                                 </span>
+                                            ) : user.role === "visitante" ? (
+                                                <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-emerald-400 px-2 py-0.5 bg-emerald-500/10 rounded-full">
+                                                    <Mail size={10} /> Visitante
+                                                </span>
                                             ) : (
                                                 <span className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-slate-400 px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded-full">
                                                     <ShieldAlert size={10} /> Ayudante
                                                 </span>
                                             )}
-                                            {user.last_seen && !user.is_online && (
-                                                <span className="text-[10px] text-slate-500 font-medium">
-                                                    visto {new Date(user.last_seen).toLocaleDateString()}
+                                            {user.phone && (
+                                                <span className="flex items-center gap-1 text-[10px] font-bold text-slate-400 px-2 py-0.5 bg-slate-100 dark:bg-white/5 rounded-full">
+                                                    <Phone size={10} /> {user.phone}
                                                 </span>
                                             )}
                                         </div>
+                                        {user.observations && (
+                                            <p className="text-[10px] text-slate-500 mt-2 line-clamp-2 bg-slate-100/50 dark:bg-white/5 p-2 rounded-lg border border-border/20 italic">
+                                                "{user.observations}"
+                                            </p>
+                                        )}
                                     </div>
                                 </div>
                             </div>
 
                             <div className="mt-6 flex items-center justify-between gap-4 pt-6 border-t border-border/20 relative z-10">
                                 <button
-                                    onClick={() => toggleRole(user.id, user.role || "")}
+                                    onClick={() => openEditModal(user)}
                                     className="text-xs font-bold text-accent hover:text-accent/80 transition-colors uppercase tracking-widest flex items-center gap-1.5"
                                 >
-                                    {user.role === "admin" ? "Bajar a Ayudante" : "Subir a Admin"}
+                                    <Edit size={12} /> Editar Perfil
                                 </button>
                                 <div className="flex items-center gap-2">
                                     <button
                                         onClick={() => toggleStatus(user.id, user.status || "active")}
-                                        className={`p-2 rounded-xl transition-all ${user.status === 'suspended' ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-amber-500'}`}
+                                        className={`p-2 rounded-xl transition-all ${user.status === 'suspended' ? 'bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 shadow-lg shadow-amber-500/10' : 'text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-amber-500'}`}
                                         title={user.status === 'suspended' ? "Activar Acceso" : "Pausar Acceso"}
                                     >
                                         {user.status === 'suspended' ? <ShieldAlert className="h-4 w-4" /> : <Shield size={4} className="h-4 w-4" />}
@@ -216,7 +273,7 @@ export default function UsersPage() {
                         <UserPlus className="h-6 w-6" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-extrabold text-foreground">Cómo añadir más gente</h2>
+                        <h2 className="text-xl font-extrabold text-foreground italic uppercase tracking-tighter">Cómo añadir más gente</h2>
                         <p className="text-sm text-muted-foreground">Comparte el enlace de registro con tu equipo.</p>
                     </div>
                 </div>
@@ -237,6 +294,110 @@ export default function UsersPage() {
                     </button>
                 </div>
             </div>
+
+            {/* Edit User Modal */}
+            {isEditModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white dark:bg-slate-950 w-full max-w-lg rounded-[32px] border border-border/40 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                        <div className="p-8">
+                            <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent">
+                                        <Edit className="h-6 w-6" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-black text-foreground italic uppercase tracking-tighter">Editar Perfil</h2>
+                                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Información de Personal</p>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setIsEditModalOpen(false)}
+                                    className="p-2 hover:bg-slate-100 dark:hover:bg-white/5 rounded-xl transition-colors text-muted-foreground"
+                                >
+                                    <ShieldAlert className="h-5 w-5 rotate-45" />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleEditSubmit} className="space-y-5">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Nombre Completo</label>
+                                    <div className="relative group">
+                                        <UserCircle className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                        <input
+                                            type="text"
+                                            required
+                                            value={editForm.full_name}
+                                            onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })}
+                                            className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-all font-bold text-sm"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Teléfono</label>
+                                        <div className="relative group">
+                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                            <input
+                                                type="text"
+                                                value={editForm.phone}
+                                                onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                                                placeholder="099 123 456"
+                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-all font-bold text-sm"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Rol en el Club</label>
+                                        <div className="relative group">
+                                            <Shield className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                            <select
+                                                value={editForm.role}
+                                                onChange={(e) => setEditForm({ ...editForm, role: e.target.value as any })}
+                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-all font-bold text-sm appearance-none"
+                                            >
+                                                <option value="admin">Administrador</option>
+                                                <option value="ayudante">Ayudante</option>
+                                                <option value="visitante">Visitante</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">Observaciones / Notas</label>
+                                    <div className="relative group">
+                                        <FileText className="absolute left-4 top-4 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                        <textarea
+                                            value={editForm.observations}
+                                            onChange={(e) => setEditForm({ ...editForm, observations: e.target.value })}
+                                            placeholder="Notas adicionales sobre el usuario..."
+                                            rows={3}
+                                            className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition-all font-medium text-sm resize-none"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-3 pt-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsEditModalOpen(false)}
+                                        className="flex-1 h-14 rounded-2xl font-bold text-sm uppercase tracking-widest text-slate-500 hover:bg-slate-100 dark:hover:bg-white/5 transition-all"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        className="flex-[2] h-14 bg-accent hover:bg-accent/90 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-accent/20"
+                                    >
+                                        <Check className="h-5 w-5" /> Guardar Cambios
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
