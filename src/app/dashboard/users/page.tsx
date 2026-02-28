@@ -26,6 +26,16 @@ export default function UsersPage() {
     const [loading, setLoading] = useState(true);
     const [users, setUsers] = useState<UserProfile[]>([]);
 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
+    const [editForm, setEditForm] = useState({
+        full_name: "",
+        phone: "",
+        observations: "",
+        role: "ayudante" as UserProfile['role']
+    });
+
     useEffect(() => {
         if (!profileLoading && profile?.role === "visitante") {
             router.push("/dashboard");
@@ -40,15 +50,6 @@ export default function UsersPage() {
             </div>
         );
     }
-    const [searchTerm, setSearchTerm] = useState("");
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
-    const [editForm, setEditForm] = useState({
-        full_name: "",
-        phone: "",
-        observations: "",
-        role: "ayudante" as UserProfile['role']
-    });
 
     useEffect(() => {
         loadUsers();

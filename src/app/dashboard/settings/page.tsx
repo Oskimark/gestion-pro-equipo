@@ -12,11 +12,19 @@ export default function SettingsPage() {
     const router = useRouter();
     const [settings, setSettings] = useState<ClubSettings>({ id_card_alert_days: 30, health_card_alert_days: 30 });
 
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [saved, setSaved] = useState(false);
+
     useEffect(() => {
         if (!profileLoading && profile?.role === "visitante") {
             router.push("/dashboard");
         }
     }, [profile, profileLoading, router]);
+
+    useEffect(() => {
+        loadSettings();
+    }, []);
 
     if (profileLoading || profile?.role === "visitante") {
         return (
@@ -26,13 +34,6 @@ export default function SettingsPage() {
             </div>
         );
     }
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
-    const [saved, setSaved] = useState(false);
-
-    useEffect(() => {
-        loadSettings();
-    }, []);
 
     const loadSettings = async () => {
         try {
