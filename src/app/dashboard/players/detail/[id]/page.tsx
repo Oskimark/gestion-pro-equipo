@@ -225,17 +225,17 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                     </div>
                 </div>
 
-                {!isEditing ? (
-                    !isVisitor && (
-                        <button
-                            onClick={() => setIsEditing(true)}
-                            className="btn-secondary flex items-center gap-2"
-                        >
-                            <Edit2 className="h-4 w-4" />
-                            Editar Datos
-                        </button>
-                    )
-                ) : (
+                {!isEditing && !isVisitor && (
+                    <button
+                        onClick={() => setIsEditing(true)}
+                        className="btn-secondary flex items-center gap-2"
+                    >
+                        <Edit2 className="h-4 w-4" />
+                        Editar Datos
+                    </button>
+                )}
+
+                {isEditing && (
                     <button
                         onClick={() => {
                             setIsEditing(false);
