@@ -42,6 +42,10 @@ export default function UsersPage() {
         }
     }, [profile, profileLoading, router]);
 
+    useEffect(() => {
+        loadUsers();
+    }, []);
+
     if (profileLoading || profile?.role === "visitante") {
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
@@ -50,10 +54,6 @@ export default function UsersPage() {
             </div>
         );
     }
-
-    useEffect(() => {
-        loadUsers();
-    }, []);
 
     const loadUsers = async () => {
         try {
