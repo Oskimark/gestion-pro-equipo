@@ -92,9 +92,12 @@ export default function DashboardPage() {
                     Bienvenido de nuevo, <span className="text-accent underline decoration-secondary decoration-4 underline-offset-4">
                         {profileLoading ? "..." : (profile?.full_name || "Usuario")}
                     </span>
+                    {profile?.role === 'visitante' && ", visitante"}
                 </h1>
                 <p className="mt-2 text-muted-foreground">
-                    Aquí tienes un resumen rápido de la situación actual del equipo.
+                    {profile?.role === 'visitante'
+                        ? "Como visitante solo puedes ver algunos datos limitados. Contacta al administrador para ver los módulos de pagos, usuarios y configuración."
+                        : "Aquí tienes un resumen rápido de la situación actual del equipo."}
                 </p>
             </div>
 
