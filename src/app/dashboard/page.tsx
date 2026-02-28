@@ -153,6 +153,10 @@ export default function DashboardPage() {
                                         <button
                                             onClick={(e) => {
                                                 e.preventDefault();
+                                                if (profile?.role === 'visitante') {
+                                                    alert("Como visitante no tienes permisos para enviar notificaciones.");
+                                                    return;
+                                                }
                                                 const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${alert.type} de ${alert.name} está ${alert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
                                                 if (alert.phone) {
                                                     const link = generateWhatsAppLink(alert.phone, message);
@@ -164,8 +168,10 @@ export default function DashboardPage() {
                                                 // Fallback: Generic share link
                                                 window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
                                             }}
-                                            className="p-2 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-full transition-colors flex items-center justify-center shrink-0 group/btn"
-                                            title="Avisar por WhatsApp"
+                                            className={`p-2 rounded-full transition-colors flex items-center justify-center shrink-0 group/btn ${profile?.role === 'visitante'
+                                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                                : 'bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500'}`}
+                                            title={profile?.role === 'visitante' ? 'Sin permisos' : 'Avisar por WhatsApp'}
                                         >
                                             <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                                         </button>
