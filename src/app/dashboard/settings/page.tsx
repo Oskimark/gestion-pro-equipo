@@ -16,25 +16,6 @@ export default function SettingsPage() {
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
 
-    useEffect(() => {
-        if (!profileLoading && profile?.role === "visitante") {
-            router.push("/dashboard");
-        }
-    }, [profile, profileLoading, router]);
-
-    useEffect(() => {
-        loadSettings();
-    }, []);
-
-    if (profileLoading || profile?.role === "visitante") {
-        return (
-            <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
-                <Loader2 className="h-10 w-10 animate-spin text-secondary" />
-                <p className="font-semibold text-lg">Verificando acceso...</p>
-            </div>
-        );
-    }
-
     const loadSettings = async () => {
         try {
             setLoading(true);
@@ -63,6 +44,25 @@ export default function SettingsPage() {
             setSaving(false);
         }
     };
+
+    useEffect(() => {
+        if (!profileLoading && profile?.role === "visitante") {
+            router.push("/dashboard");
+        }
+    }, [profile, profileLoading, router]);
+
+    useEffect(() => {
+        loadSettings();
+    }, []);
+
+    if (profileLoading || profile?.role === "visitante") {
+        return (
+            <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
+                <Loader2 className="h-10 w-10 animate-spin text-secondary" />
+                <p className="font-semibold text-lg">Verificando acceso...</p>
+            </div>
+        );
+    }
 
     if (loading) {
         return (

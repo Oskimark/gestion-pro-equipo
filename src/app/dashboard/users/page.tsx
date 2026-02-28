@@ -36,25 +36,6 @@ export default function UsersPage() {
         role: "ayudante" as UserProfile['role']
     });
 
-    useEffect(() => {
-        if (!profileLoading && profile?.role === "visitante") {
-            router.push("/dashboard");
-        }
-    }, [profile, profileLoading, router]);
-
-    useEffect(() => {
-        loadUsers();
-    }, []);
-
-    if (profileLoading || profile?.role === "visitante") {
-        return (
-            <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
-                <Loader2 className="h-10 w-10 animate-spin text-secondary" />
-                <p className="font-semibold text-lg">Verificando acceso...</p>
-            </div>
-        );
-    }
-
     const loadUsers = async () => {
         try {
             setLoading(true);
@@ -168,6 +149,25 @@ export default function UsersPage() {
             alert(`Error: ${error.message || "No se pudo eliminar al usuario."}`);
         }
     };
+
+    useEffect(() => {
+        if (!profileLoading && profile?.role === "visitante") {
+            router.push("/dashboard");
+        }
+    }, [profile, profileLoading, router]);
+
+    useEffect(() => {
+        loadUsers();
+    }, []);
+
+    if (profileLoading || profile?.role === "visitante") {
+        return (
+            <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
+                <Loader2 className="h-10 w-10 animate-spin text-secondary" />
+                <p className="font-semibold text-lg">Verificando acceso...</p>
+            </div>
+        );
+    }
 
     const filteredUsers = users.filter(user =>
         user.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
