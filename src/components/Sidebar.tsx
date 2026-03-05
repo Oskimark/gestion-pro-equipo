@@ -10,7 +10,8 @@ import {
     LogOut,
     X,
     Trophy,
-    UserCircle
+    UserCircle,
+    AlertTriangle
 } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import { useRouter, usePathname } from "next/navigation";
@@ -18,6 +19,7 @@ import { supabase } from "@/lib/supabase";
 
 const navigation = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Alertas", href: "/dashboard/alerts", icon: AlertTriangle },
     { name: "Jugadores", href: "/dashboard/players", icon: Users },
     { name: "Pagos", href: "/dashboard/payments", icon: CreditCard },
     { name: "Partidos", href: "/dashboard/matches", icon: Calendar },

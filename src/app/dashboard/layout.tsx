@@ -2,11 +2,13 @@
 
 import Sidebar from "@/components/Sidebar";
 import { useProfile } from "@/hooks/useProfile";
-import { Loader2, Menu, Bell, AlertTriangle } from "lucide-react";
+import { Loader2, Menu, Bell, AlertTriangle, LogOut, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { playerService } from "@/services/playerService";
 import { getDocStatus } from "@/utils/playerUtils";
+import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
     children,
@@ -16,6 +18,8 @@ export default function DashboardLayout({
     const { profile, loading } = useProfile();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [alertCount, setAlertCount] = useState(0);
+    const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchAlerts = async () => {
@@ -33,6 +37,15 @@ export default function DashboardLayout({
         };
         fetchAlerts();
     }, []);
+
+    const handleLogout = async () => {
+        try {
+            await supabase.auth.signOut();
+            router.push("/login");
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+    };
 
     return (
         <div className="flex h-screen bg-background overflow-hidden font-sans">
@@ -53,7 +66,7 @@ export default function DashboardLayout({
                     </div>
 
                     <div className="flex items-center gap-3 sm:gap-4">
-                        <Link href="/dashboard" className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-colors relative group">
+                        <Link href="/dashboard/alerts" className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-colors relative group">
                             <Bell className="h-5 w-5 group-hover:shake transition-all" />
                             {alertCount > 0 && (
                                 <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-white dark:border-slate-900 animate-pulse">
@@ -62,7 +75,7 @@ export default function DashboardLayout({
                             )}
                         </Link>
 
-                        <div className="flex items-center gap-3 pl-3 sm:pl-4 border-l border-border/50">
+                        <div className="flex items-center gap-3 pl-3 sm:pl-4 border-l border-border/50 relative">
                             <div className="text-right hidden sm:block">
                                 {loading ? (
                                     <div className="h-4 w-24 bg-slate-100 animate-pulse rounded"></div>
@@ -77,9 +90,39 @@ export default function DashboardLayout({
                                     </>
                                 )}
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-bold border-2 border-white/20 shadow-sm shrink-0">
+                            <button
+                                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                                className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-bold border-2 border-white/20 shadow-sm shrink-0 hover:scale-105 transition-transform relative"
+                            >
                                 {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : "U"}
-                            </div>
+                                <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-950 rounded-full p-0.5 border border-border">
+                                    <ChevronDown className="h-2 w-2 text-foreground" />
+                                </div>
+                            </button>
+
+                            {/* User Menu Dropdown */}
+                            {isUserMenuOpen && (
+                                <>
+                                    <div
+                                        className="fixed inset-0 z-30"
+                                        onClick={() => setIsUserMenuOpen(false)}
+                                    ></div>
+                                    <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-950 border border-border rounded-2xl shadow-xl z-40 py-2 animate-in fade-in zoom-in-95 duration-200">
+                                        <div className="px-4 py-2 border-b border-border/50 sm:hidden">
+                                            <p className="text-xs font-bold text-foreground">
+                                                {profile?.full_name || "Usuario"}
+                                            </p>
+                                        </div>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-2 transition-colors"
+                                        >
+                                            <LogOut className="h-4 w-4" />
+                                            Cerrar Sesión
+                                        </button>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </header>

@@ -128,8 +128,8 @@ export default function DashboardPage() {
     };
 
     const stats = [
-        { name: "Total Jugadores", value: counts.players.toString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100" },
-        { name: "Alertas Docs", value: alerts.length.toString(), icon: AlertTriangle, color: alerts.length > 0 ? "text-red-600" : "text-green-600", bg: alerts.length > 0 ? "bg-red-100" : "bg-green-100" },
+        { name: "Total Jugadores", value: counts.players.toString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100", href: "/dashboard/players" },
+        { name: "Alertas Docs", value: alerts.length.toString(), icon: AlertTriangle, color: alerts.length > 0 ? "text-red-600" : "text-green-600", bg: alerts.length > 0 ? "bg-red-100" : "bg-green-100", href: "/dashboard/alerts" },
         {
             name: "Próximo Partido",
             value: nextMatch
@@ -137,7 +137,8 @@ export default function DashboardPage() {
                 : "TBD",
             icon: Calendar,
             color: "text-green-600",
-            bg: "bg-green-100"
+            bg: "bg-green-100",
+            href: "/dashboard/matches"
         },
         { name: "Goles del Mes", value: counts.goals.toString(), icon: Trophy, color: "text-amber-600", bg: "bg-amber-100" },
     ];
@@ -159,20 +160,32 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {stats.map((stat) => (
-                    <div key={stat.name} className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-secondary/50 transition-all hover:translate-y-[-4px] group relative overflow-hidden">
-                        <div className="flex items-center justify-between">
-                            <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
-                                <stat.icon className="h-6 w-6" />
+                {stats.map((stat) => {
+                    const CardContent = (
+                        <div className="bg-white dark:bg-slate-950 h-full p-6 rounded-3xl border border-border/40 hover:border-secondary/50 transition-all hover:translate-y-[-4px] group relative overflow-hidden">
+                            <div className="flex items-center justify-between">
+                                <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
+                                    <stat.icon className="h-6 w-6" />
+                                </div>
+                                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Resumen</span>
                             </div>
-                            <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Resumen</span>
+                            <div className="mt-6">
+                                <p className="text-small font-medium text-muted-foreground">{stat.name}</p>
+                                <p className="text-3xl font-extrabold text-foreground mt-1">{stat.value}</p>
+                            </div>
                         </div>
-                        <div className="mt-6">
-                            <p className="text-small font-medium text-muted-foreground">{stat.name}</p>
-                            <p className="text-3xl font-extrabold text-foreground mt-1">{stat.value}</p>
+                    );
+
+                    return stat.href ? (
+                        <Link key={stat.name} href={stat.href}>
+                            {CardContent}
+                        </Link>
+                    ) : (
+                        <div key={stat.name}>
+                            {CardContent}
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
@@ -193,7 +206,7 @@ export default function DashboardPage() {
                             alerts.map((docAlert, idx) => (
                                 <Link
                                     key={`${docAlert.id}-${idx}`}
-                                    href={`/dashboard/players/detail/${docAlert.id}`}
+                                    href={`/dashboard/players/detail/${docAlert.id}?tab=docs`}
                                     className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-border/20 hover:border-red-500/30 transition-all group/item"
                                 >
                                     <div className="flex items-center gap-3">
