@@ -59,8 +59,8 @@ export default function MatchesPage() {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-foreground">Partidos y Resultados</h1>
-                    <p className="text-muted-foreground">Calendario de competición y estadísticas.</p>
+                    <h1 className="text-3xl font-extrabold text-foreground dark:text-white">Partidos y Resultados</h1>
+                    <p className="text-muted-foreground dark:text-slate-300">Calendario de competición y estadísticas.</p>
                 </div>
                 {!isVisitor && (
                     <Link href="/dashboard/matches/new" className="btn-primary flex items-center gap-2">
@@ -118,7 +118,7 @@ export default function MatchesPage() {
 
                     {/* Calendar / List */}
                     <div className="space-y-4">
-                        <h3 className="text-xl font-bold text-foreground">
+                        <h3 className="text-xl font-bold text-foreground dark:text-white">
                             {pastMatches.length > 0 ? "Historial Reciente" : "Próximos Encuentros"}
                         </h3>
                         <div className="grid grid-cols-1 gap-4">
@@ -136,12 +136,12 @@ export default function MatchesPage() {
                                         <div className="flex items-center gap-4 sm:gap-6">
                                             <div className={`flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl border border-border/20 shrink-0 ${match.status === "Finalizado" ? "bg-slate-100/50 dark:bg-white/5" : "bg-slate-100 dark:bg-white/5"
                                                 }`}>
-                                                <span className="text-[10px] font-bold text-muted-foreground uppercase">{new Date(match.date).toLocaleString('es', { month: 'short' })}</span>
-                                                <span className="text-lg sm:text-xl font-extrabold text-foreground">{new Date(match.date).getDate()}</span>
+                                                <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase">{new Date(match.date).toLocaleString('es', { month: 'short' })}</span>
+                                                <span className="text-lg sm:text-xl font-extrabold text-foreground dark:text-white">{new Date(match.date).getDate()}</span>
                                             </div>
                                             <div className="min-w-0">
-                                                <h4 className="font-extrabold text-base sm:text-lg text-foreground group-hover:text-accent transition-colors truncate">vs {match.rival}</h4>
-                                                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1.5 truncate">
+                                                <h4 className="font-extrabold text-base sm:text-lg text-foreground dark:text-white group-hover:text-accent transition-colors truncate">vs {match.rival}</h4>
+                                                <p className="text-xs sm:text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-1.5 truncate">
                                                     <MapPin className="h-3.5 w-3.5 shrink-0" />
                                                     {match.venue}
                                                 </p>
@@ -184,7 +184,8 @@ export default function MatchesPage() {
                         </div>
                     </div>
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }

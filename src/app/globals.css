@@ -25,7 +25,7 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
-  color-scheme: light dark;
+  color-scheme: light !important;
 }
 
 .dark {

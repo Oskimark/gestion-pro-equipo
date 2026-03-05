@@ -130,7 +130,7 @@ export default function PlayersPage() {
                                                         <User className="h-6 w-6" />
                                                     </div>
                                                 )}
-                                                <span className="font-bold text-foreground truncate">{player.full_name}</span>
+                                                <span className="font-bold text-foreground dark:text-white truncate">{player.full_name}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-4 whitespace-nowrap sticky left-[180px] z-20 bg-white dark:bg-slate-950 border-r border-border/40 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)] sm:shadow-none sm:border-transparent sm:static sm:bg-transparent group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
