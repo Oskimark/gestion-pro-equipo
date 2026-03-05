@@ -142,8 +142,15 @@ export default function PublicDocUploadPage({ params }: { params: Promise<{ toke
                 </h1>
                 <p className="text-slate-400 text-sm font-medium">Jugador: <span className="text-white font-bold">{player.full_name}</span></p>
 
-                <div className="mt-4 flex items-center justify-center gap-2">
+                <div className="mt-4 flex flex-col items-center justify-center gap-3">
                     <span className="px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Conexión Segura</span>
+
+                    <div className="max-w-xs p-3 rounded-xl bg-secondary/10 border border-secondary/20 flex gap-3 text-left">
+                        <AlertCircle className="h-5 w-5 text-secondary shrink-0" />
+                        <p className="text-[10px] font-bold text-secondary uppercase leading-tight">
+                            Atención: Por favor completa únicamente los datos solicitados en el mensaje recibido por WhatsApp.
+                        </p>
+                    </div>
                 </div>
             </div>
 
