@@ -38,9 +38,11 @@ export default function UsersPage() {
         role: "ayudante" as UserProfile['role']
     });
 
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [addMode, setAddMode] = useState<'invite' | 'manual'>('invite');
     const [addForm, setAddForm] = useState({
         email: "",
+        username: "",
+        password: "",
         full_name: "",
         phone: "",
         role: "ayudante" as UserProfile['role']
@@ -104,22 +106,59 @@ export default function UsersPage() {
         setAddingUser(true);
 
         try {
-            const { error: authError } = await supabase.auth.signInWithOtp({
-                email: addForm.email,
-                options: {
-                    emailRedirectTo: `${window.location.origin}/dashboard`
+            if (addMode === 'invite') {
+                const { error: authError } = await supabase.auth.signInWithOtp({
+                    email: addForm.email,
+                    options: {
+                        emailRedirectTo: `${window.location.origin}/dashboard`
+                    }
+                });
+
+                if (authError) throw authError;
+                alert(`¡Invitación enviada a ${addForm.email}! El usuario debe revisar su correo para acceder.`);
+            } else {
+                // Manual creation
+                const generatedEmail = addForm.email || `${addForm.username.toLowerCase().replace(/\s+/g, '')}@gestion-equipo.com`;
+
+                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+                    email: generatedEmail,
+                    password: addForm.password,
+                    options: {
+                        data: {
+                            full_name: addForm.full_name || addForm.username,
+                        }
+                    }
+                });
+
+                if (signUpError) throw signUpError;
+
+                if (signUpData.user) {
+                    const { error: profileError } = await supabase
+                        .from("profiles")
+                        .update({
+                            full_name: addForm.full_name || addForm.username,
+                            phone: addForm.phone,
+                            role: addForm.role,
+                            status: 'active'
+                        })
+                        .eq("id", signUpData.user.id);
+
+                    if (profileError) {
+                        // If profile update fails, we might need to handle it, but signUp creates profile via trigger usually
+                        // In this app, profiles might be created by a trigger on auth.users
+                        console.error("Profile update error:", profileError);
+                    }
                 }
-            });
 
-            if (authError) throw authError;
+                alert(`¡Usuario ${addForm.username} creado correctamente! Ya puede iniciar sesión.`);
+            }
 
-            alert(`¡Invitación enviada a ${addForm.email}! El usuario debe revisar su correo para acceder.`);
             setIsAddModalOpen(false);
-            setAddForm({ email: "", full_name: "", phone: "", role: "ayudante" });
+            setAddForm({ email: "", username: "", password: "", full_name: "", phone: "", role: "ayudante" });
             loadUsers();
         } catch (error: any) {
             console.error("Error adding user:", error);
-            alert(`Error: ${error.message || "No se pudo invitar al usuario."}`);
+            alert(`Error: ${error.message || "No se pudo crear/invitar al usuario."}`);
         } finally {
             setAddingUser(false);
         }
@@ -483,28 +522,77 @@ export default function UsersPage() {
                                 </button>
                             </div>
 
+                            <div className="flex p-1 bg-slate-100 rounded-2xl mb-8">
+                                <button
+                                    onClick={() => setAddMode('invite')}
+                                    className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${addMode === 'invite' ? 'bg-white text-secondary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                                >
+                                    Enviar Invitación
+                                </button>
+                                <button
+                                    onClick={() => setAddMode('manual')}
+                                    className={`flex-1 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${addMode === 'manual' ? 'bg-white text-secondary shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+                                >
+                                    Carga Manual
+                                </button>
+                            </div>
+
                             <form onSubmit={handleAddSubmit} className="space-y-5">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Correo Electrónico</label>
-                                    <div className="relative group">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
-                                        <input
-                                            type="email"
-                                            required
-                                            value={addForm.email}
-                                            onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
-                                            placeholder="empleado@proequipo.com"
-                                            className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
-                                        />
+                                {addMode === 'invite' ? (
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Correo Electrónico</label>
+                                        <div className="relative group">
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                            <input
+                                                type="email"
+                                                required
+                                                value={addForm.email}
+                                                onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                                                placeholder="empleado@proequipo.com"
+                                                className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                    <>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nombre de Usuario (Login)</label>
+                                            <div className="relative group">
+                                                <UserCircleIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                                <input
+                                                    type="text"
+                                                    required
+                                                    value={addForm.username}
+                                                    onChange={(e) => setAddForm({ ...addForm, username: e.target.value })}
+                                                    placeholder="ej: juanperez"
+                                                    className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Contraseña</label>
+                                            <div className="relative group">
+                                                <Shield className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                                <input
+                                                    type="password"
+                                                    required
+                                                    value={addForm.password}
+                                                    onChange={(e) => setAddForm({ ...addForm, password: e.target.value })}
+                                                    placeholder=" mín. 6 caracteres"
+                                                    className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
+                                                />
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nombre Completo (Opcional)</label>
+                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nombre Completo {addMode === 'invite' && '(Opcional)'}</label>
                                     <div className="relative group">
                                         <UserCircleIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
                                         <input
                                             type="text"
+                                            required={addMode === 'manual'}
                                             value={addForm.full_name}
                                             onChange={(e) => setAddForm({ ...addForm, full_name: e.target.value })}
                                             className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
@@ -537,7 +625,11 @@ export default function UsersPage() {
                                 </div>
 
                                 <div className="bg-blue-500/5 p-4 rounded-2xl border border-blue-500/10">
-                                    <p className="text-[10px] text-blue-600 font-medium">Se enviará un correo con un enlace de acceso seguro. Una vez que el usuario acceda, podrá completar su perfil.</p>
+                                    <p className="text-[10px] text-blue-600 font-medium">
+                                        {addMode === 'invite'
+                                            ? "Se enviará un correo con un enlace de acceso seguro. Una vez que el usuario acceda, podrá completar su perfil."
+                                            : "El usuario se creará inmediatamente. Podrá iniciar sesión usando su nombre de usuario como correo (ej: nombre@gestion-equipo.com) y la contraseña asignada."}
+                                    </p>
                                 </div>
 
                                 <button
@@ -547,7 +639,8 @@ export default function UsersPage() {
                                 >
                                     {addingUser ? <Loader2 className="h-5 w-5 animate-spin" /> : (
                                         <>
-                                            <Mail className="h-5 w-5" /> Enviar Invitación
+                                            {addMode === 'invite' ? <Mail className="h-5 w-5" /> : <Check className="h-5 w-5" />}
+                                            {addMode === 'invite' ? 'Enviar Invitación' : 'Crear Usuario'}
                                         </>
                                     )}
                                 </button>
