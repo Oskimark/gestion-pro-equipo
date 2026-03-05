@@ -144,6 +144,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             if (idCardFile) {
                 const publicUrl = await uploadService.uploadFile(idCardFile, "player-docs");
                 updatedData.id_card_url = publicUrl;
+                updatedData.id_card_notified_count = 0; // Reset count on new upload
                 if (player?.id_card_url) {
                     await uploadService.deleteFile(player.id_card_url, "player-docs");
                 }
@@ -151,9 +152,18 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             if (healthCardFile) {
                 const publicUrl = await uploadService.uploadFile(healthCardFile, "player-docs");
                 updatedData.health_card_url = publicUrl;
+                updatedData.health_card_notified_count = 0; // Reset count on new upload
                 if (player?.health_card_url) {
                     await uploadService.deleteFile(player.health_card_url, "player-docs");
                 }
+            }
+
+            // Detect if dates changed to reset counts
+            if (formData.id_card_expiry !== player.id_card_expiry) {
+                updatedData.id_card_notified_count = 0;
+            }
+            if (formData.health_card_expiry !== player.health_card_expiry) {
+                updatedData.health_card_notified_count = 0;
             }
 
             // Clean data: remove empty strings or convert to null
@@ -536,10 +546,20 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 </div>
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => {
+                                                    onClick={async (e) => {
                                                         e.preventDefault();
                                                         const phone = formData.mother_phone || formData.father_phone || formData.referent_phone;
                                                         const message = `Hola! Te escribimos de CLUB 33. Queríamos consultarte por la Cédula de Identidad de ${formData.full_name}.`;
+
+                                                        try {
+                                                            const newCount = (player.id_card_notified_count || 0) + 1;
+                                                            await playerService.update(player.id, { id_card_notified_count: newCount });
+                                                            setPlayer(prev => prev ? { ...prev, id_card_notified_count: newCount } : null);
+                                                            setFormData(prev => ({ ...prev, id_card_notified_count: newCount }));
+                                                        } catch (err) {
+                                                            console.error("Error updating notification count:", err);
+                                                        }
+
                                                         if (phone) {
                                                             const link = generateWhatsAppLink(phone, message);
                                                             if (link) {
@@ -549,9 +569,16 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                         }
                                                         window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
                                                     }}
-                                                    className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn"
-                                                    title="Consultar por WhatsApp"
+                                                    className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn relative"
+                                                    title={`Consultar por WhatsApp (${player.id_card_notified_count || 0} enviados)`}
                                                 >
+                                                    {player.id_card_notified_count && player.id_card_notified_count > 0 ? (
+                                                        <div className="absolute -top-1 -left-1 flex">
+                                                            {[...Array(Math.min(player.id_card_notified_count, 3))].map((_, i) => (
+                                                                <span key={i} className="text-green-600 font-black text-[8px]">✓</span>
+                                                            ))}
+                                                        </div>
+                                                    ) : null}
                                                     <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                                                 </button>
                                             </div>
@@ -607,10 +634,20 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 </div>
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => {
+                                                    onClick={async (e) => {
                                                         e.preventDefault();
                                                         const phone = formData.mother_phone || formData.father_phone || formData.referent_phone;
                                                         const message = `Hola! Te escribimos de CLUB 33. Queríamos consultarte por la Ficha Médica de ${formData.full_name}.`;
+
+                                                        try {
+                                                            const newCount = (player.health_card_notified_count || 0) + 1;
+                                                            await playerService.update(player.id, { health_card_notified_count: newCount });
+                                                            setPlayer(prev => prev ? { ...prev, health_card_notified_count: newCount } : null);
+                                                            setFormData(prev => ({ ...prev, health_card_notified_count: newCount }));
+                                                        } catch (err) {
+                                                            console.error("Error updating notification count:", err);
+                                                        }
+
                                                         if (phone) {
                                                             const link = generateWhatsAppLink(phone, message);
                                                             if (link) {
@@ -620,9 +657,16 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                         }
                                                         window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
                                                     }}
-                                                    className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn"
-                                                    title="Consultar por WhatsApp"
+                                                    className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn relative"
+                                                    title={`Consultar por WhatsApp (${player.health_card_notified_count || 0} enviados)`}
                                                 >
+                                                    {player.health_card_notified_count && player.health_card_notified_count > 0 ? (
+                                                        <div className="absolute -top-1 -left-1 flex">
+                                                            {[...Array(Math.min(player.health_card_notified_count, 3))].map((_, i) => (
+                                                                <span key={i} className="text-green-600 font-black text-[8px]">✓</span>
+                                                            ))}
+                                                        </div>
+                                                    ) : null}
                                                     <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                                                 </button>
                                             </div>

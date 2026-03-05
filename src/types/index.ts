@@ -35,6 +35,9 @@ export type Player = {
   health_insurance?: string;
   allergies?: string;
 
+  id_card_notified_count?: number;
+  health_card_notified_count?: number;
+
   created_at: string;
 };
 

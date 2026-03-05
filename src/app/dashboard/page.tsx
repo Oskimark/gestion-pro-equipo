@@ -46,17 +46,33 @@ export default function DashboardPage() {
             });
 
             // Calculate Alerts
-            const docAlerts: { id: string; name: string; type: string; status: string; phone?: string; photo_url?: string }[] = [];
+            const docAlerts: { id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number }[] = [];
             players.forEach(p => {
                 const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days);
                 const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days);
                 const phone = p.mother_phone || p.father_phone || p.referent_phone;
 
                 if (idStatus.label === 'Vencido' || idStatus.label === 'Por vencer' || idStatus.label === 'Faltante') {
-                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Cédula', status: idStatus.label, phone, photo_url: p.photo_url });
+                    docAlerts.push({
+                        id: p.id,
+                        name: p.full_name,
+                        type: 'Cédula',
+                        status: idStatus.label,
+                        phone,
+                        photo_url: p.photo_url,
+                        count: p.id_card_notified_count || 0
+                    });
                 }
                 if (healthStatus.label === 'Vencido' || healthStatus.label === 'Por vencer' || healthStatus.label === 'Faltante') {
-                    docAlerts.push({ id: p.id, name: p.full_name, type: 'Ficha Médica', status: healthStatus.label, phone, photo_url: p.photo_url });
+                    docAlerts.push({
+                        id: p.id,
+                        name: p.full_name,
+                        type: 'Ficha Médica',
+                        status: healthStatus.label,
+                        phone,
+                        photo_url: p.photo_url,
+                        count: p.health_card_notified_count || 0
+                    });
                 }
             });
             setAlerts(docAlerts);
@@ -67,6 +83,43 @@ export default function DashboardPage() {
             console.error("Error loading dashboard data:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleWhatsAppNotify = async (e: React.MouseEvent, docAlert: any) => {
+        e.preventDefault();
+        if (profile?.role === 'visitante') {
+            alert("Como visitante no tienes permisos para enviar notificaciones.");
+            return;
+        }
+
+        const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
+
+        try {
+            // Increment in DB
+            const field = docAlert.type === 'Cédula' ? 'id_card_notified_count' : 'health_card_notified_count';
+            await playerService.update(docAlert.id, {
+                [field]: (docAlert.count || 0) + 1
+            });
+
+            // Update local state
+            setAlerts(prev => prev.map(a =>
+                (a.id === docAlert.id && a.type === docAlert.type)
+                    ? { ...a, count: (a.count || 0) + 1 }
+                    : a
+            ));
+
+            // Open WhatsApp
+            if (docAlert.phone) {
+                const link = generateWhatsAppLink(docAlert.phone, message);
+                if (link) {
+                    window.open(link, '_blank');
+                    return;
+                }
+            }
+            window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
+        } catch (error) {
+            console.error("Error updating notification count:", error);
         }
     };
 
@@ -153,31 +206,24 @@ export default function DashboardPage() {
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                if (profile?.role === 'visitante') {
-                                                    alert("Como visitante no tienes permisos para enviar notificaciones.");
-                                                    return;
-                                                }
-                                                const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
-                                                if (docAlert.phone) {
-                                                    const link = generateWhatsAppLink(docAlert.phone, message);
-                                                    if (link) {
-                                                        window.open(link, '_blank');
-                                                        return;
-                                                    }
-                                                }
-                                                // Fallback: Generic share link
-                                                window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
-                                            }}
-                                            className={`p-2 rounded-full transition-colors flex items-center justify-center shrink-0 group/btn ${profile?.role === 'visitante'
-                                                ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                                : 'bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500'}`}
-                                            title={profile?.role === 'visitante' ? 'Sin permisos' : 'Avisar por WhatsApp'}
-                                        >
-                                            <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
-                                        </button>
+                                        <div className="flex items-center gap-1 group/wa">
+                                            {docAlert.count > 0 && (
+                                                <div className="flex -space-x-1 animate-in zoom-in-50 duration-300">
+                                                    {[...Array(docAlert.count)].map((_, i) => (
+                                                        <span key={i} className="text-green-500 font-black text-xs drop-shadow-sm select-none">✓</span>
+                                                    ))}
+                                                </div>
+                                            )}
+                                            <button
+                                                onClick={(e) => handleWhatsAppNotify(e, docAlert)}
+                                                className={`p-2 rounded-full transition-all flex items-center justify-center shrink-0 group/btn relative ${profile?.role === 'visitante'
+                                                    ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                                    : 'bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 hover:scale-105 active:scale-95'}`}
+                                                title={profile?.role === 'visitante' ? 'Sin permisos' : `Avisar por WhatsApp (${docAlert.count} enviados)`}
+                                            >
+                                                <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
+                                            </button>
+                                        </div>
                                         <ChevronRight className="h-4 w-4 text-muted-foreground group-hover/item:translate-x-1 transition-transform" />
                                     </div>
                                 </Link>
