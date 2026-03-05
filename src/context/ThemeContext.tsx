@@ -2,39 +2,59 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Theme = "light" | "dark";
+type Theme = "light" | "dark" | "system";
 
 interface ThemeContextType {
     theme: Theme;
-    toggleTheme: () => void;
+    setTheme: (theme: Theme) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [theme, setTheme] = useState<Theme>("light");
+    const [theme, setTheme] = useState<Theme>("system");
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-        // Get initial theme from localStorage or system preference
         const savedTheme = localStorage.getItem("theme") as Theme | null;
-        const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-        const initialTheme = savedTheme || systemTheme;
-
-        setTheme(initialTheme);
-        document.documentElement.classList.toggle("dark", initialTheme === "dark");
+        if (savedTheme) {
+            setTheme(savedTheme);
+        }
         setMounted(true);
     }, []);
 
-    const toggleTheme = () => {
-        const newTheme = theme === "light" ? "dark" : "light";
-        setTheme(newTheme);
-        localStorage.setItem("theme", newTheme);
-        document.documentElement.classList.toggle("dark", newTheme === "dark");
-    };
+    useEffect(() => {
+        if (!mounted) return;
+
+        const applyTheme = (currentTheme: Theme) => {
+            const root = document.documentElement;
+            let effectiveTheme = currentTheme;
+
+            if (currentTheme === "system") {
+                effectiveTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            }
+
+            root.classList.toggle("dark", effectiveTheme === "dark");
+            root.style.colorScheme = effectiveTheme;
+            localStorage.setItem("theme", currentTheme);
+        };
+
+        applyTheme(theme);
+
+        // Listener for system changes
+        const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+        const handleChange = () => {
+            if (theme === "system") {
+                applyTheme("system");
+            }
+        };
+
+        mediaQuery.addEventListener("change", handleChange);
+        return () => mediaQuery.removeEventListener("change", handleChange);
+    }, [theme, mounted]);
 
     return (
-        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+        <ThemeContext.Provider value={{ theme, setTheme }}>
             <div className={mounted ? "" : "invisible"}>
                 {children}
             </div>

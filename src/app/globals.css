@@ -25,6 +25,7 @@
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+  color-scheme: light dark;
 }
 
 .dark {
@@ -35,7 +36,8 @@
   --color-foreground: #f8fafc;
   --color-card: #0f172a;
   --color-card-foreground: #f8fafc;
-  --color-primary: #dc2626; /* Usar rojo como primario en modo oscuro para resaltar */
+  --color-primary: #dc2626;
+  /* Usar rojo como primario en modo oscuro para resaltar */
   --color-primary-foreground: #ffffff;
   --color-secondary: #dc2626;
   --color-secondary-foreground: #ffffff;
