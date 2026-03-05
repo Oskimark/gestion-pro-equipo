@@ -100,7 +100,10 @@ export default function DashboardPage() {
 
         let message = '';
         if (settings.wa_custom_text_enabled && settings.wa_custom_text) {
-            message = settings.wa_custom_text;
+            message = settings.wa_custom_text
+                .replace(/\$jugador/g, docAlert.name)
+                .replace(/\$documento/g, docAlert.type)
+                .replace(/\$estado/g, docAlert.status === 'Vencido' ? 'vencida' : 'faltante');
         } else {
             message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
         }
@@ -180,8 +183,8 @@ export default function DashboardPage() {
                                 <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Resumen</span>
                             </div>
                             <div className="mt-6">
-                                <p className="text-small font-medium text-muted-foreground">{stat.name}</p>
-                                <p className="text-3xl font-extrabold text-foreground mt-1">{stat.value}</p>
+                                <p className="text-small font-medium text-muted-foreground dark:text-slate-300">{stat.name}</p>
+                                <p className="text-3xl font-extrabold text-foreground dark:text-white mt-1">{stat.value}</p>
                             </div>
                         </div>
                     );

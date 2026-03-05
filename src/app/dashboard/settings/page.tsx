@@ -212,23 +212,38 @@ export default function SettingsPage() {
                                 </button>
                             </div>
 
-                            {settings.wa_custom_text_enabled && (
-                                <div className="animate-in slide-in-from-top-2 duration-300">
-                                    <textarea
-                                        value={settings.wa_custom_text}
-                                        onChange={(e) => setSettings({ ...settings, wa_custom_text: e.target.value })}
-                                        placeholder="Escribe aquí el mensaje personalizado..."
-                                        rows={4}
-                                        className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-secondary/50 outline-none transition-all placeholder:text-muted-foreground/50"
-                                    />
+                            {/* Textarea is always visible now */}
+                            <div className="animate-in slide-in-from-top-2 duration-300 space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground dark:text-slate-300">
+                                    {settings.wa_custom_text_enabled ? 'Plantilla Editable' : 'Ejemplo de Mensaje Actual'}
+                                </label>
+                                <textarea
+                                    value={settings.wa_custom_text_enabled
+                                        ? settings.wa_custom_text
+                                        : "Hola! Te escribimos de CLUB 33. Te avisamos que la Ficha Médica de GONZALO CAETANO DÍAZ está vencida."
+                                    }
+                                    onChange={(e) => {
+                                        if (settings.wa_custom_text_enabled) {
+                                            setSettings({ ...settings, wa_custom_text: e.target.value });
+                                        }
+                                    }}
+                                    readOnly={!settings.wa_custom_text_enabled}
+                                    placeholder={settings.wa_custom_text_enabled ? "Hola! Te escribimos de CLUB 33. Te avisamos que la $documento de $jugador está $estado." : ""}
+                                    rows={4}
+                                    className={`w-full border rounded-2xl p-4 text-sm font-medium outline-none transition-all ${settings.wa_custom_text_enabled
+                                            ? 'bg-slate-50 dark:bg-white/5 border-border focus:ring-2 focus:ring-secondary/50 text-foreground dark:text-white'
+                                            : 'bg-slate-100 dark:bg-white/10 border-transparent text-muted-foreground dark:text-slate-300 cursor-not-allowed italic'
+                                        }`}
+                                />
+                                {settings.wa_custom_text_enabled && (
                                     <div className="flex items-start gap-2 mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
                                         <BellRing className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
-                                        <p className="text-[10px] text-blue-700 dark:text-blue-400 font-medium">
-                                            El nombre del jugador, el tipo de documento y el estado se añadirán automáticamente al inicio o contexto si el sistema lo requiere para completar el aviso.
+                                        <p className="text-[10px] text-blue-700 dark:text-slate-200 font-medium leading-relaxed">
+                                            Variables disponibles: <span className="font-bold">$jugador</span>, <span className="font-bold">$documento</span>, <span className="font-bold">$estado</span>. El sistema las reemplazará automáticamente al enviar.
                                         </p>
                                     </div>
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
                     </div>
 
