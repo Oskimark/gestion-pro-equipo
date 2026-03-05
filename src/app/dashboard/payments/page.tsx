@@ -52,12 +52,23 @@ export default function PaymentsPage() {
     const loadData = async () => {
         try {
             setLoading(true);
-            const [paymentsData, playersList] = await Promise.all([
-                paymentService.getAllPayments(),
-                playerService.getAll()
-            ]);
-            setPayments(paymentsData);
-            setPlayers(playersList);
+            let loadedPayments: Payment[] = [];
+            let loadedPlayers: Player[] = [];
+
+            try {
+                loadedPayments = await paymentService.getAllPayments();
+            } catch (err) {
+                console.error("Error loading payments:", err);
+            }
+
+            try {
+                loadedPlayers = await playerService.getAll();
+            } catch (err) {
+                console.error("Error loading players:", err);
+            }
+
+            setPayments(loadedPayments);
+            setPlayers(loadedPlayers);
         } catch (error) {
             console.error("Error loading payments:", error);
         } finally {
@@ -96,7 +107,7 @@ export default function PaymentsPage() {
                 if (newPayment.category === 'Indumentaria') updates.gear_status = 'paid';
 
                 if (Object.keys(updates).length > 0) {
-                    await supabase.from('profiles').update(updates).eq('id', player.id);
+                    await supabase.from('players').update(updates).eq('id', player.id);
                 }
             }
 
