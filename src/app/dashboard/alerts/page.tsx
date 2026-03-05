@@ -155,7 +155,7 @@ export default function AlertsPage() {
                         <AlertTriangle className="h-8 w-8 text-red-600" />
                         Centro de Alertas
                     </h1>
-                    <p className="text-muted-foreground dark:text-slate-300 mt-1">
+                    <p className="text-muted-foreground  mt-1">
                         Gestiona toda la documentación vencida o faltante de los jugadores.
                     </p>
                 </div>
@@ -167,7 +167,7 @@ export default function AlertsPage() {
             </div>
 
             {/* Filters & Search */}
-            <div className="bg-white dark:bg-slate-950 p-4 rounded-[2rem] border border-border/40 shadow-sm flex flex-col md:flex-row gap-4">
+            <div className="bg-white  p-4 rounded-[2rem] border border-border/40 shadow-sm flex flex-col md:flex-row gap-4">
                 <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                     <input
@@ -175,26 +175,26 @@ export default function AlertsPage() {
                         placeholder="Buscar jugador..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-white/5 border border-border/20 rounded-2xl outline-none focus:ring-2 focus:ring-secondary/50 transition-all font-bold"
+                        className="w-full pl-12 pr-4 py-3 bg-slate-50  border border-border/20 rounded-2xl outline-none focus:ring-2 focus:ring-secondary/50 transition-all font-bold"
                     />
                 </div>
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
                     <button
                         onClick={() => setTypeFilter('all')}
-                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${typeFilter === 'all' ? 'bg-secondary text-primary shadow-lg shadow-secondary/20' : 'bg-slate-50 dark:bg-white/5 text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10'}`}
+                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${typeFilter === 'all' ? 'bg-secondary text-primary shadow-lg shadow-secondary/20' : 'bg-slate-50  text-muted-foreground hover:bg-slate-100 
                     >
                         Todos
                     </button>
                     <button
                         onClick={() => setTypeFilter('Cédula')}
-                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${typeFilter === 'Cédula' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-50 dark:bg-white/5 text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10'}`}
+                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${typeFilter === 'Cédula' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-50  text-muted-foreground hover:bg-slate-100 
                     >
                         <FileText className="h-4 w-4" />
                         Cédulas
                     </button>
                     <button
                         onClick={() => setTypeFilter('Ficha Médica')}
-                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${typeFilter === 'Ficha Médica' ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' : 'bg-slate-50 dark:bg-white/5 text-muted-foreground hover:bg-slate-100 dark:hover:bg-white/10'}`}
+                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${typeFilter === 'Ficha Médica' ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' : 'bg-slate-50  text-muted-foreground hover:bg-slate-100 
                     >
                         <Shield className="h-4 w-4" />
                         Fichas Médicas
@@ -206,29 +206,29 @@ export default function AlertsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {loading ? (
                     Array(6).fill(0).map((_, i) => (
-                        <div key={i} className="bg-white dark:bg-slate-950 h-48 rounded-[2rem] border border-border/40 animate-pulse"></div>
+                        <div key={i} className="bg-white  h-48 rounded-[2rem] border border-border/40 animate-pulse"></div>
                     ))
                 ) : filteredAlerts.length > 0 ? (
                     filteredAlerts.map((alert) => (
-                        <div key={`${alert.id}-${alert.type}`} className="bg-white dark:bg-slate-950 p-6 rounded-[2.5rem] border border-border/40 hover:border-red-500/30 transition-all group relative overflow-hidden flex flex-col justify-between shadow-sm">
+                        <div key={`${alert.id}-${alert.type}`} className="bg-white  p-6 rounded-[2.5rem] border border-border/40 hover:border-red-500/30 transition-all group relative overflow-hidden flex flex-col justify-between shadow-sm">
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
                                     <div className="relative">
                                         {alert.photo_url ? (
                                             <img src={alert.photo_url} alt={alert.name} className="h-14 w-14 rounded-2xl object-cover border-2 border-border" />
                                         ) : (
-                                            <div className="h-14 w-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-2 border-border text-slate-400">
+                                            <div className="h-14 w-14 rounded-2xl bg-slate-100  flex items-center justify-center border-2 border-border text-slate-400">
                                                 <User className="h-8 w-8" />
                                             </div>
                                         )}
-                                        <div className={`absolute -bottom-1 -right-1 p-1 rounded-lg border-2 border-white dark:border-slate-950 ${alert.type === 'Cédula' ? 'bg-blue-500' : 'bg-green-600'} text-white`}>
+                                        <div className={`absolute -bottom-1 -right-1 p-1 rounded-lg border-2 border-white  ${alert.type === 'Cédula' ? 'bg-blue-500' : 'bg-green-600'} text-white`}>
                                             {alert.type === 'Cédula' ? <FileText className="h-3 w-3" /> : <Shield className="h-3 w-3" />}
                                         </div>
                                     </div>
                                     <div>
                                         <h3 className="font-black text-lg text-foreground leading-tight">{alert.name}</h3>
                                         <div className="flex items-center gap-1 mt-1 flex-wrap">
-                                            <span className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/5 text-[10px] font-black uppercase tracking-tighter text-slate-500">
+                                            <span className="px-2 py-0.5 rounded-lg bg-slate-100  text-[10px] font-black uppercase tracking-tighter text-slate-500">
                                                 {alert.type}
                                             </span>
                                             <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-tighter ${alert.status === 'Vencido' ? 'bg-red-100 text-red-600' :
@@ -246,31 +246,31 @@ export default function AlertsPage() {
                                             <span key={i} className="text-green-500 font-black text-xs drop-shadow-sm">✓</span>
                                         ))}
                                     </div>
-                                    <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase">{alert.count} avisos</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground  uppercase">{alert.count} avisos</span>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
-                                <div className="p-4 rounded-3xl bg-slate-50 dark:bg-white/5 border border-border/20 flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-300">
+                                <div className="p-4 rounded-3xl bg-slate-50  border border-border/20 flex items-center justify-between">
+                                    <div className="flex items-center gap-2 text-muted-foreground ">
                                         <Calendar className="h-4 w-4" />
                                         <span className="text-xs font-bold uppercase tracking-tight">Vencimiento:</span>
                                     </div>
-                                    <span className="text-sm font-black text-foreground dark:text-white">{alert.expiryDate ? new Date(alert.expiryDate).toLocaleDateString('es-ES') : 'Faltante'}</span>
+                                    <span className="text-sm font-black text-foreground ">{alert.expiryDate ? new Date(alert.expiryDate).toLocaleDateString('es-ES') : 'Faltante'}</span>
                                 </div>
 
                                 <div className="flex items-center gap-3">
                                     <button
                                         onClick={(e) => handleWhatsAppNotify(e, alert)}
                                         disabled={profile?.role === 'visitante'}
-                                        className="flex-1 h-14 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-2xl flex items-center justify-center gap-2 transition-all font-black uppercase text-xs tracking-widest disabled:opacity-50"
+                                        className="flex-1 h-14 bg-green-100  hover:bg-green-200  text-green-700  rounded-2xl flex items-center justify-center gap-2 transition-all font-black uppercase text-xs tracking-widest disabled:opacity-50"
                                     >
                                         <MessageCircle className="h-5 w-5" />
                                         Avisar
                                     </button>
                                     <Link
                                         href={`/dashboard/players/detail/${alert.id}?tab=docs`}
-                                        className="w-14 h-14 bg-slate-100 dark:bg-white/5 hover:bg-secondary hover:text-primary rounded-2xl flex items-center justify-center transition-all"
+                                        className="w-14 h-14 bg-slate-100  hover:bg-secondary hover:text-primary rounded-2xl flex items-center justify-center transition-all"
                                     >
                                         <ChevronRight className="h-6 w-6" />
                                     </Link>
@@ -279,8 +279,8 @@ export default function AlertsPage() {
                         </div>
                     ))
                 ) : (
-                    <div className="col-span-full py-20 bg-white dark:bg-slate-950 rounded-[3rem] border border-dashed border-border flex flex-col items-center justify-center text-center">
-                        <div className="p-6 rounded-full bg-green-100 dark:bg-green-900/20 text-green-600 mb-6 group-hover:scale-110 transition-transform">
+                    <div className="col-span-full py-20 bg-white  rounded-[3rem] border border-dashed border-border flex flex-col items-center justify-center text-center">
+                        <div className="p-6 rounded-full bg-green-100  text-green-600 mb-6 group-hover:scale-110 transition-transform">
                             <CheckCircle2 className="h-12 w-12" />
                         </div>
                         <h3 className="text-2xl font-black italic uppercase tracking-tighter mb-2">¡Todo al día!</h3>

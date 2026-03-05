@@ -154,7 +154,7 @@ export default function NewPlayerPage() {
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/players" className="p-2 rounded-full hover:bg-white dark:hover:bg-white/5 text-muted-foreground hover:text-foreground transition-all shadow-sm">
+                <Link href="/dashboard/players" className="p-2 rounded-full hover:bg-white  text-muted-foreground hover:text-foreground transition-all shadow-sm">
                     <ArrowLeft className="h-6 w-6" />
                 </Link>
                 <div>
@@ -166,7 +166,7 @@ export default function NewPlayerPage() {
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Tabs Selection */}
                 <div className="lg:col-span-1 space-y-4">
-                    <div className="bg-white dark:bg-slate-950 p-4 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden sticky top-8 shadow-sm">
+                    <div className="bg-white  p-4 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden sticky top-8 shadow-sm">
                         <p className="px-4 pt-2 pb-4 text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] border-b border-border/10 mb-4">Secciones del Formulario</p>
                         <div className="flex flex-col gap-2">
                             {tabs.map((tab) => (
@@ -176,7 +176,7 @@ export default function NewPlayerPage() {
                                     onClick={() => setActiveTab(tab.id)}
                                     className={`flex items-center gap-3 px-6 py-4 rounded-2xl text-sm font-bold transition-all ${activeTab === tab.id
                                         ? "bg-secondary text-primary shadow-md scale-[1.02]"
-                                        : "text-muted-foreground hover:bg-white dark:hover:bg-white/5"
+                                        : "text-muted-foreground hover:bg-white "
                                         }`}
                                 >
                                     <tab.icon className={`h-5 w-5 ${activeTab === tab.id ? "text-primary" : "text-muted-foreground"}`} />
@@ -185,16 +185,16 @@ export default function NewPlayerPage() {
                             ))}
                         </div>
 
-                        <div className="mt-8 p-4 bg-orange-50 dark:bg-orange-900/10 rounded-2xl border border-orange-100 dark:border-orange-900/20">
-                            <p className="text-[10px] font-bold text-orange-600 dark:text-orange-400 uppercase mb-2">Consejo Deportista</p>
-                            <p className="text-xs text-orange-800 dark:text-orange-200">Asegúrate de cargar los vencimientos de documentos para recibir alertas.</p>
+                        <div className="mt-8 p-4 bg-orange-50  rounded-2xl border border-orange-100 ">
+                            <p className="text-[10px] font-bold text-orange-600  uppercase mb-2">Consejo Deportista</p>
+                            <p className="text-xs text-orange-800 ">Asegúrate de cargar los vencimientos de documentos para recibir alertas.</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Form Content */}
                 <div className="lg:col-span-2">
-                    <div className="bg-white dark:bg-slate-950 min-h-[500px] flex flex-col shadow-xl rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
+                    <div className="bg-white  min-h-[500px] flex flex-col shadow-xl rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                         <div className="p-8 flex-1">
                             {activeTab === "sports" && (
                                 <div className="space-y-6 animate-in fade-in duration-300">
@@ -208,14 +208,14 @@ export default function NewPlayerPage() {
                                                 value={formData.full_name}
                                                 onChange={handleChange}
                                                 required
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                                className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                                 placeholder="Ej: Juan Manuel Pérez..."
                                             />
                                         </div>
                                         <div className="md:col-span-2">
                                             <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Foto de Perfil</label>
                                             <div className="flex items-center gap-6">
-                                                <div className="relative h-24 w-24 rounded-2xl overflow-hidden bg-slate-100 dark:bg-white/5 border-2 border-dashed border-border flex items-center justify-center shrink-0">
+                                                <div className="relative h-24 w-24 rounded-2xl overflow-hidden bg-slate-100  border-2 border-dashed border-border flex items-center justify-center shrink-0">
                                                     {photoPreview ? (
                                                         <>
                                                             <img src={photoPreview} alt="Preview" className="h-full w-full object-cover" />
@@ -232,7 +232,7 @@ export default function NewPlayerPage() {
                                                     )}
                                                 </div>
                                                 <div className="flex-1">
-                                                    <label className="relative cursor-pointer bg-white dark:bg-white/5 border border-border rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-white/10 transition-all group">
+                                                    <label className="relative cursor-pointer bg-white  border border-border rounded-xl px-4 py-3 flex items-center gap-3 hover:bg-slate-50  transition-all group">
                                                         <div className="h-8 w-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
                                                             <Upload className="h-4 w-4" />
                                                         </div>
@@ -257,7 +257,7 @@ export default function NewPlayerPage() {
                                                 name="shirt_number"
                                                 value={formData.shirt_number || ""}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                                className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                                 placeholder="Ej: 10"
                                             />
                                         </div>
@@ -267,7 +267,7 @@ export default function NewPlayerPage() {
                                                 name="position"
                                                 value={formData.position}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                                className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                             >
                                                 <option>Portero</option>
                                                 <option>Defensa</option>
@@ -283,7 +283,7 @@ export default function NewPlayerPage() {
                                                 name="birth_date"
                                                 value={formData.birth_date}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                                className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                             />
                                         </div>
                                     </div>
@@ -302,15 +302,15 @@ export default function NewPlayerPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Camiseta</label>
-                                                <input type="text" name="shirt_size" value={formData.shirt_size} onChange={handleChange} placeholder="Ej: M, 14..." className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="shirt_size" value={formData.shirt_size} onChange={handleChange} placeholder="Ej: M, 14..." className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Short</label>
-                                                <input type="text" name="short_size" value={formData.short_size} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="short_size" value={formData.short_size} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Medias</label>
-                                                <input type="text" name="socks_size" value={formData.socks_size} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="socks_size" value={formData.socks_size} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                         </div>
                                     </div>
@@ -323,19 +323,19 @@ export default function NewPlayerPage() {
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Camiseta Larga</label>
-                                                <input type="text" name="long_jersey_size" value={formData.long_jersey_size} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="long_jersey_size" value={formData.long_jersey_size} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Pantalón Largo</label>
-                                                <input type="text" name="long_shorts_size" value={formData.long_shorts_size} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="long_shorts_size" value={formData.long_shorts_size} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Campera / Abrigo</label>
-                                                <input type="text" name="jacket_size" value={formData.jacket_size} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="jacket_size" value={formData.jacket_size} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Calzado / Zapatillas</label>
-                                                <input type="text" name="shoe_size" value={formData.shoe_size} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="shoe_size" value={formData.shoe_size} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                         </div>
                                     </div>
@@ -352,11 +352,11 @@ export default function NewPlayerPage() {
                                             <p className="text-xs font-black text-secondary uppercase tracking-widest">Madre</p>
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-muted-foreground uppercase">Nombre Completo</label>
-                                                <input type="text" name="mother_name" value={formData.mother_name} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="mother_name" value={formData.mother_name} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-muted-foreground uppercase">Teléfono</label>
-                                                <input type="text" name="mother_phone" value={formData.mother_phone} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="mother_phone" value={formData.mother_phone} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                         </div>
 
@@ -365,11 +365,11 @@ export default function NewPlayerPage() {
                                             <p className="text-xs font-black text-secondary uppercase tracking-widest">Padre</p>
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-muted-foreground uppercase">Nombre Completo</label>
-                                                <input type="text" name="father_name" value={formData.father_name} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="father_name" value={formData.father_name} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-muted-foreground uppercase">Teléfono</label>
-                                                <input type="text" name="father_phone" value={formData.father_phone} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                <input type="text" name="father_phone" value={formData.father_phone} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                             </div>
                                         </div>
 
@@ -379,11 +379,11 @@ export default function NewPlayerPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-2">
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase">Nombre Completo</label>
-                                                    <input type="text" name="referent_name" value={formData.referent_name} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                    <input type="text" name="referent_name" value={formData.referent_name} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase">Teléfono</label>
-                                                    <input type="text" name="referent_phone" value={formData.referent_phone} onChange={handleChange} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
+                                                    <input type="text" name="referent_phone" value={formData.referent_phone} onChange={handleChange} className="w-full bg-slate-50  border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 transition-all" />
                                                 </div>
                                             </div>
                                         </div>
@@ -395,7 +395,7 @@ export default function NewPlayerPage() {
                                                 name="address"
                                                 value={formData.address}
                                                 onChange={handleChange}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                                className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                             />
                                         </div>
                                     </div>
@@ -408,9 +408,9 @@ export default function NewPlayerPage() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         {/* ID Card */}
-                                        <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
+                                        <div className="bg-white  p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <div className="h-10 w-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 shadow-sm">
+                                                <div className="h-10 w-10 rounded-xl bg-blue-100  flex items-center justify-center text-blue-600 shadow-sm">
                                                     <FileText className="h-5 w-5" />
                                                 </div>
                                                 <p className="font-extrabold text-foreground">Cédula Identidad</p>
@@ -418,11 +418,11 @@ export default function NewPlayerPage() {
                                             <div className="space-y-3">
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Número de CI</label>
-                                                    <input type="text" name="id_card_num" value={formData.id_card_num} onChange={handleChange} className="w-full bg-white dark:bg-white/5 border border-border rounded-xl p-2.5 text-sm" />
+                                                    <input type="text" name="id_card_num" value={formData.id_card_num} onChange={handleChange} className="w-full bg-white  border border-border rounded-xl p-2.5 text-sm" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento CI</label>
-                                                    <input type="date" name="id_card_expiry" value={formData.id_card_expiry} onChange={handleChange} className="w-full bg-white dark:bg-white/5 border border-border rounded-xl p-2.5 text-sm" />
+                                                    <input type="date" name="id_card_expiry" value={formData.id_card_expiry} onChange={handleChange} className="w-full bg-white  border border-border rounded-xl p-2.5 text-sm" />
                                                 </div>
                                                 <div className="pt-2">
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
@@ -435,7 +435,7 @@ export default function NewPlayerPage() {
                                                                 </button>
                                                             </div>
                                                         ) : (
-                                                            <label className="cursor-pointer bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all w-full">
+                                                            <label className="cursor-pointer bg-slate-50  border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100  transition-all w-full">
                                                                 <Upload className="h-4 w-4 text-muted-foreground mb-2" />
                                                                 <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
                                                                 <input type="file" accept="image/*" onChange={handleIdCardChange} className="hidden" />
@@ -447,9 +447,9 @@ export default function NewPlayerPage() {
                                         </div>
 
                                         {/* Health Card / Ficha */}
-                                        <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
+                                        <div className="bg-white  p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <div className="h-10 w-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 shadow-sm">
+                                                <div className="h-10 w-10 rounded-xl bg-green-100  flex items-center justify-center text-green-600 shadow-sm">
                                                     <Shield className="h-5 w-5" />
                                                 </div>
                                                 <p className="font-extrabold text-foreground">Ficha de Salud</p>
@@ -457,11 +457,11 @@ export default function NewPlayerPage() {
                                             <div className="space-y-3">
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Empresa Salud / Seguro</label>
-                                                    <input type="text" name="health_insurance" value={formData.health_insurance} onChange={handleChange} className="w-full bg-white dark:bg-white/5 border border-border rounded-xl p-2.5 text-sm" />
+                                                    <input type="text" name="health_insurance" value={formData.health_insurance} onChange={handleChange} className="w-full bg-white  border border-border rounded-xl p-2.5 text-sm" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento Ficha</label>
-                                                    <input type="date" name="health_card_expiry" value={formData.health_card_expiry} onChange={handleChange} className="w-full bg-white dark:bg-white/5 border border-border rounded-xl p-2.5 text-sm" />
+                                                    <input type="date" name="health_card_expiry" value={formData.health_card_expiry} onChange={handleChange} className="w-full bg-white  border border-border rounded-xl p-2.5 text-sm" />
                                                 </div>
                                                 <div className="pt-2">
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
@@ -474,7 +474,7 @@ export default function NewPlayerPage() {
                                                                 </button>
                                                             </div>
                                                         ) : (
-                                                            <label className="cursor-pointer bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all w-full">
+                                                            <label className="cursor-pointer bg-slate-50  border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100  transition-all w-full">
                                                                 <Upload className="h-4 w-4 text-muted-foreground mb-2" />
                                                                 <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
                                                                 <input type="file" accept="image/*" onChange={handleHealthCardChange} className="hidden" />
@@ -486,9 +486,9 @@ export default function NewPlayerPage() {
                                         </div>
 
                                         {/* Permissions */}
-                                        <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4 md:col-span-2">
+                                        <div className="bg-white  p-6 rounded-3xl border border-border/20 transition-all group relative overflow-hidden space-y-4 md:col-span-2">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <div className="h-10 w-10 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600 shadow-sm">
+                                                <div className="h-10 w-10 rounded-xl bg-yellow-100  flex items-center justify-center text-yellow-600 shadow-sm">
                                                     <Edit2 className="h-5 w-5" />
                                                 </div>
                                                 <p className="font-extrabold text-foreground">Permisos / Otros</p>
@@ -496,11 +496,11 @@ export default function NewPlayerPage() {
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Detalle del Permiso</label>
-                                                    <input type="text" name="permit_info" value={formData.permit_info} onChange={handleChange} placeholder="Ej: Viaje, Competencia..." className="w-full bg-white dark:bg-white/5 border border-border rounded-xl p-2.5 text-sm" />
+                                                    <input type="text" name="permit_info" value={formData.permit_info} onChange={handleChange} placeholder="Ej: Viaje, Competencia..." className="w-full bg-white  border border-border rounded-xl p-2.5 text-sm" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento Permiso</label>
-                                                    <input type="date" name="permit_expiry" value={formData.permit_expiry} onChange={handleChange} className="w-full bg-white dark:bg-white/5 border border-border rounded-xl p-2.5 text-sm" />
+                                                    <input type="date" name="permit_expiry" value={formData.permit_expiry} onChange={handleChange} className="w-full bg-white  border border-border rounded-xl p-2.5 text-sm" />
                                                 </div>
                                             </div>
                                         </div>
@@ -512,7 +512,7 @@ export default function NewPlayerPage() {
                                                 value={formData.allergies}
                                                 onChange={handleChange}
                                                 rows={3}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium resize-none shadow-inner"
+                                                className="w-full bg-slate-50  border border-border rounded-xl p-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium resize-none shadow-inner"
                                                 placeholder="Información médica relevante..."
                                             ></textarea>
                                         </div>
@@ -521,7 +521,7 @@ export default function NewPlayerPage() {
                             )}
                         </div>
 
-                        <div className="p-8 border-t border-border/40 bg-slate-50/30 dark:bg-black/10 flex justify-end">
+                        <div className="p-8 border-t border-border/40 bg-slate-50/30  flex justify-end">
                             <button
                                 type="submit"
                                 disabled={loading}

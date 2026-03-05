@@ -165,7 +165,7 @@ export default function DashboardPage() {
                     </span>
                     {profile?.role === 'visitante' && ", visitante"}
                 </h1>
-                <p className="mt-2 text-muted-foreground dark:text-slate-300">
+                <p className="mt-2 text-muted-foreground">
                     {profile?.role === 'visitante'
                         ? "Como visitante solo puedes ver algunos datos limitados. Contacta al administrador para ver los módulos de pagos, usuarios y configuración."
                         : "Aquí tienes un resumen rápido de la situación actual del equipo."}
@@ -175,16 +175,16 @@ export default function DashboardPage() {
             <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {stats.map((stat) => {
                     const CardContent = (
-                        <div className="bg-white dark:bg-slate-950 h-full p-6 rounded-3xl border border-border/40 hover:border-secondary/50 transition-all hover:translate-y-[-4px] group relative overflow-hidden">
+                        <div className="bg-white  h-full p-6 rounded-3xl border border-border/40 hover:border-secondary/50 transition-all hover:translate-y-[-4px] group relative overflow-hidden">
                             <div className="flex items-center justify-between">
                                 <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
                                     <stat.icon className="h-6 w-6" />
                                 </div>
-                                <span className="text-xs font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">Resumen</span>
+                                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Resumen</span>
                             </div>
                             <div className="mt-6">
-                                <p className="text-small font-medium text-muted-foreground dark:text-slate-300">{stat.name}</p>
-                                <p className="text-3xl font-extrabold text-foreground dark:text-white mt-1">{stat.value}</p>
+                                <p className="text-small font-medium text-muted-foreground">{stat.name}</p>
+                                <p className="text-3xl font-extrabold text-foreground  mt-1">{stat.value}</p>
                             </div>
                         </div>
                     );
@@ -203,9 +203,9 @@ export default function DashboardPage() {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 {/* Alerts Section */}
-                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-red-400/40 transition-all group relative overflow-hidden flex flex-col">
+                <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-red-400/40 transition-all group relative overflow-hidden flex flex-col">
                     <div className="flex items-center justify-between mb-6">
-                        <h3 className="text-lg font-bold flex items-center gap-2 text-red-600 dark:text-red-400">
+                        <h3 className="text-lg font-bold flex items-center gap-2 text-red-600 ">
                             <AlertTriangle className="h-5 w-5" />
                             Alertas de Documentación
                         </h3>
@@ -220,20 +220,20 @@ export default function DashboardPage() {
                                 <Link
                                     key={`${docAlert.id}-${idx}`}
                                     href={`/dashboard/players/detail/${docAlert.id}?tab=docs`}
-                                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-white/5 border border-border/20 hover:border-red-500/30 transition-all group/item"
+                                    className="flex items-center justify-between p-3 rounded-xl bg-slate-50  border border-border/20 hover:border-red-500/30 transition-all group/item"
                                 >
                                     <div className="flex items-center gap-3">
                                         {docAlert.photo_url ? (
                                             <img src={docAlert.photo_url} alt={docAlert.name} className="h-10 w-10 rounded-full object-cover shrink-0 border border-border" />
                                         ) : (
-                                            <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-border text-slate-400 shrink-0">
+                                            <div className="h-10 w-10 rounded-full bg-slate-100  flex items-center justify-center border border-border text-slate-400 shrink-0">
                                                 <User className="h-6 w-6" />
                                             </div>
                                         )}
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-sm text-foreground dark:text-white">{docAlert.name}</span>
-                                            <span className="text-[10px] text-muted-foreground dark:text-slate-300 flex items-center gap-1">
-                                                <span className="font-black uppercase tracking-tighter px-1 rounded bg-slate-100 dark:bg-white/10">{docAlert.type}</span>
+                                            <span className="font-bold text-sm text-foreground">{docAlert.name}</span>
+                                            <span className="text-[10px] text-muted-foreground  flex items-center gap-1">
+                                                <span className="font-black uppercase tracking-tighter px-1 rounded bg-slate-100 ">{docAlert.type}</span>
                                                 <span>•</span>
                                                 <span className={docAlert.status === 'Vencido' ? 'text-red-500 font-bold' : docAlert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{docAlert.status}</span>
                                             </span>
@@ -252,7 +252,7 @@ export default function DashboardPage() {
                                                 onClick={(e) => handleWhatsAppNotify(e, docAlert)}
                                                 className={`p-2 rounded-full transition-all flex items-center justify-center shrink-0 group/btn relative ${profile?.role === 'visitante'
                                                     ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                                                    : 'bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 hover:scale-105 active:scale-95'}`}
+                                                    : 'bg-green-100  hover:bg-green-200  text-green-700  hover:scale-105 active:scale-95'}`}
                                                 title={profile?.role === 'visitante' ? 'Sin permisos' : `Avisar por WhatsApp (${docAlert.count} enviados)`}
                                             >
                                                 <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
@@ -263,7 +263,7 @@ export default function DashboardPage() {
                                 </Link>
                             ))
                         ) : (
-                            <div className="h-full flex flex-col items-center justify-center py-8 text-center bg-slate-50/50 dark:bg-black/10 rounded-2xl border border-dashed border-border">
+                            <div className="h-full flex flex-col items-center justify-center py-8 text-center bg-slate-50/50  rounded-2xl border border-dashed border-border">
                                 <Check className="h-8 w-8 text-green-500 mb-2 opacity-50" />
                                 <p className="text-sm text-muted-foreground font-medium italic">Todo al día. No hay alertas pendientes.</p>
                             </div>
@@ -272,24 +272,24 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Match Highlight */}
-                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
+                <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                         <Calendar className="h-5 w-5 text-secondary" />
                         Próximo Encuentro
                     </h3>
                     {nextMatch ? (
-                        <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-black/20 border border-border/20">
+                        <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-border/20">
                             <div className="flex flex-col">
-                                <span className="font-bold text-lg text-foreground dark:text-white">vs {nextMatch.rival}</span>
-                                <span className="text-sm text-muted-foreground dark:text-slate-300">
+                                <span className="font-bold text-lg text-foreground ">vs {nextMatch.rival}</span>
+                                <span className="text-sm text-muted-foreground ">
                                     {new Date(nextMatch.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
                                 </span>
                             </div>
                             <div className="text-right">
-                                <span className="block font-black text-xl text-primary dark:text-secondary">
+                                <span className="block font-black text-xl text-primary">
                                     {new Date(nextMatch.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                                 </span>
-                                <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase">{nextMatch.venue}</span>
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase">{nextMatch.venue}</span>
                             </div>
                         </div>
                     ) : (
@@ -300,7 +300,7 @@ export default function DashboardPage() {
                 </div>
 
                 {/* Placeholder for Financial Summary */}
-                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
+                <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
                         <CreditCard className="h-5 w-5 text-accent" />
                         Resumen de Cobros

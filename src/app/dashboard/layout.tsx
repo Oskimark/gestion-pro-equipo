@@ -2,12 +2,11 @@
 
 import Sidebar from "@/components/Sidebar";
 import { useProfile } from "@/hooks/useProfile";
-import { Loader2, Menu, Bell, AlertTriangle, LogOut, ChevronDown, Sun, Moon, Monitor } from "lucide-react";
+import { Loader2, Menu, Bell, AlertTriangle, LogOut, ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import { playerService } from "@/services/playerService";
 import { getDocStatus } from "@/utils/playerUtils";
 import { supabase } from "@/lib/supabase";
-import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -20,7 +19,6 @@ export default function DashboardLayout({
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [alertCount, setAlertCount] = useState(0);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-    const { theme, setTheme } = useTheme();
     const router = useRouter();
 
     useEffect(() => {
@@ -50,15 +48,15 @@ export default function DashboardLayout({
     };
 
     return (
-        <div className="flex h-screen bg-background overflow-hidden font-sans">
+        <div className="flex h-screen bg-slate-50 overflow-hidden font-sans">
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-                <header className="h-20 border-b border-border bg-card flex items-center justify-between px-4 sm:px-8 z-20">
+                <header className="h-20 border-b border-border bg-white flex items-center justify-between px-4 sm:px-8 z-20">
                     <div className="flex items-center gap-4">
                         <button
                             onClick={() => setIsSidebarOpen(true)}
-                            className="p-2 rounded-xl bg-slate-100 dark:bg-white/5 lg:hidden text-foreground"
+                            className="p-2 rounded-xl bg-slate-100 lg:hidden text-foreground"
                         >
                             <Menu className="h-6 w-6" />
                         </button>
@@ -68,24 +66,10 @@ export default function DashboardLayout({
                     </div>
 
                     <div className="flex items-center gap-3 sm:gap-4">
-                        <button
-                            onClick={() => {
-                                if (theme === 'light') setTheme('dark');
-                                else if (theme === 'dark') setTheme('system');
-                                else setTheme('light');
-                            }}
-                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-all hover:scale-110 flex items-center justify-center min-w-[40px]"
-                            title={`Modo actual: ${theme === 'light' ? 'Claro' : theme === 'dark' ? 'Oscuro' : 'Sistema'}. Haz clic para cambiar.`}
-                        >
-                            {theme === 'light' && <Sun className="h-5 w-5 text-amber-500" />}
-                            {theme === 'dark' && <Moon className="h-5 w-5 text-blue-400" />}
-                            {theme === 'system' && <Monitor className="h-5 w-5 text-slate-400" />}
-                        </button>
-
-                        <Link href="/dashboard/alerts" className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-colors relative group">
+                        <Link href="/dashboard/alerts" className="p-2 rounded-xl hover:bg-slate-100 text-muted-foreground transition-colors relative group">
                             <Bell className="h-5 w-5 group-hover:shake transition-all" />
                             {alertCount > 0 && (
-                                <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-white dark:border-slate-900 animate-pulse">
+                                <span className="absolute top-1 right-1 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-black flex items-center justify-center border-2 border-white animate-pulse">
                                     {alertCount}
                                 </span>
                             )}
@@ -111,7 +95,7 @@ export default function DashboardLayout({
                                 className="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-primary font-bold border-2 border-white/20 shadow-sm shrink-0 hover:scale-105 transition-transform relative"
                             >
                                 {profile?.full_name ? profile.full_name.charAt(0).toUpperCase() : "U"}
-                                <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-950 rounded-full p-0.5 border border-border">
+                                <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 border border-border">
                                     <ChevronDown className="h-2 w-2 text-foreground" />
                                 </div>
                             </button>
@@ -123,7 +107,7 @@ export default function DashboardLayout({
                                         className="fixed inset-0 z-30"
                                         onClick={() => setIsUserMenuOpen(false)}
                                     ></div>
-                                    <div className="absolute top-full right-0 mt-2 w-48 bg-white dark:bg-slate-950 border border-border rounded-2xl shadow-xl z-40 py-2 animate-in fade-in zoom-in-95 duration-200">
+                                    <div className="absolute top-full right-0 mt-2 w-48 bg-white border border-border rounded-2xl shadow-xl z-40 py-2 animate-in fade-in zoom-in-95 duration-200">
                                         <div className="px-4 py-2 border-b border-border/50 sm:hidden">
                                             <p className="text-xs font-bold text-foreground">
                                                 {profile?.full_name || "Usuario"}
@@ -131,7 +115,7 @@ export default function DashboardLayout({
                                         </div>
                                         <button
                                             onClick={handleLogout}
-                                            className="w-full text-left px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10 flex items-center gap-2 transition-colors"
+                                            className="w-full text-left px-4 py-3 text-sm font-bold text-red-600 hover:bg-red-50 flex items-center gap-2 transition-colors"
                                         >
                                             <LogOut className="h-4 w-4" />
                                             Cerrar Sesión
@@ -142,7 +126,7 @@ export default function DashboardLayout({
                         </div>
                     </div>
                 </header>
-                <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-50/50 dark:bg-slate-950/20">
+                <main className="flex-1 overflow-y-auto p-4 sm:p-8 bg-slate-50/50">
                     {children}
                 </main>
             </div>

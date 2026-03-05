@@ -69,15 +69,15 @@ export default function PaymentsPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
+                <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Total Pendiente</p>
                     <p className="text-3xl font-extrabold text-red-500">${totalPending}</p>
                 </div>
-                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
+                <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Recaudación Mes</p>
                     <p className="text-3xl font-extrabold text-green-500">$5000</p>
                 </div>
-                <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
+                <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden">
                     <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Pagos al Día</p>
                     <p className="text-3xl font-extrabold text-accent">65%</p>
                 </div>
@@ -99,7 +99,7 @@ export default function PaymentsPage() {
                             onClick={() => setFilter(s)}
                             className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${filter === s
                                 ? "bg-secondary text-primary"
-                                : "bg-white/50 dark:bg-white/5 text-muted-foreground hover:text-foreground border border-border/20"
+                                : "bg-white/50  text-muted-foreground hover:text-foreground border border-border/20"
                                 }`}
                         >
                             {s}
@@ -108,11 +108,11 @@ export default function PaymentsPage() {
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-slate-950 rounded-2xl border border-border/40 overflow-hidden relative">
+            <div className="bg-white  rounded-2xl border border-border/40 overflow-hidden relative">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="border-b border-border/40 bg-slate-50/50 dark:bg-white/5">
+                            <tr className="border-b border-border/40 bg-slate-50/50 ">
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Jugador</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Categoría</th>
                                 <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Monto</th>
@@ -122,7 +122,7 @@ export default function PaymentsPage() {
                         </thead>
                         <tbody className="divide-y divide-border/20">
                             {mockPayments.filter(p => filter === "Todos" || p.status === filter).map((payment) => (
-                                <tr key={payment.id} className="group hover:bg-white/40 dark:hover:bg-white/5 transition-colors">
+                                <tr key={payment.id} className="group hover:bg-white/40  transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap font-bold text-foreground">
                                         {payment.player}
                                     </td>
@@ -140,12 +140,12 @@ export default function PaymentsPage() {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex items-center gap-2">
                                             {payment.status === "Pagado" ? (
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700  ">
                                                     <CheckCircle2 className="h-3.5 w-3.5" />
                                                     Pagado
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300">
+                                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-red-100 text-red-700  ">
                                                     <AlertCircle className="h-3.5 w-3.5" />
                                                     Pendiente
                                                 </span>

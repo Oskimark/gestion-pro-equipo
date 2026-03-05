@@ -50,16 +50,16 @@ export default function Home() {
 
         {/* Feature Highlights */}
         <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-5xl">
-          <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-secondary/40 transition-all group relative overflow-hidden text-left border-l-4 border-l-secondary">
-            <h3 className="text-xl font-bold mb-2 text-primary dark:text-white group-hover:text-secondary transition-colors">Gestión de Jugadores</h3>
+          <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-secondary/40 transition-all group relative overflow-hidden text-left border-l-4 border-l-secondary">
+            <h3 className="text-xl font-bold mb-2 text-primary  group-hover:text-secondary transition-colors">Gestión de Jugadores</h3>
             <p className="text-muted-foreground font-medium text-sm">Centraliza toda la información deportiva, médica y de contacto.</p>
           </div>
-          <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden text-left border-l-4 border-l-accent">
-            <h3 className="text-xl font-bold mb-2 text-primary dark:text-white group-hover:text-accent transition-colors">Control de Pagos</h3>
+          <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden text-left border-l-4 border-l-accent">
+            <h3 className="text-xl font-bold mb-2 text-primary  group-hover:text-accent transition-colors">Control de Pagos</h3>
             <p className="text-muted-foreground font-medium text-sm">Visualiza estados de cuenta con nuestro sistema de semáforos inteligente.</p>
           </div>
-          <div className="bg-white dark:bg-slate-950 p-6 rounded-3xl border border-border/40 hover:border-white/40 transition-all group relative overflow-hidden text-left border-l-4 border-l-white/50">
-            <h3 className="text-xl font-bold mb-2 text-primary dark:text-white transition-colors">Competición</h3>
+          <div className="bg-white  p-6 rounded-3xl border border-border/40 hover:border-white/40 transition-all group relative overflow-hidden text-left border-l-4 border-l-white/50">
+            <h3 className="text-xl font-bold mb-2 text-primary  transition-colors">Competición</h3>
             <p className="text-muted-foreground font-medium text-sm">Calendario de partidos, resultados y goleadores en un solo lugar.</p>
           </div>
         </div>

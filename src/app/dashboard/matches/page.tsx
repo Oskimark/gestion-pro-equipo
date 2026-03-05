@@ -59,8 +59,8 @@ export default function MatchesPage() {
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-foreground dark:text-white">Partidos y Resultados</h1>
-                    <p className="text-muted-foreground dark:text-slate-300">Calendario de competición y estadísticas.</p>
+                    <h1 className="text-3xl font-extrabold text-foreground ">Partidos y Resultados</h1>
+                    <p className="text-muted-foreground ">Calendario de competición y estadísticas.</p>
                 </div>
                 {!isVisitor && (
                     <Link href="/dashboard/matches/new" className="btn-primary flex items-center gap-2">
@@ -71,7 +71,7 @@ export default function MatchesPage() {
             </div>
 
             {loading ? (
-                <div className="py-20 flex flex-col items-center justify-center gap-4 text-muted-foreground bg-white dark:bg-slate-950 rounded-3xl border border-border/40">
+                <div className="py-20 flex flex-col items-center justify-center gap-4 text-muted-foreground bg-white  rounded-3xl border border-border/40">
                     <Loader2 className="h-8 w-8 animate-spin text-secondary" />
                     <p className="font-medium">Cargando calendario...</p>
                 </div>
@@ -118,30 +118,30 @@ export default function MatchesPage() {
 
                     {/* Calendar / List */}
                     <div className="space-y-4">
-                        <h3 className="text-xl font-bold text-foreground dark:text-white">
+                        <h3 className="text-xl font-bold text-foreground ">
                             {pastMatches.length > 0 ? "Historial Reciente" : "Próximos Encuentros"}
                         </h3>
                         <div className="grid grid-cols-1 gap-4">
                             {matches.length === 0 ? (
-                                <div className="p-12 text-center bg-white dark:bg-slate-950 rounded-3xl border border-border/40 border-dashed">
+                                <div className="p-12 text-center bg-white  rounded-3xl border border-border/40 border-dashed">
                                     <Calendar className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
                                     <p className="text-muted-foreground font-medium">No hay partidos programados en este momento.</p>
                                 </div>
                             ) : (
                                 matches.map((match) => (
                                     <div key={match.id} className={`p-4 sm:p-6 rounded-3xl border transition-all group relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${match.status === "Finalizado"
-                                        ? "bg-slate-50/50 dark:bg-white/[0.02] border-border/20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
-                                        : "bg-white dark:bg-slate-950 border-border/40 hover:border-secondary/40 shadow-sm"
+                                        ? "bg-slate-50/50  border-border/20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
+                                        : "bg-white  border-border/40 hover:border-secondary/40 shadow-sm"
                                         }`}>
                                         <div className="flex items-center gap-4 sm:gap-6">
-                                            <div className={`flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl border border-border/20 shrink-0 ${match.status === "Finalizado" ? "bg-slate-100/50 dark:bg-white/5" : "bg-slate-100 dark:bg-white/5"
+                                            <div className={`flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl border border-border/20 shrink-0 ${match.status === "Finalizado" ? "bg-slate-100/50 " : "bg-slate-100 "
                                                 }`}>
-                                                <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase">{new Date(match.date).toLocaleString('es', { month: 'short' })}</span>
-                                                <span className="text-lg sm:text-xl font-extrabold text-foreground dark:text-white">{new Date(match.date).getDate()}</span>
+                                                <span className="text-[10px] font-bold text-muted-foreground  uppercase">{new Date(match.date).toLocaleString('es', { month: 'short' })}</span>
+                                                <span className="text-lg sm:text-xl font-extrabold text-foreground ">{new Date(match.date).getDate()}</span>
                                             </div>
                                             <div className="min-w-0">
-                                                <h4 className="font-extrabold text-base sm:text-lg text-foreground dark:text-white group-hover:text-accent transition-colors truncate">vs {match.rival}</h4>
-                                                <p className="text-xs sm:text-sm text-muted-foreground dark:text-slate-300 flex items-center gap-1.5 truncate">
+                                                <h4 className="font-extrabold text-base sm:text-lg text-foreground  group-hover:text-accent transition-colors truncate">vs {match.rival}</h4>
+                                                <p className="text-xs sm:text-sm text-muted-foreground  flex items-center gap-1.5 truncate">
                                                     <MapPin className="h-3.5 w-3.5 shrink-0" />
                                                     {match.venue}
                                                 </p>
@@ -164,12 +164,12 @@ export default function MatchesPage() {
 
                                             {!isVisitor && (
                                                 <div className="flex items-center gap-2">
-                                                    <Link href={`/dashboard/matches/edit/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors" title="Editar">
+                                                    <Link href={`/dashboard/matches/edit/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-green-500 transition-colors" title="Editar">
                                                         <Edit2 className="h-5 w-5" />
                                                     </Link>
                                                     <button
                                                         onClick={() => handleDelete(match.id, match.rival)}
-                                                        className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors"
+                                                        className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-red-500 transition-colors"
                                                         title="Eliminar"
                                                     >
                                                         <Trash2 className="h-5 w-5" />

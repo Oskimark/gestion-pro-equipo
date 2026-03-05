@@ -98,7 +98,7 @@ export default function PlayersPage() {
                 </button>
             </div>
 
-            <div className="bg-white dark:bg-slate-950 rounded-2xl border border-border/40 overflow-hidden shadow-sm relative">
+            <div className="bg-white  rounded-2xl border border-border/40 overflow-hidden shadow-sm relative">
                 <div className="overflow-x-auto">
                     {loading ? (
                         <div className="py-20 flex flex-col items-center justify-center gap-4 text-muted-foreground">
@@ -108,9 +108,9 @@ export default function PlayersPage() {
                     ) : (
                         <table className="w-full text-left">
                             <thead className="sticky top-0 z-30">
-                                <tr className="border-b border-border/40 bg-slate-50 dark:bg-slate-900 shadow-sm">
-                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50 dark:bg-slate-900 min-w-[180px] max-w-[180px]">Jugador</th>
-                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-[180px] z-40 bg-slate-50 dark:bg-slate-900 border-r border-border/40 sm:border-transparent sm:static sm:z-30 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.05)] sm:shadow-none">Dorsal</th>
+                                <tr className="border-b border-border/40 bg-slate-50  shadow-sm">
+                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50  min-w-[180px] max-w-[180px]">Jugador</th>
+                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-[180px] z-40 bg-slate-50  border-r border-border/40 sm:border-transparent sm:static sm:z-30 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.05)] sm:shadow-none">Dorsal</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Cédula</th>
@@ -120,26 +120,26 @@ export default function PlayersPage() {
                             </thead>
                             <tbody className="divide-y divide-border/20">
                                 {filteredPlayers.map((player) => (
-                                    <tr key={player.id} className="hover:bg-slate-50 dark:hover:bg-white/5 transition-colors group">
-                                        <td className="px-4 py-4 whitespace-nowrap sticky left-0 z-20 bg-white dark:bg-slate-950 sm:static sm:bg-transparent min-w-[180px] max-w-[180px] overflow-hidden group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
+                                    <tr key={player.id} className="hover:bg-slate-50  transition-colors group">
+                                        <td className="px-4 py-4 whitespace-nowrap sticky left-0 z-20 bg-white  sm:static sm:bg-transparent min-w-[180px] max-w-[180px] overflow-hidden group-hover:bg-slate-50  transition-colors">
                                             <div className="flex items-center gap-3">
                                                 {player.photo_url ? (
                                                     <img src={player.photo_url} alt={player.full_name} className="h-10 w-10 rounded-full object-cover shrink-0 border border-border" />
                                                 ) : (
-                                                    <div className="h-10 w-10 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border border-border text-slate-400 shrink-0 group-hover:border-secondary transition-colors">
+                                                    <div className="h-10 w-10 rounded-full bg-slate-100  flex items-center justify-center border border-border text-slate-400 shrink-0 group-hover:border-secondary transition-colors">
                                                         <User className="h-6 w-6" />
                                                     </div>
                                                 )}
-                                                <span className="font-bold text-foreground dark:text-white truncate">{player.full_name}</span>
+                                                <span className="font-bold text-foreground  truncate">{player.full_name}</span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-4 whitespace-nowrap sticky left-[180px] z-20 bg-white dark:bg-slate-950 border-r border-border/40 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)] sm:shadow-none sm:border-transparent sm:static sm:bg-transparent group-hover:bg-slate-50 dark:group-hover:bg-slate-900 transition-colors">
+                                        <td className="px-4 py-4 whitespace-nowrap sticky left-[180px] z-20 bg-white  border-r border-border/40 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)] sm:shadow-none sm:border-transparent sm:static sm:bg-transparent group-hover:bg-slate-50  transition-colors">
                                             <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-secondary/10 text-secondary font-extrabold border border-secondary/20 flex-shrink-0">
                                                 {player.shirt_number || "-"}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700  ">
                                                 {player.position || "N/A"}
                                             </span>
                                         </td>
@@ -169,24 +169,24 @@ export default function PlayersPage() {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center gap-2">
                                                 <div className="flex items-center gap-2">
-                                                    <Link href={`/dashboard/players/detail/${player.id}`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-accent transition-colors" title="Ver Detalles">
+                                                    <Link href={`/dashboard/players/detail/${player.id}`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-accent transition-colors" title="Ver Detalles">
                                                         <Eye className="h-5 w-5" />
                                                     </Link>
                                                     {!isVisitor && (
                                                         <>
-                                                            <Link href={`/dashboard/players/detail/${player.id}?edit=true`} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-green-500 transition-colors" title="Editar">
+                                                            <Link href={`/dashboard/players/detail/${player.id}?edit=true`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-green-500 transition-colors" title="Editar">
                                                                 <Edit2 className="h-5 w-5" />
                                                             </Link>
                                                             <button
                                                                 onClick={() => setReportPlayer(player)}
-                                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-blue-500 transition-colors"
+                                                                className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-blue-500 transition-colors"
                                                                 title="Generar Reporte"
                                                             >
                                                                 <FileDown className="h-5 w-5" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDelete(player.id, player.full_name)}
-                                                                className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-red-500 transition-colors"
+                                                                className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-red-500 transition-colors"
                                                                 title="Eliminar"
                                                             >
                                                                 <Trash2 className="h-5 w-5" />

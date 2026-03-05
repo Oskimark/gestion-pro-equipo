@@ -69,7 +69,7 @@ export default function NewMatchPage() {
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center gap-4">
-                <Link href="/dashboard/matches" className="p-2 rounded-full hover:bg-white dark:hover:bg-white/5 text-muted-foreground hover:text-foreground transition-all shadow-sm">
+                <Link href="/dashboard/matches" className="p-2 rounded-full hover:bg-white  text-muted-foreground hover:text-foreground transition-all shadow-sm">
                     <ArrowLeft className="h-6 w-6" />
                 </Link>
                 <div>
@@ -79,7 +79,7 @@ export default function NewMatchPage() {
             </div>
 
             <div className="max-w-4xl">
-                <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-950 rounded-3xl border border-border/40 shadow-xl overflow-hidden group hover:border-accent/30 transition-all">
+                <form onSubmit={handleSubmit} className="bg-white  rounded-3xl border border-border/40 shadow-xl overflow-hidden group hover:border-accent/30 transition-all">
                     <div className="p-8 space-y-8">
                         {/* Section: Basic Info */}
                         <div className="space-y-6">
@@ -97,7 +97,7 @@ export default function NewMatchPage() {
                                         value={formData.rival}
                                         onChange={handleChange}
                                         required
-                                        className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                        className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                         placeholder="Nombre del club rival..."
                                     />
                                 </div>
@@ -112,7 +112,7 @@ export default function NewMatchPage() {
                                             value={formData.date}
                                             onChange={handleChange}
                                             required
-                                            className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                            className="w-full bg-slate-50  border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                         />
                                     </div>
                                 </div>
@@ -126,7 +126,7 @@ export default function NewMatchPage() {
                                             name="time"
                                             value={formData.time}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                            className="w-full bg-slate-50  border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                         />
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@ export default function NewMatchPage() {
                                             name="venue"
                                             value={formData.venue}
                                             onChange={handleChange}
-                                            className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                            className="w-full bg-slate-50  border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                             placeholder="Ej: Cancha Local, Estadio Parque Alzaga..."
                                         />
                                     </div>
@@ -152,7 +152,7 @@ export default function NewMatchPage() {
                                         name="status"
                                         value={formData.status}
                                         onChange={handleChange as any}
-                                        className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                        className="w-full bg-slate-50  border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                     >
                                         <option value="Próximo">Próximo</option>
                                         <option value="Finalizado">Finalizado</option>
@@ -168,7 +168,7 @@ export default function NewMatchPage() {
                                     <Trophy className="h-5 w-5 text-amber-500" />
                                     Resultado Final
                                 </h3>
-                                <div className="flex items-center gap-8 justify-center bg-slate-50 dark:bg-white/5 p-8 rounded-2xl border border-border/20">
+                                <div className="flex items-center gap-8 justify-center bg-slate-50  p-8 rounded-2xl border border-border/20">
                                     <div className="text-center space-y-3">
                                         <p className="text-xs font-black uppercase text-muted-foreground">MARCADOR 33</p>
                                         <input
@@ -176,7 +176,7 @@ export default function NewMatchPage() {
                                             name="score_home"
                                             value={formData.score_home ?? ""}
                                             onChange={handleChange}
-                                            className="w-20 h-20 text-4xl font-black text-center bg-white dark:bg-slate-900 border-2 border-primary rounded-2xl focus:ring-4 focus:ring-primary/20 outline-none transition-all"
+                                            className="w-20 h-20 text-4xl font-black text-center bg-white  border-2 border-primary rounded-2xl focus:ring-4 focus:ring-primary/20 outline-none transition-all"
                                             placeholder="0"
                                         />
                                     </div>
@@ -188,7 +188,7 @@ export default function NewMatchPage() {
                                             name="score_away"
                                             value={formData.score_away ?? ""}
                                             onChange={handleChange}
-                                            className="w-20 h-20 text-4xl font-black text-center bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-700 rounded-2xl focus:ring-4 focus:ring-slate-400/20 outline-none transition-all"
+                                            className="w-20 h-20 text-4xl font-black text-center bg-white  border-2 border-slate-300  rounded-2xl focus:ring-4 focus:ring-slate-400/20 outline-none transition-all"
                                             placeholder="0"
                                         />
                                     </div>
@@ -197,7 +197,7 @@ export default function NewMatchPage() {
                         )}
                     </div>
 
-                    <div className="p-8 border-t border-border/40 bg-slate-50/30 dark:bg-black/10 flex justify-end">
+                    <div className="p-8 border-t border-border/40 bg-slate-50/30  flex justify-end">
                         <button
                             type="submit"
                             disabled={loading}

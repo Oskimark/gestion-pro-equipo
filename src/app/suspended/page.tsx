@@ -20,7 +20,7 @@ export default function SuspendedPage() {
             </div>
 
             <div className="relative z-10 w-full max-w-md">
-                <div className="bg-white dark:bg-slate-950 p-10 rounded-3xl border border-red-500/30 hover:border-red-500/50 transition-all group relative overflow-hidden text-center shadow-2xl">
+                <div className="bg-white  p-10 rounded-3xl border border-red-500/30 hover:border-red-500/50 transition-all group relative overflow-hidden text-center shadow-2xl">
                     <div className="w-24 h-24 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 mx-auto mb-8 animate-pulse">
                         <ShieldAlert className="h-12 w-12" />
                     </div>

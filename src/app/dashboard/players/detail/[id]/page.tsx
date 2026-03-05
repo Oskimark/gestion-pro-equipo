@@ -291,7 +291,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
-                    <Link href="/dashboard/players" className="p-2 rounded-full hover:bg-white dark:hover:bg-white/5 text-muted-foreground hover:text-foreground transition-all shadow-sm">
+                    <Link href="/dashboard/players" className="p-2 rounded-full hover:bg-white text-muted-foreground hover:text-foreground transition-all shadow-sm">
                         <ArrowLeft className="h-6 w-6" />
                     </Link>
                     <div>
@@ -329,9 +329,9 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Left Column: Avatar & Summary */}
                 <div className="lg:col-span-1">
-                    <div className="bg-white dark:bg-slate-950 p-10 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden text-center sticky top-8 shadow-sm">
+                    <div className="bg-white p-10 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden text-center sticky top-8 shadow-sm">
                         <div className="relative mx-auto w-32 h-32 mb-6">
-                            <div className="w-full h-full rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center border-4 border-white dark:border-slate-900 shadow-xl overflow-hidden group">
+                            <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center border-4 border-white shadow-xl overflow-hidden group">
                                 {photoPreview || formData.photo_url ? (
                                     <img src={photoPreview || formData.photo_url || ""} alt={formData.full_name} className="w-full h-full object-cover" />
                                 ) : (
@@ -351,7 +351,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                 )}
                             </div>
                             {formData.shirt_number && (
-                                <div className="absolute -bottom-1 -right-1 h-10 w-10 rounded-xl bg-secondary flex items-center justify-center font-extrabold text-primary border-4 border-white dark:border-slate-900 scale-in-center shadow-lg">
+                                <div className="absolute -bottom-1 -right-1 h-10 w-10 rounded-xl bg-secondary flex items-center justify-center font-extrabold text-primary border-4 border-white scale-in-center shadow-lg">
                                     {formData.shirt_number}
                                 </div>
                             )}
@@ -403,8 +403,8 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
 
                 {/* Right Column: Information Tabs */}
                 <div className="lg:col-span-2">
-                    <div className="bg-white dark:bg-slate-950 rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden flex flex-col h-full shadow-sm">
-                        <div className="flex border-b border-border/40 bg-slate-50/50 dark:bg-white/5 overflow-x-auto no-scrollbar">
+                    <div className="bg-white rounded-3xl border border-border/40 hover:border-accent/40 transition-all group relative overflow-hidden flex flex-col h-full shadow-sm">
+                        <div className="flex border-b border-border/40 bg-slate-50/50 overflow-x-auto no-scrollbar">
                             {navigationTabs
                                 .filter(tab => !isVisitor || !tab.restricted)
                                 .map((tab) => (
@@ -439,7 +439,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 value={formData.full_name || ""}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
+                                                className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
                                             />
                                         </div>
                                         <div>
@@ -450,7 +450,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 value={formData.shirt_number || ""}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
+                                                className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
                                             />
                                         </div>
                                         <div>
@@ -460,7 +460,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 value={formData.position || ""}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
+                                                className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
                                             >
                                                 <option>Portero</option>
                                                 <option>Defensa</option>
@@ -477,7 +477,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 value={formData.birth_date || ""}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
+                                                className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
                                             />
                                         </div>
                                     </div>
@@ -496,15 +496,15 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Camiseta</label>
-                                                <input type="text" name="shirt_size" value={formData.shirt_size || ""} onChange={handleChange} disabled={!isEditing} placeholder="Ej: M, 14..." className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="shirt_size" value={formData.shirt_size || ""} onChange={handleChange} disabled={!isEditing} placeholder="Ej: M, 14..." className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Short</label>
-                                                <input type="text" name="short_size" value={formData.short_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="short_size" value={formData.short_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Medias</label>
-                                                <input type="text" name="socks_size" value={formData.socks_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="socks_size" value={formData.socks_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                         </div>
                                     </div>
@@ -517,19 +517,19 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Camiseta Larga</label>
-                                                <input type="text" name="long_jersey_size" value={formData.long_jersey_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="long_jersey_size" value={formData.long_jersey_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Pantalón Largo</label>
-                                                <input type="text" name="long_shorts_size" value={formData.long_shorts_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="long_shorts_size" value={formData.long_shorts_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Campera / Abrigo</label>
-                                                <input type="text" name="jacket_size" value={formData.jacket_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="jacket_size" value={formData.jacket_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                             <div>
                                                 <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Calzado / Zapatillas</label>
-                                                <input type="text" name="shoe_size" value={formData.shoe_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="shoe_size" value={formData.shoe_size || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                         </div>
                                     </div>
@@ -546,11 +546,11 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                             <p className="text-xs font-black text-secondary uppercase tracking-widest">Madre</p>
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-muted-foreground uppercase">Nombre Completo</label>
-                                                <input type="text" name="mother_name" value={formData.mother_name || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="mother_name" value={formData.mother_name || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-muted-foreground uppercase">Teléfono</label>
-                                                <input type="text" name="mother_phone" value={formData.mother_phone || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="mother_phone" value={formData.mother_phone || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                         </div>
 
@@ -559,11 +559,11 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                             <p className="text-xs font-black text-secondary uppercase tracking-widest">Padre</p>
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-muted-foreground uppercase">Nombre Completo</label>
-                                                <input type="text" name="father_name" value={formData.father_name || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="father_name" value={formData.father_name || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="block text-[10px] font-bold text-muted-foreground uppercase">Teléfono</label>
-                                                <input type="text" name="father_phone" value={formData.father_phone || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                <input type="text" name="father_phone" value={formData.father_phone || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                             </div>
                                         </div>
 
@@ -573,11 +573,11 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div className="space-y-2">
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase">Nombre Completo</label>
-                                                    <input type="text" name="referent_name" value={formData.referent_name || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                    <input type="text" name="referent_name" value={formData.referent_name || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase">Teléfono</label>
-                                                    <input type="text" name="referent_phone" value={formData.referent_phone || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
+                                                    <input type="text" name="referent_phone" value={formData.referent_phone || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-slate-50 border border-border rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all" />
                                                 </div>
                                             </div>
                                         </div>
@@ -590,7 +590,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 value={formData.address || ""}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
+                                                className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium"
                                             />
                                         </div>
                                     </div>
@@ -603,10 +603,10 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                         {/* ID Card */}
-                                        <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
+                                        <div className="bg-white p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-8 w-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600">
+                                                    <div className="h-8 w-8 rounded-lg bg-blue-100 flex items-center justify-center text-blue-600">
                                                         <FileText className="h-4 w-4" />
                                                     </div>
                                                     <p className="text-sm font-bold text-foreground">Cédula de Identidad</p>
@@ -636,7 +636,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                         }
                                                         window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
                                                     }}
-                                                    className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn relative"
+                                                    className="p-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn relative"
                                                     title={`Consultar por WhatsApp (${player.id_card_notified_count || 0} enviados)`}
                                                 >
                                                     {player.id_card_notified_count && player.id_card_notified_count > 0 ? (
@@ -682,7 +682,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                             type="button"
                                                             onClick={() => handleRejectDoc('id')}
                                                             disabled={saving}
-                                                            className="flex-1 bg-slate-200 dark:bg-white/10 hover:bg-red-500 hover:text-white text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase py-2 rounded-lg transition-all flex items-center justify-center gap-1"
+                                                            className="flex-1 bg-slate-200 hover:bg-red-500 hover:text-white text-slate-700 text-[10px] font-black uppercase py-2 rounded-lg transition-all flex items-center justify-center gap-1"
                                                         >
                                                             <X className="h-3 w-3" /> Rechazar
                                                         </button>
@@ -693,11 +693,11 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                             <div className="space-y-3">
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Número de CI</label>
-                                                    <input type="text" name="id_card_num" value={formData.id_card_num || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white dark:bg-white/5 border border-border rounded-lg p-2 text-sm" />
+                                                    <input type="text" name="id_card_num" value={formData.id_card_num || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white border border-border rounded-lg p-2 text-sm" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento CI</label>
-                                                    <input type="date" name="id_card_expiry" value={formData.id_card_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white dark:bg-white/5 border border-border rounded-lg p-2 text-sm" />
+                                                    <input type="date" name="id_card_expiry" value={formData.id_card_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white border border-border rounded-lg p-2 text-sm" />
                                                 </div>
                                                 <div className="pt-2">
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
@@ -715,13 +715,13 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                             </div>
                                                         ) : (
                                                             isEditing ? (
-                                                                <label className="cursor-pointer bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all w-full">
+                                                                <label className="cursor-pointer bg-slate-50 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 transition-all w-full">
                                                                     <Upload className="h-4 w-4 text-muted-foreground mb-2" />
                                                                     <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
                                                                     <input type="file" accept="image/*" onChange={handleIdCardChange} className="hidden" />
                                                                 </label>
                                                             ) : (
-                                                                <div className="bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex items-center justify-center w-full">
+                                                                <div className="bg-slate-50 border border-dashed border-border rounded-lg p-4 flex items-center justify-center w-full">
                                                                     <span className="text-[10px] uppercase font-bold text-muted-foreground">Sin documento</span>
                                                                 </div>
                                                             )
@@ -732,10 +732,10 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                         </div>
 
                                         {/* Health Card / Ficha */}
-                                        <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
+                                        <div className="bg-white p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-3">
-                                                    <div className="h-8 w-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600">
+                                                    <div className="h-8 w-8 rounded-lg bg-green-100 flex items-center justify-center text-green-600">
                                                         <Shield className="h-4 w-4" />
                                                     </div>
                                                     <p className="text-sm font-bold text-foreground">Ficha de Salud / Carnet</p>
@@ -765,7 +765,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                         }
                                                         window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
                                                     }}
-                                                    className="p-1.5 bg-green-100 dark:bg-green-900/30 hover:bg-green-200 dark:hover:bg-green-800/50 text-green-700 dark:text-green-500 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn relative"
+                                                    className="p-1.5 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg transition-colors flex items-center justify-center shrink-0 group/btn relative"
                                                     title={`Consultar por WhatsApp (${player.health_card_notified_count || 0} enviados)`}
                                                 >
                                                     {player.health_card_notified_count && player.health_card_notified_count > 0 ? (
@@ -811,7 +811,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                             type="button"
                                                             onClick={() => handleRejectDoc('health')}
                                                             disabled={saving}
-                                                            className="flex-1 bg-slate-200 dark:bg-white/10 hover:bg-red-500 hover:text-white text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase py-2 rounded-lg transition-all flex items-center justify-center gap-1"
+                                                            className="flex-1 bg-slate-200 hover:bg-red-500 hover:text-white text-slate-700 text-[10px] font-black uppercase py-2 rounded-lg transition-all flex items-center justify-center gap-1"
                                                         >
                                                             <X className="h-3 w-3" /> Rechazar
                                                         </button>
@@ -822,11 +822,11 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                             <div className="space-y-3">
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Empresa Salud / Seguro</label>
-                                                    <input type="text" name="health_insurance" value={formData.health_insurance || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white dark:bg-white/5 border border-border rounded-lg p-2 text-sm" />
+                                                    <input type="text" name="health_insurance" value={formData.health_insurance || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white border border-border rounded-lg p-2 text-sm" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento Ficha</label>
-                                                    <input type="date" name="health_card_expiry" value={formData.health_card_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white dark:bg-white/5 border border-border rounded-lg p-2 text-sm" />
+                                                    <input type="date" name="health_card_expiry" value={formData.health_card_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white border border-border rounded-lg p-2 text-sm" />
                                                 </div>
                                                 <div className="pt-2">
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
@@ -844,13 +844,13 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                             </div>
                                                         ) : (
                                                             isEditing ? (
-                                                                <label className="cursor-pointer bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 dark:hover:bg-white/10 transition-all w-full">
+                                                                <label className="cursor-pointer bg-slate-50 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 transition-all w-full">
                                                                     <Upload className="h-4 w-4 text-muted-foreground mb-2" />
                                                                     <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
                                                                     <input type="file" accept="image/*" onChange={handleHealthCardChange} className="hidden" />
                                                                 </label>
                                                             ) : (
-                                                                <div className="bg-slate-50 dark:bg-white/5 border border-dashed border-border rounded-lg p-4 flex items-center justify-center w-full">
+                                                                <div className="bg-slate-50 border border-dashed border-border rounded-lg p-4 flex items-center justify-center w-full">
                                                                     <span className="text-[10px] uppercase font-bold text-muted-foreground">Sin documento</span>
                                                                 </div>
                                                             )
@@ -861,9 +861,9 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                         </div>
 
                                         {/* Permissions */}
-                                        <div className="bg-white dark:bg-slate-950 p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4 md:col-span-2">
+                                        <div className="bg-white p-5 rounded-2xl border border-border/20 transition-all group relative overflow-hidden space-y-4 md:col-span-2">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <div className="h-8 w-8 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center text-yellow-600">
+                                                <div className="h-8 w-8 rounded-lg bg-yellow-100 flex items-center justify-center text-yellow-600">
                                                     <Edit2 className="h-4 w-4" />
                                                 </div>
                                                 <p className="text-sm font-bold text-foreground">Permisos y Otros</p>
@@ -871,11 +871,11 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Detalle del Permiso</label>
-                                                    <input type="text" name="permit_info" value={formData.permit_info || ""} onChange={handleChange} disabled={!isEditing} placeholder="Ej: Viaje, Competencia..." className="w-full bg-white dark:bg-white/5 border border-border rounded-lg p-2 text-sm" />
+                                                    <input type="text" name="permit_info" value={formData.permit_info || ""} onChange={handleChange} disabled={!isEditing} placeholder="Ej: Viaje, Competencia..." className="w-full bg-white border border-border rounded-lg p-2 text-sm" />
                                                 </div>
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Vencimiento Permiso</label>
-                                                    <input type="date" name="permit_expiry" value={formData.permit_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white dark:bg-white/5 border border-border rounded-lg p-2 text-sm" />
+                                                    <input type="date" name="permit_expiry" value={formData.permit_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white border border-border rounded-lg p-2 text-sm" />
                                                 </div>
                                             </div>
                                         </div>
@@ -888,7 +888,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
                                                 rows={3}
-                                                className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium resize-none shadow-inner"
+                                                className="w-full bg-slate-50 border border-border rounded-xl p-3 outline-none focus:ring-2 focus:ring-accent/40 disabled:opacity-70 transition-all font-medium resize-none shadow-inner"
                                             ></textarea>
                                         </div>
                                     </div>
@@ -897,7 +897,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                         </div>
 
                         {isEditing && (
-                            <div className="p-8 border-t border-border/40 bg-slate-50/30 dark:bg-black/10 flex justify-end gap-4">
+                            <div className="p-8 border-t border-border/40 bg-slate-50/30 flex justify-end gap-4">
                                 <button
                                     type="button"
                                     onClick={() => setIsEditing(false)}
