@@ -100,8 +100,18 @@ export default function AlertsPage() {
         }
 
         const baseUrl = window.location.origin;
-        const uploadLink = docAlert.token ? `\n\nPuedes subirla tú mismo aquí: ${baseUrl}/public/docs/${docAlert.token}` : '';
-        const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.${uploadLink}`;
+        const settings = await settingsService.getSettings();
+
+        let message = '';
+        if (settings.wa_custom_text_enabled && settings.wa_custom_text) {
+            message = settings.wa_custom_text;
+        } else {
+            message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
+        }
+
+        if (settings.wa_send_form_link && docAlert.token) {
+            message += `\n\nPuedes subirla tú mismo aquí: ${baseUrl}/public/docs/${docAlert.token}`;
+        }
 
         try {
             const field = docAlert.type === 'Cédula' ? 'id_card_notified_count' : 'health_card_notified_count';
@@ -214,10 +224,13 @@ export default function AlertsPage() {
                                     </div>
                                     <div>
                                         <h3 className="font-black text-lg text-foreground leading-tight">{alert.name}</h3>
-                                        <div className="flex items-center gap-2 mt-1">
+                                        <div className="flex items-center gap-1 mt-1 flex-wrap">
+                                            <span className="px-2 py-0.5 rounded-lg bg-slate-100 dark:bg-white/5 text-[10px] font-black uppercase tracking-tighter text-slate-500">
+                                                {alert.type}
+                                            </span>
                                             <span className={`px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-tighter ${alert.status === 'Vencido' ? 'bg-red-100 text-red-600' :
-                                                    alert.status === 'Por vencer' ? 'bg-amber-100 text-amber-600' :
-                                                        alert.status === 'En revisión' ? 'bg-blue-100 text-blue-600' : 'bg-red-50 text-red-400'
+                                                alert.status === 'Por vencer' ? 'bg-amber-100 text-amber-600' :
+                                                    alert.status === 'En revisión' ? 'bg-blue-100 text-blue-600' : 'bg-red-50 text-red-400'
                                                 }`}>
                                                 {alert.status}
                                             </span>

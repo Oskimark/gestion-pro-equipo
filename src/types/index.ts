@@ -96,5 +96,8 @@ export type ClubSettings = {
   id?: string;
   id_card_alert_days: number;
   health_card_alert_days: number;
+  wa_send_form_link?: boolean;
+  wa_custom_text_enabled?: boolean;
+  wa_custom_text?: string;
   updated_at?: string;
 };

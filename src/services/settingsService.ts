@@ -12,11 +12,23 @@ export const settingsService = {
         if (error) {
             // If table is empty or error occurs, return defaults
             if (error.code === 'PGRST116') {
-                return { id_card_alert_days: 30, health_card_alert_days: 30 };
+                return {
+                    id_card_alert_days: 30,
+                    health_card_alert_days: 30,
+                    wa_send_form_link: true,
+                    wa_custom_text_enabled: false,
+                    wa_custom_text: ''
+                };
             }
             console.error('Error fetching settings:', error);
             // Default fallback
-            return { id_card_alert_days: 30, health_card_alert_days: 30 };
+            return {
+                id_card_alert_days: 30,
+                health_card_alert_days: 30,
+                wa_send_form_link: true,
+                wa_custom_text_enabled: false,
+                wa_custom_text: ''
+            };
         }
 
         return data as ClubSettings;

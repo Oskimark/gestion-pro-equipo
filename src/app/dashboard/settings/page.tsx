@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2 } from "lucide-react";
+import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type } from "lucide-react";
 import { settingsService } from "@/services/settingsService";
 import { ClubSettings } from "@/types";
 import { useProfile } from "@/hooks/useProfile";
@@ -145,6 +145,90 @@ export default function SettingsPage() {
                             <p className="text-xs text-muted-foreground">
                                 Los jugadores con Ficha Médica que venza en {settings.health_card_alert_days} días o menos aparecerán en el Dashboard como "Por vencer".
                             </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-12 flex items-center gap-3 mb-6 pb-6 border-b border-border/10">
+                        <div className="p-3 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-xl">
+                            <MessageCircle className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-foreground">Notificaciones WhatsApp</h2>
+                            <p className="text-sm text-muted-foreground">Personaliza los mensajes que se envían a los padres.</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-8">
+                        {/* Send Form Link Toggle */}
+                        <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-border/20">
+                            <div className="flex items-center gap-4">
+                                <div className="p-2 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-border/10">
+                                    <Link2 className="h-5 w-5 text-muted-foreground" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold text-foreground">Enviar link de formulario</h3>
+                                    <p className="text-xs text-muted-foreground">Incluye automáticamente el enlace de autogestión para que los padres suban los documentos.</p>
+                                </div>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={settings.wa_send_form_link}
+                                    onChange={(e) => setSettings({ ...settings, wa_send_form_link: e.target.checked })}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-green-600"></div>
+                            </label>
+                        </div>
+
+                        {/* Custom Text Toggle */}
+                        <div className="space-y-4">
+                            <div className="flex items-center gap-4 mb-2">
+                                <div className="p-2 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-border/10">
+                                    <Type className="h-5 w-5 text-muted-foreground" />
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold text-foreground">Contenido del Mensaje</h3>
+                                    <p className="text-xs text-muted-foreground">Elige si usar el texto predeterminado del sistema o uno propio.</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <button
+                                    type="button"
+                                    onClick={() => setSettings({ ...settings, wa_custom_text_enabled: false })}
+                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${!settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border'}`}
+                                >
+                                    <p className="font-bold text-sm mb-1">Predeterminado</p>
+                                    <p className="text-[10px] text-muted-foreground uppercase font-black">Sistema</p>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setSettings({ ...settings, wa_custom_text_enabled: true })}
+                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border'}`}
+                                >
+                                    <p className="font-bold text-sm mb-1">Personalizado</p>
+                                    <p className="text-[10px] text-muted-foreground uppercase font-black">Manual</p>
+                                </button>
+                            </div>
+
+                            {settings.wa_custom_text_enabled && (
+                                <div className="animate-in slide-in-from-top-2 duration-300">
+                                    <textarea
+                                        value={settings.wa_custom_text}
+                                        onChange={(e) => setSettings({ ...settings, wa_custom_text: e.target.value })}
+                                        placeholder="Escribe aquí el mensaje personalizado..."
+                                        rows={4}
+                                        className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-2xl p-4 text-sm font-medium focus:ring-2 focus:ring-secondary/50 outline-none transition-all placeholder:text-muted-foreground/50"
+                                    />
+                                    <div className="flex items-start gap-2 mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-100 dark:border-blue-900/30">
+                                        <BellRing className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
+                                        <p className="text-[10px] text-blue-700 dark:text-blue-400 font-medium">
+                                            El nombre del jugador, el tipo de documento y el estado se añadirán automáticamente al inicio o contexto si el sistema lo requiere para completar el aviso.
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 

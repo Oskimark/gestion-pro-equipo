@@ -96,8 +96,18 @@ export default function DashboardPage() {
         }
 
         const baseUrl = window.location.origin;
-        const uploadLink = docAlert.token ? `\n\nPuedes subirla tú mismo aquí: ${baseUrl}/public/docs/${docAlert.token}` : '';
-        const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.${uploadLink}`;
+        const settings = await settingsService.getSettings();
+
+        let message = '';
+        if (settings.wa_custom_text_enabled && settings.wa_custom_text) {
+            message = settings.wa_custom_text;
+        } else {
+            message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
+        }
+
+        if (settings.wa_send_form_link && docAlert.token) {
+            message += `\n\nPuedes subirla tú mismo aquí: ${baseUrl}/public/docs/${docAlert.token}`;
+        }
 
         try {
             // Increment in DB
@@ -219,7 +229,11 @@ export default function DashboardPage() {
                                         )}
                                         <div className="flex flex-col">
                                             <span className="font-bold text-sm text-foreground">{docAlert.name}</span>
-                                            <span className="text-xs text-muted-foreground">{docAlert.type} • <span className={docAlert.status === 'Vencido' ? 'text-red-500 font-bold' : docAlert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{docAlert.status}</span></span>
+                                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                                <span className="font-black uppercase tracking-tighter px-1 rounded bg-slate-100 dark:bg-white/10">{docAlert.type}</span>
+                                                <span>•</span>
+                                                <span className={docAlert.status === 'Vencido' ? 'text-red-500 font-bold' : docAlert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{docAlert.status}</span>
+                                            </span>
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-2">
