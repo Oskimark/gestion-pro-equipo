@@ -159,10 +159,10 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             }
 
             // Detect if dates changed to reset counts
-            if (formData.id_card_expiry !== player.id_card_expiry) {
+            if (player && formData.id_card_expiry !== player.id_card_expiry) {
                 updatedData.id_card_notified_count = 0;
             }
-            if (formData.health_card_expiry !== player.health_card_expiry) {
+            if (player && formData.health_card_expiry !== player.health_card_expiry) {
                 updatedData.health_card_notified_count = 0;
             }
 
