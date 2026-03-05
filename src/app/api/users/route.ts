@@ -34,8 +34,7 @@ export async function POST(request: Request) {
                 full_name: full_name || '',
                 phone: phone || '',
                 role: role || 'ayudante',
-                status: 'active',
-                email: email
+                status: 'active'
             });
 
         if (profileError) {
