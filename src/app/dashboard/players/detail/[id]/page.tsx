@@ -11,9 +11,11 @@ import {
     Save,
     Loader2,
     Edit2,
+    Check,
     X,
     Camera,
-    MessageCircle
+    MessageCircle,
+    AlertCircle
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -122,6 +124,71 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             const file = e.target.files[0];
             setHealthCardFile(file);
             setHealthCardPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handleApproveDoc = async (type: 'id' | 'health') => {
+        if (!player) return;
+        try {
+            setSaving(true);
+            const updates: Partial<Player> = {};
+            if (type === 'id') {
+                updates.id_card_url = player.id_card_rev_url;
+                updates.id_card_expiry = player.id_card_rev_expiry;
+                updates.id_card_rev_status = 'none';
+                updates.id_card_rev_url = null as any;
+                updates.id_card_rev_expiry = null as any;
+                updates.id_card_notified_count = 0; // Reset notifications on approval
+            } else {
+                updates.health_card_url = player.health_card_rev_url;
+                updates.health_card_expiry = player.health_card_rev_expiry;
+                updates.health_card_rev_status = 'none';
+                updates.health_card_rev_url = null as any;
+                updates.health_card_rev_expiry = null as any;
+                updates.health_card_notified_count = 0; // Reset notifications on approval
+            }
+
+            await playerService.update(player.id, updates);
+            await loadPlayer(); // Reload data
+            alert("Documento aprobado correctamente.");
+        } catch (err) {
+            console.error("Error approving document:", err);
+            alert("Error al aprobar el documento.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleRejectDoc = async (type: 'id' | 'health') => {
+        if (!player) return;
+        if (!confirm("¿Estás seguro de que deseas rechazar este documento? Se eliminarán los archivos temporales.")) return;
+
+        try {
+            setSaving(true);
+            const updates: Partial<Player> = {};
+            if (type === 'id') {
+                updates.id_card_rev_status = 'none';
+                updates.id_card_rev_url = null as any;
+                updates.id_card_rev_expiry = null as any;
+            } else {
+                updates.health_card_rev_status = 'none';
+                updates.health_card_rev_url = null as any;
+                updates.health_card_rev_expiry = null as any;
+            }
+
+            // Cleanup storage for rejected files
+            const urlToDelete = type === 'id' ? player.id_card_rev_url : player.health_card_rev_url;
+            if (urlToDelete) {
+                await uploadService.deleteFile(urlToDelete, "player-docs");
+            }
+
+            await playerService.update(player.id, updates);
+            await loadPlayer(); // Reload data
+        } catch (err) {
+            console.error("Error rejecting document:", err);
+            alert("Error al rechazar el documento.");
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -582,6 +649,47 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                     <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                                                 </button>
                                             </div>
+
+                                            {/* Revision Section for ID Card */}
+                                            {player?.id_card_rev_status === 'pending' && (
+                                                <div className="mt-2 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
+                                                    <div className="flex items-center gap-2 mb-3">
+                                                        <AlertCircle className="h-4 w-4 text-blue-500" />
+                                                        <span className="text-[10px] font-black uppercase tracking-tight text-blue-500">Revisión Pendiente (Padres)</span>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4 mb-4">
+                                                        <div className="text-[10px] space-y-1">
+                                                            <p className="text-muted-foreground uppercase font-black">Vencimiento Propuesto</p>
+                                                            <p className="text-blue-500 font-black">{player.id_card_rev_expiry || "No especificado"}</p>
+                                                        </div>
+                                                        <div className="text-[10px] space-y-1">
+                                                            <p className="text-muted-foreground uppercase font-black">Documento</p>
+                                                            {player.id_card_rev_url ? (
+                                                                <a href={player.id_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Archivo</a>
+                                                            ) : <p className="text-slate-500 italic">Sin archivo</p>}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleApproveDoc('id')}
+                                                            disabled={saving}
+                                                            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-black uppercase py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                                        >
+                                                            <Check className="h-3 w-3" /> Aprobar
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRejectDoc('id')}
+                                                            disabled={saving}
+                                                            className="flex-1 bg-slate-200 dark:bg-white/10 hover:bg-red-500 hover:text-white text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase py-2 rounded-lg transition-all flex items-center justify-center gap-1"
+                                                        >
+                                                            <X className="h-3 w-3" /> Rechazar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             <div className="space-y-3">
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Número de CI</label>
@@ -670,6 +778,47 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                     <MessageCircle className="h-4 w-4 group-hover/btn:scale-110 transition-transform" />
                                                 </button>
                                             </div>
+
+                                            {/* Revision Section for Health Card */}
+                                            {player?.health_card_rev_status === 'pending' && (
+                                                <div className="mt-2 p-4 rounded-xl bg-green-500/10 border border-green-500/30">
+                                                    <div className="flex items-center gap-2 mb-3">
+                                                        <AlertCircle className="h-4 w-4 text-green-500" />
+                                                        <span className="text-[10px] font-black uppercase tracking-tight text-green-500">Revisión Pendiente (Padres)</span>
+                                                    </div>
+                                                    <div className="grid grid-cols-2 gap-4 mb-4">
+                                                        <div className="text-[10px] space-y-1">
+                                                            <p className="text-muted-foreground uppercase font-black">Vencimiento Propuesto</p>
+                                                            <p className="text-green-500 font-black">{player.health_card_rev_expiry || "No especificado"}</p>
+                                                        </div>
+                                                        <div className="text-[10px] space-y-1">
+                                                            <p className="text-muted-foreground uppercase font-black">Documento</p>
+                                                            {player.health_card_rev_url ? (
+                                                                <a href={player.health_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-green-500 font-bold underline">Ver Archivo</a>
+                                                            ) : <p className="text-slate-500 italic">Sin archivo</p>}
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleApproveDoc('health')}
+                                                            disabled={saving}
+                                                            className="flex-1 bg-green-600 hover:bg-green-700 text-white text-[10px] font-black uppercase py-2 rounded-lg transition-colors flex items-center justify-center gap-1"
+                                                        >
+                                                            <Check className="h-3 w-3" /> Aprobar
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRejectDoc('health')}
+                                                            disabled={saving}
+                                                            className="flex-1 bg-slate-200 dark:bg-white/10 hover:bg-red-500 hover:text-white text-slate-700 dark:text-slate-300 text-[10px] font-black uppercase py-2 rounded-lg transition-all flex items-center justify-center gap-1"
+                                                        >
+                                                            <X className="h-3 w-3" /> Rechazar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+
                                             <div className="space-y-3">
                                                 <div>
                                                     <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-1">Empresa Salud / Seguro</label>

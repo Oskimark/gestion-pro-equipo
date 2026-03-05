@@ -34,9 +34,17 @@ export type Player = {
   permit_expiry?: string;
   health_insurance?: string;
   allergies?: string;
-
   id_card_notified_count?: number;
   health_card_notified_count?: number;
+
+  // New Revision fields
+  access_token?: string;
+  id_card_rev_url?: string;
+  id_card_rev_expiry?: string;
+  health_card_rev_url?: string;
+  health_card_rev_expiry?: string;
+  id_card_rev_status?: 'none' | 'pending' | 'approved' | 'rejected';
+  health_card_rev_status?: 'none' | 'pending' | 'approved' | 'rejected';
 
   created_at: string;
 };

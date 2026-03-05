@@ -23,7 +23,7 @@ export default function DashboardPage() {
     const { profile, loading: profileLoading } = useProfile();
     const [counts, setCounts] = useState({ players: 0, payments: 0, goals: 0 });
     const [nextMatch, setNextMatch] = useState<Match | null>(null);
-    const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number }[]>([]);
+    const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -46,13 +46,13 @@ export default function DashboardPage() {
             });
 
             // Calculate Alerts
-            const docAlerts: { id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number }[] = [];
+            const docAlerts: { id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[] = [];
             players.forEach(p => {
-                const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days);
-                const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days);
+                const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
+                const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
                 const phone = p.mother_phone || p.father_phone || p.referent_phone;
 
-                if (idStatus.label === 'Vencido' || idStatus.label === 'Por vencer' || idStatus.label === 'Faltante') {
+                if (idStatus.label !== 'Al día') {
                     docAlerts.push({
                         id: p.id,
                         name: p.full_name,
@@ -60,10 +60,11 @@ export default function DashboardPage() {
                         status: idStatus.label,
                         phone,
                         photo_url: p.photo_url,
-                        count: p.id_card_notified_count || 0
+                        count: p.id_card_notified_count || 0,
+                        token: p.access_token
                     });
                 }
-                if (healthStatus.label === 'Vencido' || healthStatus.label === 'Por vencer' || healthStatus.label === 'Faltante') {
+                if (healthStatus.label !== 'Al día') {
                     docAlerts.push({
                         id: p.id,
                         name: p.full_name,
@@ -71,7 +72,8 @@ export default function DashboardPage() {
                         status: healthStatus.label,
                         phone,
                         photo_url: p.photo_url,
-                        count: p.health_card_notified_count || 0
+                        count: p.health_card_notified_count || 0,
+                        token: p.access_token
                     });
                 }
             });
@@ -93,7 +95,9 @@ export default function DashboardPage() {
             return;
         }
 
-        const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.`;
+        const baseUrl = window.location.origin;
+        const uploadLink = docAlert.token ? `\n\nPuedes subirla tú mismo aquí: ${baseUrl}/public/docs/${docAlert.token}` : '';
+        const message = `Hola! Te escribimos de CLUB 33. Te avisamos que la ${docAlert.type} de ${docAlert.name} está ${docAlert.status === 'Vencido' ? 'vencida' : 'faltante'}.${uploadLink}`;
 
         try {
             // Increment in DB

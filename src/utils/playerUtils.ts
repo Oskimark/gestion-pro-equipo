@@ -1,6 +1,6 @@
 import { Check, X, AlertTriangle, LucideIcon } from "lucide-react";
 
-export type DocStatus = 'Al día' | 'Vencido' | 'Por vencer' | 'Faltante';
+export type DocStatus = 'Al día' | 'Vencido' | 'Por vencer' | 'Faltante' | 'En revisión';
 
 export interface StatusUI {
     icon: LucideIcon;
@@ -8,7 +8,11 @@ export interface StatusUI {
     label: DocStatus;
 }
 
-export const getDocStatus = (expiryDate?: string, alertDays: number = 30): StatusUI => {
+export const getDocStatus = (expiryDate?: string, alertDays: number = 30, revStatus: string = 'none'): StatusUI => {
+    if (revStatus === 'pending') {
+        return { icon: Check, color: "text-blue-500 bg-blue-500/10", label: "En revisión" };
+    }
+
     if (!expiryDate) return { icon: X, color: "text-red-500 bg-red-500/10", label: "Faltante" };
 
     const today = new Date();

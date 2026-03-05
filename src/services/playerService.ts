@@ -54,5 +54,16 @@ export const playerService = {
 
         if (error) throw error;
         return true;
+    },
+
+    async getByToken(token: string) {
+        const { data, error } = await supabase
+            .from("players")
+            .select("*")
+            .eq("access_token", token)
+            .single();
+
+        if (error) throw error;
+        return data as Player;
     }
 };
