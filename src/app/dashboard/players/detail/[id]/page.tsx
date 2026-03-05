@@ -945,14 +945,14 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                         <div className="flex gap-4">
                                             <div className="flex flex-col items-end">
                                                 <p className="text-[10px] font-black uppercase text-muted-foreground">Estado Cuota</p>
-                                                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${player?.fee_status === 'Al día' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
-                                                    {player?.fee_status || 'Pendiente'}
+                                                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${player?.fee_status === 'up_to_date' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                                                    {player?.fee_status === 'up_to_date' ? 'Al día' : player?.fee_status === 'behind' ? 'Atrasado' : 'Pendiente'}
                                                 </span>
                                             </div>
                                             <div className="flex flex-col items-end">
                                                 <p className="text-[10px] font-black uppercase text-muted-foreground">Indumentaria</p>
-                                                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${player?.gear_status === 'Pagado' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
-                                                    {player?.gear_status || 'Pendiente'}
+                                                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${player?.gear_status === 'paid' || player?.gear_status === 'delivered' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
+                                                    {player?.gear_status === 'paid' ? 'Pagado' : player?.gear_status === 'delivered' ? 'Entregado' : 'Pendiente'}
                                                 </span>
                                             </div>
                                         </div>
