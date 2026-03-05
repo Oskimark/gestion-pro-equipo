@@ -197,7 +197,7 @@ export default function SettingsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setSettings({ ...settings, wa_custom_text_enabled: false })}
-                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${!settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border 
+                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${!settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border'}`}
                                 >
                                     <p className="font-bold text-sm mb-1 ">Predeterminado</p>
                                     <p className="text-[10px] text-muted-foreground  uppercase font-black">Sistema</p>
@@ -205,7 +205,7 @@ export default function SettingsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setSettings({ ...settings, wa_custom_text_enabled: true })}
-                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border 
+                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border'}`}
                                 >
                                     <p className="font-bold text-sm mb-1 ">Personalizado</p>
                                     <p className="text-[10px] text-muted-foreground  uppercase font-black">Manual</p>
@@ -231,8 +231,8 @@ export default function SettingsPage() {
                                     placeholder={settings.wa_custom_text_enabled ? "Hola! Te escribimos de CLUB 33. Te avisamos que la $documento de $jugador está $estado." : ""}
                                     rows={4}
                                     className={`w-full border rounded-2xl p-4 text-sm font-medium outline-none transition-all ${settings.wa_custom_text_enabled
-                                            ? 'bg-slate-50  border-border focus:ring-2 focus:ring-secondary/50 text-foreground 
-                                            : 'bg-slate-100  border-transparent text-muted-foreground  cursor-not-allowed italic'
+                                        ? 'bg-slate-50 border-border focus:ring-2 focus:ring-secondary/50 text-foreground'
+                                        : 'bg-slate-100 border-transparent text-muted-foreground cursor-not-allowed italic'
                                         }`}
                                 />
                                 {settings.wa_custom_text_enabled && (

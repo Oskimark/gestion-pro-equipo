@@ -181,20 +181,20 @@ export default function AlertsPage() {
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0">
                     <button
                         onClick={() => setTypeFilter('all')}
-                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${typeFilter === 'all' ? 'bg-secondary text-primary shadow-lg shadow-secondary/20' : 'bg-slate-50  text-muted-foreground hover:bg-slate-100 
+                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap ${typeFilter === 'all' ? 'bg-secondary text-primary shadow-lg shadow-secondary/20' : 'bg-slate-50 text-muted-foreground hover:bg-slate-100'}`}
                     >
                         Todos
                     </button>
                     <button
                         onClick={() => setTypeFilter('Cédula')}
-                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${typeFilter === 'Cédula' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-50  text-muted-foreground hover:bg-slate-100 
+                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${typeFilter === 'Cédula' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-slate-50 text-muted-foreground hover:bg-slate-100'}`}
                     >
                         <FileText className="h-4 w-4" />
                         Cédulas
                     </button>
                     <button
                         onClick={() => setTypeFilter('Ficha Médica')}
-                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${typeFilter === 'Ficha Médica' ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' : 'bg-slate-50  text-muted-foreground hover:bg-slate-100 
+                        className={`px-4 py-3 rounded-2xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap flex items-center gap-2 ${typeFilter === 'Ficha Médica' ? 'bg-green-600 text-white shadow-lg shadow-green-600/20' : 'bg-slate-50 text-muted-foreground hover:bg-slate-100'}`}
                     >
                         <Shield className="h-4 w-4" />
                         Fichas Médicas
