@@ -22,8 +22,15 @@ export default function LoginPage() {
         setLoading(true);
         setError(null);
 
+        // Format username to internal email if no '@' is present
+        let loginEmail = email;
+        if (!email.includes('@')) {
+            const cleanUsername = email.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '');
+            loginEmail = `${cleanUsername}@gestion-equipo.com`;
+        }
+
         const { error: authError } = await supabase.auth.signInWithPassword({
-            email,
+            email: loginEmail,
             password,
         });
 
@@ -85,15 +92,15 @@ export default function LoginPage() {
                         )}
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-white uppercase tracking-widest ml-1">Correo Electrónico</label>
+                            <label className="text-xs font-bold text-white uppercase tracking-widest ml-1">Usuario o Correo</label>
                             <div className="relative group">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-secondary transition-colors" />
                                 <input
-                                    type="email"
+                                    type="text"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="admin@proequipo.com"
+                                    placeholder="ej: juanperez o correo@ejemplo.com"
                                     className="w-full bg-slate-900/40 border border-white/20 rounded-2xl py-3.5 pl-12 pr-4 text-white outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all placeholder:text-slate-500"
                                 />
                             </div>
