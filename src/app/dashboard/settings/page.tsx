@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type } from "lucide-react";
+import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type, Banknote } from "lucide-react";
 import { settingsService } from "@/services/settingsService";
 import { ClubSettings } from "@/types";
 import { useProfile } from "@/hooks/useProfile";
@@ -10,7 +10,14 @@ import { useRouter } from "next/navigation";
 export default function SettingsPage() {
     const { profile, loading: profileLoading } = useProfile();
     const router = useRouter();
-    const [settings, setSettings] = useState<ClubSettings>({ id_card_alert_days: 30, health_card_alert_days: 30 });
+    const [settings, setSettings] = useState<ClubSettings>({
+        id_card_alert_days: 30,
+        health_card_alert_days: 30,
+        monthly_fee: 1000,
+        annual_fee: 10000,
+        annual_discount_percent: 15,
+        gear_price: 5000
+    });
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -145,6 +152,63 @@ export default function SettingsPage() {
                             <p className="text-xs text-muted-foreground ">
                                 Los jugadores con Ficha Médica que venza en {settings.health_card_alert_days} días o menos aparecerán en el Dashboard como "Por vencer".
                             </p>
+                        </div>
+                    </div>
+
+                    <div className="mt-12 flex items-center gap-3 mb-6 pb-6 border-b border-border/10">
+                        <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                            <Banknote className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-foreground">Pagos y Cuotas</h2>
+                            <p className="text-sm text-muted-foreground">Define los valores de las cuotas sociales y el costo de la indumentaria.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                            <label className="block text-sm font-bold text-foreground">Cuota Mensual ($)</label>
+                            <input
+                                type="number"
+                                required
+                                value={settings.monthly_fee}
+                                onChange={(e) => setSettings({ ...settings, monthly_fee: parseInt(e.target.value) })}
+                                className="w-full bg-slate-50 border border-border rounded-xl p-3 text-lg font-medium text-foreground"
+                            />
+                        </div>
+                        <div className="space-y-3">
+                            <label className="block text-sm font-bold text-foreground">Costo Indumentaria ($)</label>
+                            <input
+                                type="number"
+                                required
+                                value={settings.gear_price}
+                                onChange={(e) => setSettings({ ...settings, gear_price: parseInt(e.target.value) })}
+                                className="w-full bg-slate-50 border border-border rounded-xl p-3 text-lg font-medium text-foreground"
+                            />
+                        </div>
+                        <div className="space-y-3">
+                            <label className="block text-sm font-bold text-foreground">Cuota Anual ($)</label>
+                            <input
+                                type="number"
+                                required
+                                value={settings.annual_fee}
+                                onChange={(e) => setSettings({ ...settings, annual_fee: parseInt(e.target.value) })}
+                                className="w-full bg-slate-50 border border-border rounded-xl p-3 text-lg font-medium text-foreground"
+                            />
+                            <p className="text-xs text-muted-foreground italic">Precio sugerido para pago único anual.</p>
+                        </div>
+                        <div className="space-y-3">
+                            <label className="block text-sm font-bold text-foreground">Descuento Pago Anual (%)</label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    required
+                                    value={settings.annual_discount_percent}
+                                    onChange={(e) => setSettings({ ...settings, annual_discount_percent: parseInt(e.target.value) })}
+                                    className="w-full bg-slate-50 border border-border rounded-xl p-3 text-lg font-medium pr-12 text-foreground"
+                                />
+                                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-bold">%</span>
+                            </div>
                         </div>
                     </div>
 

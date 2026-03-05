@@ -13,7 +13,9 @@ import {
     Edit,
     Phone,
     FileText,
-    Check
+    Check,
+    X,
+    UserCircle as UserCircleIcon
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { UserProfile } from "@/types";
@@ -35,6 +37,15 @@ export default function UsersPage() {
         observations: "",
         role: "ayudante" as UserProfile['role']
     });
+
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [addForm, setAddForm] = useState({
+        email: "",
+        full_name: "",
+        phone: "",
+        role: "ayudante" as UserProfile['role']
+    });
+    const [addingUser, setAddingUser] = useState(false);
 
     const loadUsers = async () => {
         try {
@@ -85,6 +96,32 @@ export default function UsersPage() {
         } catch (error: any) {
             console.error("Error editing user:", error);
             alert(`Error: ${error.message || "No se pudo actualizar el perfil."}`);
+        }
+    };
+
+    const handleAddSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setAddingUser(true);
+
+        try {
+            const { error: authError } = await supabase.auth.signInWithOtp({
+                email: addForm.email,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/dashboard`
+                }
+            });
+
+            if (authError) throw authError;
+
+            alert(`¡Invitación enviada a ${addForm.email}! El usuario debe revisar su correo para acceder.`);
+            setIsAddModalOpen(false);
+            setAddForm({ email: "", full_name: "", phone: "", role: "ayudante" });
+            loadUsers();
+        } catch (error: any) {
+            console.error("Error adding user:", error);
+            alert(`Error: ${error.message || "No se pudo invitar al usuario."}`);
+        } finally {
+            setAddingUser(false);
         }
     };
 
@@ -192,6 +229,13 @@ export default function UsersPage() {
                             className="pl-10 pr-4 py-2 bg-white  border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-accent/40 w-full md:w-64"
                         />
                     </div>
+                    <button
+                        onClick={() => setIsAddModalOpen(true)}
+                        className="btn-primary flex items-center gap-2"
+                    >
+                        <UserPlus className="h-4 w-4" />
+                        Nuevo Personal
+                    </button>
                 </div>
             </div>
 
@@ -418,6 +462,101 @@ export default function UsersPage() {
                     </div>
                 </div>
             )}
+
+            {/* Add User Modal */}
+            {isAddModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white w-full max-w-lg rounded-[32px] border border-border/40 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                        <div className="p-8">
+                            <div className="flex items-center justify-between mb-8">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-12 w-12 rounded-2xl bg-secondary/20 flex items-center justify-center text-secondary">
+                                        <UserPlus className="h-6 w-6" />
+                                    </div>
+                                    <div>
+                                        <h2 className="text-xl font-black text-foreground italic uppercase tracking-tighter">Añadir Personal</h2>
+                                        <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Invitación Directa</p>
+                                    </div>
+                                </div>
+                                <button onClick={() => setIsAddModalOpen(false)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
+                                    <X className="h-5 w-5 text-muted-foreground" />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleAddSubmit} className="space-y-5">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Correo Electrónico</label>
+                                    <div className="relative group">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                        <input
+                                            type="email"
+                                            required
+                                            value={addForm.email}
+                                            onChange={(e) => setAddForm({ ...addForm, email: e.target.value })}
+                                            placeholder="empleado@proequipo.com"
+                                            className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Nombre Completo (Opcional)</label>
+                                    <div className="relative group">
+                                        <UserCircleIcon className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                        <input
+                                            type="text"
+                                            value={addForm.full_name}
+                                            onChange={(e) => setAddForm({ ...addForm, full_name: e.target.value })}
+                                            className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Rol</label>
+                                        <select
+                                            value={addForm.role}
+                                            onChange={(e) => setAddForm({ ...addForm, role: e.target.value as any })}
+                                            className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 px-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm appearance-none"
+                                        >
+                                            <option value="admin">Administrador</option>
+                                            <option value="ayudante">Ayudante</option>
+                                            <option value="visitante">Visitante</option>
+                                        </select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Teléfono</label>
+                                        <input
+                                            type="text"
+                                            value={addForm.phone}
+                                            onChange={(e) => setAddForm({ ...addForm, phone: e.target.value })}
+                                            className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 px-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="bg-blue-500/5 p-4 rounded-2xl border border-blue-500/10">
+                                    <p className="text-[10px] text-blue-600 font-medium">Se enviará un correo con un enlace de acceso seguro. Una vez que el usuario acceda, podrá completar su perfil.</p>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={addingUser}
+                                    className="w-full h-14 bg-accent hover:bg-accent/90 text-white rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-accent/20"
+                                >
+                                    {addingUser ? <Loader2 className="h-5 w-5 animate-spin" /> : (
+                                        <>
+                                            <Mail className="h-5 w-5" /> Enviar Invitación
+                                        </>
+                                    )}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
+

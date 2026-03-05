@@ -17,7 +17,11 @@ export const settingsService = {
                     health_card_alert_days: 30,
                     wa_send_form_link: true,
                     wa_custom_text_enabled: false,
-                    wa_custom_text: ''
+                    wa_custom_text: '',
+                    monthly_fee: 1000,
+                    annual_fee: 10000,
+                    annual_discount_percent: 15,
+                    gear_price: 5000
                 };
             }
             console.error('Error fetching settings:', error);
@@ -27,7 +31,11 @@ export const settingsService = {
                 health_card_alert_days: 30,
                 wa_send_form_link: true,
                 wa_custom_text_enabled: false,
-                wa_custom_text: ''
+                wa_custom_text: '',
+                monthly_fee: 1000,
+                annual_fee: 10000,
+                annual_discount_percent: 15,
+                gear_price: 5000
             };
         }
 

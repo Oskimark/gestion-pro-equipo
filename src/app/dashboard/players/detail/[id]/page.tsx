@@ -15,7 +15,11 @@ import {
     X,
     Camera,
     MessageCircle,
-    AlertCircle
+    AlertCircle,
+    Banknote,
+    Clock,
+    CheckCircle2,
+    Calendar
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -26,12 +30,14 @@ import { Player } from "@/types";
 import { Upload } from "lucide-react";
 import { generateWhatsAppLink, getDocStatus } from "@/utils/playerUtils";
 import { useProfile } from "@/hooks/useProfile";
+import { supabase } from "@/lib/supabase";
 
 const navigationTabs = [
     { id: "sports", name: "Deportivo", icon: Shield },
     { id: "gear", name: "Indumentaria", icon: Shirt },
     { id: "contact", name: "Contacto", icon: Phone, restricted: true },
     { id: "docs", name: "Documentos", icon: FileText, restricted: true },
+    { id: "payments", name: "Pagos", icon: Banknote, restricted: true },
 ];
 
 export default function PlayerDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -53,6 +59,8 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     const [idCardPreview, setIdCardPreview] = useState<string | null>(null);
     const [healthCardFile, setHealthCardFile] = useState<File | null>(null);
     const [healthCardPreview, setHealthCardPreview] = useState<string | null>(null);
+    const [payments, setPayments] = useState<any[]>([]);
+    const [loadingPayments, setLoadingPayments] = useState(false);
 
     const isVisitor = profile?.role === "visitante";
 
@@ -79,11 +87,33 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             const data = await playerService.getById(resolvedParams.id);
             setPlayer(data);
             setFormData(data);
+
+            // Load payments separately
+            await loadPayments();
         } catch (error) {
             console.error("Error loading player:", error);
             alert("Error al cargar los datos del jugador");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const loadPayments = async () => {
+        try {
+            setLoadingPayments(true);
+            const data = await supabase
+                .from('payments')
+                .select('*')
+                .eq('player_id', resolvedParams.id)
+                .order('due_date', { ascending: false });
+
+            if (data.data) {
+                setPayments(data.data);
+            }
+        } catch (error) {
+            console.error("Error loading payments:", error);
+        } finally {
+            setLoadingPayments(false);
         }
     };
 
@@ -905,6 +935,93 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                             ></textarea>
                                         </div>
                                     </div>
+                                </div>
+                            )}
+
+                            {activeTab === "payments" && (
+                                <div className="space-y-8 animate-in fade-in duration-300">
+                                    <div className="flex items-center justify-between mb-4 border-b border-border/20 pb-2">
+                                        <h4 className="text-lg font-bold text-foreground">Historial de Pagos</h4>
+                                        <div className="flex gap-4">
+                                            <div className="flex flex-col items-end">
+                                                <p className="text-[10px] font-black uppercase text-muted-foreground">Estado Cuota</p>
+                                                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${player?.fee_status === 'Al día' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                                                    {player?.fee_status || 'Pendiente'}
+                                                </span>
+                                            </div>
+                                            <div className="flex flex-col items-end">
+                                                <p className="text-[10px] font-black uppercase text-muted-foreground">Indumentaria</p>
+                                                <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${player?.gear_status === 'Pagado' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>
+                                                    {player?.gear_status || 'Pendiente'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {loadingPayments ? (
+                                        <div className="h-32 flex items-center justify-center">
+                                            <Loader2 className="h-6 w-6 animate-spin text-secondary" />
+                                        </div>
+                                    ) : (
+                                        <div className="overflow-hidden rounded-2xl border border-border/20">
+                                            <table className="w-full text-left">
+                                                <thead className="bg-slate-50 border-b border-border/20">
+                                                    <tr className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">
+                                                        <th className="px-6 py-3">Concepto</th>
+                                                        <th className="px-6 py-3">Periodo / Fecha</th>
+                                                        <th className="px-6 py-3">Monto</th>
+                                                        <th className="px-6 py-3">Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-border/10">
+                                                    {payments.length === 0 ? (
+                                                        <tr>
+                                                            <td colSpan={4} className="px-6 py-10 text-center text-muted-foreground italic text-sm">
+                                                                No hay registros de pagos para este jugador.
+                                                            </td>
+                                                        </tr>
+                                                    ) : (
+                                                        payments.map((p) => (
+                                                            <tr key={p.id} className="hover:bg-slate-50 transition-colors">
+                                                                <td className="px-6 py-4">
+                                                                    <div className="flex items-center gap-2">
+                                                                        {p.category === 'Cuota Club' ? (
+                                                                            <Calendar className="h-3.5 w-3.5 text-secondary" />
+                                                                        ) : (
+                                                                            <Shirt className="h-3.5 w-3.5 text-accent" />
+                                                                        )}
+                                                                        <span className="text-xs font-bold text-foreground">{p.category}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    <div className="flex flex-col">
+                                                                        <span className="text-xs text-foreground font-medium">
+                                                                            {p.paid_date ? new Date(p.paid_date).toLocaleDateString() : p.due_date ? new Date(p.due_date).toLocaleDateString() : '-'}
+                                                                        </span>
+                                                                        {p.period_month && (
+                                                                            <span className="text-[9px] font-black uppercase text-muted-foreground tracking-tighter">
+                                                                                {new Date(0, p.period_month - 1).toLocaleString('es', { month: 'short' })} {p.period_year}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    <span className="text-xs font-black text-foreground">${p.amount?.toLocaleString()}</span>
+                                                                </td>
+                                                                <td className="px-6 py-4">
+                                                                    {p.status === 'Pagado' ? (
+                                                                        <span className="text-[10px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100">Al día</span>
+                                                                    ) : (
+                                                                        <span className="text-[10px] font-black uppercase text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-100">Pendiente</span>
+                                                                    )}
+                                                                </td>
+                                                            </tr>
+                                                        ))
+                                                    )}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>

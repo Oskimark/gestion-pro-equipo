@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowRight, Loader2, AlertCircle } from "lucide-react";
+import { Lock, Mail, ArrowRight, Loader2, AlertCircle, X } from "lucide-react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
@@ -12,6 +12,10 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
+    const [isForgotModalOpen, setIsForgotModalOpen] = useState(false);
+    const [resetEmail, setResetEmail] = useState("");
+    const [resetLoading, setResetLoading] = useState(false);
+    const [resetMessage, setResetMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,6 +33,27 @@ export default function LoginPage() {
         } else {
             router.push("/dashboard");
         }
+    };
+
+    const handleForgotPassword = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setResetLoading(true);
+        setResetMessage(null);
+
+        const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+            redirectTo: `${window.location.origin}/reset-password`,
+        });
+
+        if (error) {
+            setResetMessage({ type: 'error', text: "Error: No se pudo enviar el correo de recuperación." });
+        } else {
+            setResetMessage({ type: 'success', text: "¡Correo enviado! Revisa tu bandeja de entrada." });
+            setTimeout(() => {
+                setIsForgotModalOpen(false);
+                setResetMessage(null);
+            }, 3000);
+        }
+        setResetLoading(false);
     };
 
     return (
@@ -77,7 +102,13 @@ export default function LoginPage() {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center ml-1">
                                 <label className="text-xs font-bold text-white uppercase tracking-widest">Contraseña</label>
-                                <button type="button" className="text-[10px] font-bold text-secondary hover:text-white transition-colors uppercase">¿Olvidaste tu contraseña?</button>
+                                <button
+                                    type="button"
+                                    onClick={() => setIsForgotModalOpen(true)}
+                                    className="text-[10px] font-bold text-secondary hover:text-white transition-colors uppercase"
+                                >
+                                    ¿Olvidaste tu contraseña?
+                                </button>
                             </div>
                             <div className="relative group">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-focus-within:text-secondary transition-colors" />
@@ -117,6 +148,55 @@ export default function LoginPage() {
                     Desarrollado por OSKIMARK© 2026 Gestión Pro Equipo -v1.15 Potenciando el futuro del deporte.
                 </footer>
             </div>
+
+            {/* Forgot Password Modal */}
+            {isForgotModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white w-full max-w-sm rounded-[32px] border border-border/40 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+                        <div className="p-8">
+                            <div className="flex items-center justify-between mb-6">
+                                <h2 className="text-xl font-black text-foreground italic uppercase tracking-tighter">Recuperar Acceso</h2>
+                                <button onClick={() => setIsForgotModalOpen(false)} className="p-2 hover:bg-slate-100 rounded-xl transition-colors">
+                                    <X className="h-5 w-5 text-muted-foreground" />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleForgotPassword} className="space-y-5">
+                                <p className="text-sm text-muted-foreground">Ingresa tu correo y te enviaremos un enlace para restablecer tu contraseña.</p>
+
+                                {resetMessage && (
+                                    <div className={`p-4 rounded-xl text-xs font-bold ${resetMessage.type === 'success' ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
+                                        {resetMessage.text}
+                                    </div>
+                                )}
+
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest ml-1">Correo Electrónico</label>
+                                    <div className="relative group">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400 group-focus-within:text-accent transition-colors" />
+                                        <input
+                                            type="email"
+                                            required
+                                            value={resetEmail}
+                                            onChange={(e) => setResetEmail(e.target.value)}
+                                            placeholder="tu@email.com"
+                                            className="w-full bg-slate-50 border border-border rounded-2xl py-3.5 pl-12 pr-4 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-bold text-sm"
+                                        />
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={resetLoading}
+                                    className="w-full h-14 bg-secondary hover:bg-secondary/90 text-primary rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-lg shadow-secondary/20"
+                                >
+                                    {resetLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Enviar Enlace"}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

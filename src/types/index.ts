@@ -46,6 +46,10 @@ export type Player = {
   id_card_rev_status?: 'none' | 'pending' | 'approved' | 'rejected';
   health_card_rev_status?: 'none' | 'pending' | 'approved' | 'rejected';
 
+  // Payments Status
+  fee_status?: 'up_to_date' | 'behind';
+  gear_status?: 'pending' | 'paid' | 'delivered';
+
   created_at: string;
 };
 
@@ -53,8 +57,10 @@ export type Payment = {
   id: string;
   player_id: string;
   amount: number;
-  category: 'Cuota Social' | 'Indumentaria' | 'Recaudación';
+  category: 'Cuota Club' | 'Indumentaria' | 'Recaudación' | 'Extra';
   status: 'Pagado' | 'Pendiente';
+  period_month?: number; // 1-12
+  period_year?: number;
   due_date: string;
   paid_date?: string;
   notes?: string;
@@ -99,5 +105,12 @@ export type ClubSettings = {
   wa_send_form_link?: boolean;
   wa_custom_text_enabled?: boolean;
   wa_custom_text?: string;
+
+  // Payments Config
+  monthly_fee: number;
+  annual_fee: number;
+  annual_discount_percent: number;
+  gear_price: number;
+
   updated_at?: string;
 };
