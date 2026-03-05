@@ -37,13 +37,12 @@
   --color-card: #0f172a;
   --color-card-foreground: #f8fafc;
   --color-primary: #dc2626;
-  /* Usar rojo como primario en modo oscuro para resaltar */
   --color-primary-foreground: #ffffff;
   --color-secondary: #dc2626;
   --color-secondary-foreground: #ffffff;
   --color-border: #1e293b;
-  --color-muted: #94a3b8;
-  --color-muted-foreground: #64748b;
+  --color-muted: #475569;
+  --color-muted-foreground: #cbd5e1;
 }
 
 * {

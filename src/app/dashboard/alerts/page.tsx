@@ -155,7 +155,7 @@ export default function AlertsPage() {
                         <AlertTriangle className="h-8 w-8 text-red-600" />
                         Centro de Alertas
                     </h1>
-                    <p className="text-muted-foreground mt-1">
+                    <p className="text-muted-foreground dark:text-slate-300 mt-1">
                         Gestiona toda la documentación vencida o faltante de los jugadores.
                     </p>
                 </div>
@@ -246,17 +246,17 @@ export default function AlertsPage() {
                                             <span key={i} className="text-green-500 font-black text-xs drop-shadow-sm">✓</span>
                                         ))}
                                     </div>
-                                    <span className="text-[10px] font-bold text-muted-foreground uppercase">{alert.count} avisos</span>
+                                    <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase">{alert.count} avisos</span>
                                 </div>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="p-4 rounded-3xl bg-slate-50 dark:bg-white/5 border border-border/20 flex items-center justify-between">
-                                    <div className="flex items-center gap-2 text-muted-foreground">
+                                    <div className="flex items-center gap-2 text-muted-foreground dark:text-slate-300">
                                         <Calendar className="h-4 w-4" />
                                         <span className="text-xs font-bold uppercase tracking-tight">Vencimiento:</span>
                                     </div>
-                                    <span className="text-sm font-black text-foreground">{alert.expiryDate ? new Date(alert.expiryDate).toLocaleDateString('es-ES') : 'Faltante'}</span>
+                                    <span className="text-sm font-black text-foreground dark:text-white">{alert.expiryDate ? new Date(alert.expiryDate).toLocaleDateString('es-ES') : 'Faltante'}</span>
                                 </div>
 
                                 <div className="flex items-center gap-3">

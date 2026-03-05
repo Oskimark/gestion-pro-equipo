@@ -165,7 +165,7 @@ export default function DashboardPage() {
                     </span>
                     {profile?.role === 'visitante' && ", visitante"}
                 </h1>
-                <p className="mt-2 text-muted-foreground">
+                <p className="mt-2 text-muted-foreground dark:text-slate-300">
                     {profile?.role === 'visitante'
                         ? "Como visitante solo puedes ver algunos datos limitados. Contacta al administrador para ver los módulos de pagos, usuarios y configuración."
                         : "Aquí tienes un resumen rápido de la situación actual del equipo."}
@@ -180,7 +180,7 @@ export default function DashboardPage() {
                                 <div className={`p-3 rounded-xl ${stat.bg} ${stat.color} group-hover:scale-110 transition-transform`}>
                                     <stat.icon className="h-6 w-6" />
                                 </div>
-                                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Resumen</span>
+                                <span className="text-xs font-bold text-muted-foreground dark:text-slate-400 uppercase tracking-widest">Resumen</span>
                             </div>
                             <div className="mt-6">
                                 <p className="text-small font-medium text-muted-foreground dark:text-slate-300">{stat.name}</p>
@@ -231,8 +231,8 @@ export default function DashboardPage() {
                                             </div>
                                         )}
                                         <div className="flex flex-col">
-                                            <span className="font-bold text-sm text-foreground">{docAlert.name}</span>
-                                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                            <span className="font-bold text-sm text-foreground dark:text-white">{docAlert.name}</span>
+                                            <span className="text-[10px] text-muted-foreground dark:text-slate-300 flex items-center gap-1">
                                                 <span className="font-black uppercase tracking-tighter px-1 rounded bg-slate-100 dark:bg-white/10">{docAlert.type}</span>
                                                 <span>•</span>
                                                 <span className={docAlert.status === 'Vencido' ? 'text-red-500 font-bold' : docAlert.status === 'Por vencer' ? 'text-amber-500 font-bold' : 'text-red-400 font-bold'}>{docAlert.status}</span>
@@ -280,8 +280,8 @@ export default function DashboardPage() {
                     {nextMatch ? (
                         <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-black/20 border border-border/20">
                             <div className="flex flex-col">
-                                <span className="font-bold text-lg text-foreground">vs {nextMatch.rival}</span>
-                                <span className="text-sm text-muted-foreground">
+                                <span className="font-bold text-lg text-foreground dark:text-white">vs {nextMatch.rival}</span>
+                                <span className="text-sm text-muted-foreground dark:text-slate-300">
                                     {new Date(nextMatch.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
                                 </span>
                             </div>
@@ -289,7 +289,7 @@ export default function DashboardPage() {
                                 <span className="block font-black text-xl text-primary dark:text-secondary">
                                     {new Date(nextMatch.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
                                 </span>
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase">{nextMatch.venue}</span>
+                                <span className="text-[10px] font-bold text-muted-foreground dark:text-slate-400 uppercase">{nextMatch.venue}</span>
                             </div>
                         </div>
                     ) : (

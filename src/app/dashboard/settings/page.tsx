@@ -78,26 +78,26 @@ export default function SettingsPage() {
     return (
         <div className="space-y-6 animate-in fade-in duration-500 max-w-4xl mx-auto">
             <div>
-                <h1 className="text-3xl font-extrabold text-foreground">Configuración</h1>
-                <p className="text-muted-foreground">Ajustes del sistema y control de alertas.</p>
+                <h1 className="text-3xl font-extrabold text-foreground dark:text-white">Configuración</h1>
+                <p className="text-muted-foreground dark:text-slate-300">Ajustes del sistema y control de alertas.</p>
             </div>
 
             <form onSubmit={handleSave} className="space-y-6">
                 <div className="bg-white dark:bg-slate-950 p-6 md:p-8 rounded-3xl border border-border/40 relative overflow-hidden">
                     <div className="flex items-center gap-3 mb-6 pb-6 border-b border-border/10">
-                        <div className="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 rounded-xl">
+                        <div className="p-3 bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-xl">
                             <BellRing className="h-6 w-6" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-foreground">Alertas de Documentación</h2>
-                            <p className="text-sm text-muted-foreground">Configura con cuántos días de anticipación deseas que el sistema te avise sobre el vencimiento de los documentos.</p>
+                            <h2 className="text-xl font-bold text-foreground dark:text-white">Alertas de Documentación</h2>
+                            <p className="text-sm text-muted-foreground dark:text-slate-300">Configura con cuántos días de anticipación deseas que el sistema te avise sobre el vencimiento de los documentos.</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {/* Cédula */}
                         <div className="space-y-3">
-                            <label className="block text-sm font-bold text-foreground">
+                            <label className="block text-sm font-bold text-foreground dark:text-slate-100">
                                 Ventana de aviso para Cédula de Identidad
                             </label>
                             <div className="flex items-center gap-4">
@@ -109,21 +109,21 @@ export default function SettingsPage() {
                                         required
                                         value={settings.id_card_alert_days}
                                         onChange={(e) => setSettings({ ...settings, id_card_alert_days: parseInt(e.target.value) })}
-                                        className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 text-lg font-medium pl-4 pr-16"
+                                        className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 text-lg font-medium pl-4 pr-16 text-foreground dark:text-white"
                                     />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium pointer-events-none">
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground dark:text-slate-300 text-sm font-medium pointer-events-none">
                                         días
                                     </span>
                                 </div>
                             </div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground dark:text-slate-400">
                                 Los jugadores con Cédula que venza en {settings.id_card_alert_days} días o menos aparecerán en el Dashboard como "Por vencer".
                             </p>
                         </div>
 
                         {/* Ficha Médica */}
                         <div className="space-y-3">
-                            <label className="block text-sm font-bold text-foreground">
+                            <label className="block text-sm font-bold text-foreground dark:text-slate-100">
                                 Ventana de aviso para Ficha Médica
                             </label>
                             <div className="flex items-center gap-4">
@@ -135,26 +135,26 @@ export default function SettingsPage() {
                                         required
                                         value={settings.health_card_alert_days}
                                         onChange={(e) => setSettings({ ...settings, health_card_alert_days: parseInt(e.target.value) })}
-                                        className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 text-lg font-medium pl-4 pr-16"
+                                        className="w-full bg-slate-50 dark:bg-white/5 border border-border rounded-xl p-3 text-lg font-medium pl-4 pr-16 text-foreground dark:text-white"
                                     />
-                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm font-medium pointer-events-none">
+                                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground dark:text-slate-300 text-sm font-medium pointer-events-none">
                                         días
                                     </span>
                                 </div>
                             </div>
-                            <p className="text-xs text-muted-foreground">
+                            <p className="text-xs text-muted-foreground dark:text-slate-400">
                                 Los jugadores con Ficha Médica que venza en {settings.health_card_alert_days} días o menos aparecerán en el Dashboard como "Por vencer".
                             </p>
                         </div>
                     </div>
 
                     <div className="mt-12 flex items-center gap-3 mb-6 pb-6 border-b border-border/10">
-                        <div className="p-3 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-xl">
+                        <div className="p-3 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-xl">
                             <MessageCircle className="h-6 w-6" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-foreground">Notificaciones WhatsApp</h2>
-                            <p className="text-sm text-muted-foreground">Personaliza los mensajes que se envían a los padres.</p>
+                            <h2 className="text-xl font-bold text-foreground dark:text-white">Notificaciones WhatsApp</h2>
+                            <p className="text-sm text-muted-foreground dark:text-slate-300">Personaliza los mensajes que se envían a los padres.</p>
                         </div>
                     </div>
 
@@ -163,11 +163,11 @@ export default function SettingsPage() {
                         <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-white/5 rounded-2xl border border-border/20">
                             <div className="flex items-center gap-4">
                                 <div className="p-2 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-border/10">
-                                    <Link2 className="h-5 w-5 text-muted-foreground" />
+                                    <Link2 className="h-5 w-5 text-muted-foreground dark:text-slate-300" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-foreground">Enviar link de formulario</h3>
-                                    <p className="text-xs text-muted-foreground">Incluye automáticamente el enlace de autogestión para que los padres suban los documentos.</p>
+                                    <h3 className="text-sm font-bold text-foreground dark:text-white">Enviar link de formulario</h3>
+                                    <p className="text-xs text-muted-foreground dark:text-slate-400">Incluye automáticamente el enlace de autogestión para que los padres suban los documentos.</p>
                                 </div>
                             </div>
                             <label className="relative inline-flex items-center cursor-pointer">
@@ -185,11 +185,11 @@ export default function SettingsPage() {
                         <div className="space-y-4">
                             <div className="flex items-center gap-4 mb-2">
                                 <div className="p-2 bg-white dark:bg-slate-900 rounded-lg shadow-sm border border-border/10">
-                                    <Type className="h-5 w-5 text-muted-foreground" />
+                                    <Type className="h-5 w-5 text-muted-foreground dark:text-slate-300" />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-foreground">Contenido del Mensaje</h3>
-                                    <p className="text-xs text-muted-foreground">Elige si usar el texto predeterminado del sistema o uno propio.</p>
+                                    <h3 className="text-sm font-bold text-foreground dark:text-white">Contenido del Mensaje</h3>
+                                    <p className="text-xs text-muted-foreground dark:text-slate-400">Elige si usar el texto predeterminado del sistema o uno propio.</p>
                                 </div>
                             </div>
 
@@ -197,18 +197,18 @@ export default function SettingsPage() {
                                 <button
                                     type="button"
                                     onClick={() => setSettings({ ...settings, wa_custom_text_enabled: false })}
-                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${!settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border'}`}
+                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${!settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border dark:border-slate-800'}`}
                                 >
-                                    <p className="font-bold text-sm mb-1">Predeterminado</p>
-                                    <p className="text-[10px] text-muted-foreground uppercase font-black">Sistema</p>
+                                    <p className="font-bold text-sm mb-1 dark:text-white">Predeterminado</p>
+                                    <p className="text-[10px] text-muted-foreground dark:text-slate-400 uppercase font-black">Sistema</p>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setSettings({ ...settings, wa_custom_text_enabled: true })}
-                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border'}`}
+                                    className={`p-4 rounded-2xl border-2 text-left transition-all ${settings.wa_custom_text_enabled ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-border dark:border-slate-800'}`}
                                 >
-                                    <p className="font-bold text-sm mb-1">Personalizado</p>
-                                    <p className="text-[10px] text-muted-foreground uppercase font-black">Manual</p>
+                                    <p className="font-bold text-sm mb-1 dark:text-white">Personalizado</p>
+                                    <p className="text-[10px] text-muted-foreground dark:text-slate-400 uppercase font-black">Manual</p>
                                 </button>
                             </div>
 
