@@ -118,41 +118,29 @@ export default function UsersPage() {
                 if (authError) throw authError;
                 alert(`¡Invitación enviada a ${addForm.email}! El usuario debe revisar su correo para acceder.`);
             } else {
-                // Manual creation: Generamos un correo válido y simple para Supabase
+                // Manual creation using API Route
                 const cleanUsername = addForm.username.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '');
                 const generatedEmail = `${cleanUsername}@gestion-equipo.com`;
 
-                const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
-                    email: generatedEmail,
-                    password: addForm.password,
-                    options: {
-                        data: {
-                            full_name: addForm.full_name || addForm.username,
-                        }
-                    }
+                const response = await fetch('/api/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: generatedEmail,
+                        password: addForm.password,
+                        full_name: addForm.full_name || addForm.username,
+                        phone: addForm.phone,
+                        role: addForm.role
+                    })
                 });
 
-                if (signUpError) throw signUpError;
+                const result = await response.json();
 
-                if (signUpData.user) {
-                    const { error: profileError } = await supabase
-                        .from("profiles")
-                        .update({
-                            full_name: addForm.full_name || addForm.username,
-                            phone: addForm.phone,
-                            role: addForm.role,
-                            status: 'active'
-                        })
-                        .eq("id", signUpData.user.id);
-
-                    if (profileError) {
-                        // If profile update fails, we might need to handle it, but signUp creates profile via trigger usually
-                        // In this app, profiles might be created by a trigger on auth.users
-                        console.error("Profile update error:", profileError);
-                    }
+                if (!response.ok) {
+                    throw new Error(result.error || 'Error al crear el usuario. Revisa que el nombre de usuario no esté ya en uso.');
                 }
 
-                alert(`¡Usuario ${addForm.username} creado correctamente! Ya puede iniciar sesión.`);
+                alert(`¡Usuario ${addForm.username} creado correctamente! Ya puede iniciar sesión con ese nombre y su contraseña.`);
             }
 
             setIsAddModalOpen(false);
