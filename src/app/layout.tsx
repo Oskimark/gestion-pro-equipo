@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Club 33 - Gestión Pro Equipo",
   description: "Sistema de gestión administrativa para el Club 33 Churrinches gen 2017.",
+  other: {
+    "color-scheme": "only light"
+  }
 };
 
 export default function RootLayout({

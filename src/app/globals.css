@@ -23,14 +23,26 @@
 }
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
-  color-scheme: light !important;
+  --background: #f8fafc !important;
+  --foreground: #0f172a !important;
+  color-scheme: only light !important;
+  forced-color-adjust: none !important;
+}
+
+/* Explicit Light Mode Base */
+:root:not(.dark) body {
+  background-color: #f8fafc !important;
+  color: #0f172a !important;
+}
+
+:root:not(.dark) .bg-card {
+  background-color: #ffffff !important;
 }
 
 .dark {
   --background: #020617;
   --foreground: #f8fafc;
+  color-scheme: dark !important;
 
   --color-background: #020617;
   --color-foreground: #f8fafc;
