@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { paymentService } from "@/services/paymentService";
+import { playerService } from "@/services/playerService";
 import { Payment, Player } from "@/types";
 import { supabase } from "@/lib/supabase";
 
@@ -51,12 +52,12 @@ export default function PaymentsPage() {
     const loadData = async () => {
         try {
             setLoading(true);
-            const [paymentsData, playersData] = await Promise.all([
+            const [paymentsData, playersList] = await Promise.all([
                 paymentService.getAllPayments(),
-                supabase.from('players').select('*').order('full_name')
+                playerService.getAll()
             ]);
             setPayments(paymentsData);
-            if (playersData.data) setPlayers(playersData.data as Player[]);
+            setPlayers(playersList);
         } catch (error) {
             console.error("Error loading payments:", error);
         } finally {

@@ -38,6 +38,7 @@ export default function UsersPage() {
         role: "ayudante" as UserProfile['role']
     });
 
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
     const [addMode, setAddMode] = useState<'invite' | 'manual'>('invite');
     const [addForm, setAddForm] = useState({
         email: "",
