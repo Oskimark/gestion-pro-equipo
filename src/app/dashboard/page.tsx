@@ -8,6 +8,7 @@ import {
     User
 } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
+import Image from "next/image";
 
 import { useState, useEffect } from "react";
 import { playerService } from "@/services/playerService";
@@ -224,7 +225,14 @@ export default function DashboardPage() {
                                 >
                                     <div className="flex items-center gap-3">
                                         {docAlert.photo_url ? (
-                                            <img src={docAlert.photo_url} alt={docAlert.name} className="h-10 w-10 rounded-full object-cover shrink-0 border border-border" />
+                                            <Image
+                                                src={docAlert.photo_url}
+                                                alt={docAlert.name}
+                                                width={40}
+                                                height={40}
+                                                className="h-10 w-10 rounded-full object-cover shrink-0 border border-border"
+                                                priority={idx < 5}
+                                            />
                                         ) : (
                                             <div className="h-10 w-10 rounded-full bg-slate-100  flex items-center justify-center border border-border text-slate-400 shrink-0">
                                                 <User className="h-6 w-6" />

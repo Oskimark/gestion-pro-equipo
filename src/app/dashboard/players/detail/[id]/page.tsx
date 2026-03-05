@@ -18,6 +18,7 @@ import {
     AlertCircle
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { playerService } from "@/services/playerService";
 import { uploadService } from "@/services/uploadService";
@@ -333,7 +334,13 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                         <div className="relative mx-auto w-32 h-32 mb-6">
                             <div className="w-full h-full rounded-full bg-slate-100 flex items-center justify-center border-4 border-white shadow-xl overflow-hidden group">
                                 {photoPreview || formData.photo_url ? (
-                                    <img src={photoPreview || formData.photo_url || ""} alt={formData.full_name} className="w-full h-full object-cover" />
+                                    <Image
+                                        src={photoPreview || formData.photo_url || ""}
+                                        alt={formData.full_name || "Foto del jugador"}
+                                        width={128}
+                                        height={128}
+                                        className="w-full h-full object-cover"
+                                    />
                                 ) : (
                                     <User className="h-16 w-16 text-slate-300" />
                                 )}
@@ -705,7 +712,13 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                         {(idCardPreview || formData.id_card_url) ? (
                                                             <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-border group">
                                                                 <a href={idCardPreview || formData.id_card_url || ""} target="_blank" rel="noopener noreferrer">
-                                                                    <img src={idCardPreview || formData.id_card_url || ""} alt="CI" className="h-full w-full object-cover group-hover:opacity-70 transition-opacity" />
+                                                                    <Image
+                                                                        src={idCardPreview || formData.id_card_url || ""}
+                                                                        alt="CI"
+                                                                        width={128}
+                                                                        height={80}
+                                                                        className="h-full w-full object-cover group-hover:opacity-70 transition-opacity"
+                                                                    />
                                                                 </a>
                                                                 {isEditing && (
                                                                     <button type="button" onClick={() => { setIdCardFile(null); setIdCardPreview(null); setFormData(p => ({ ...p, id_card_url: null as any })); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">

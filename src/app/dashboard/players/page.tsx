@@ -16,6 +16,7 @@ import {
     FileDown
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { playerService } from "@/services/playerService";
 import { Player } from "@/types";
 import { getDocStatus, calculateAge } from "@/utils/playerUtils";
@@ -124,7 +125,13 @@ export default function PlayersPage() {
                                         <td className="px-4 py-4 whitespace-nowrap sticky left-0 z-20 bg-white  sm:static sm:bg-transparent min-w-[180px] max-w-[180px] overflow-hidden group-hover:bg-slate-50  transition-colors">
                                             <div className="flex items-center gap-3">
                                                 {player.photo_url ? (
-                                                    <img src={player.photo_url} alt={player.full_name} className="h-10 w-10 rounded-full object-cover shrink-0 border border-border" />
+                                                    <Image
+                                                        src={player.photo_url}
+                                                        alt={player.full_name}
+                                                        width={40}
+                                                        height={40}
+                                                        className="h-10 w-10 rounded-full object-cover shrink-0 border border-border"
+                                                    />
                                                 ) : (
                                                     <div className="h-10 w-10 rounded-full bg-slate-100  flex items-center justify-center border border-border text-slate-400 shrink-0 group-hover:border-secondary transition-colors">
                                                         <User className="h-6 w-6" />

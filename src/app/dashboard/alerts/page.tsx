@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { getDocStatus, generateWhatsAppLink } from "@/utils/playerUtils";
 import Link from "next/link";
+import Image from "next/image";
 
 interface DocAlert {
     id: string;
@@ -215,7 +216,13 @@ export default function AlertsPage() {
                                 <div className="flex items-center gap-3">
                                     <div className="relative">
                                         {alert.photo_url ? (
-                                            <img src={alert.photo_url} alt={alert.name} className="h-14 w-14 rounded-2xl object-cover border-2 border-border" />
+                                            <Image
+                                                src={alert.photo_url}
+                                                alt={alert.name}
+                                                width={56}
+                                                height={56}
+                                                className="h-14 w-14 rounded-2xl object-cover border-2 border-border"
+                                            />
                                         ) : (
                                             <div className="h-14 w-14 rounded-2xl bg-slate-100  flex items-center justify-center border-2 border-border text-slate-400">
                                                 <User className="h-8 w-8" />
