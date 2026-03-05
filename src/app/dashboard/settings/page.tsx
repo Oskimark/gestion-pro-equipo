@@ -62,6 +62,13 @@ export default function SettingsPage() {
         loadSettings();
     }, []);
 
+    useEffect(() => {
+        const calculatedAnnual = Math.round(settings.monthly_fee * 12 * (1 - settings.annual_discount_percent / 100));
+        if (calculatedAnnual !== settings.annual_fee) {
+            setSettings(prev => ({ ...prev, annual_fee: calculatedAnnual }));
+        }
+    }, [settings.monthly_fee, settings.annual_discount_percent]);
+
     if (profileLoading || profile?.role === "visitante") {
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">

@@ -57,7 +57,7 @@ export type Payment = {
   id: string;
   player_id: string;
   amount: number;
-  category: 'Cuota Club' | 'Indumentaria' | 'Recaudación' | 'Extra';
+  category: 'Cuota Club' | 'Indumentaria' | 'Recaudación' | 'Extra' | 'Pago Anual';
   status: 'Pagado' | 'Pendiente';
   period_month?: number; // 1-12
   period_year?: number;

@@ -17,8 +17,10 @@ import {
     ChevronRight,
     MoreHorizontal,
     Shirt,
-    X
+    X,
+    Eye
 } from "lucide-react";
+import Link from "next/link";
 import { paymentService } from "@/services/paymentService";
 import { Payment, Player } from "@/types";
 import { supabase } from "@/lib/supabase";
@@ -34,7 +36,7 @@ export default function PaymentsPage() {
     const [showAddModal, setShowAddModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [newPayment, setNewPayment] = useState<Partial<Payment>>({
-        category: 'Cuota Club',
+        category: 'Cuota Club', // Default to 'Cuota Club' as a single value
         amount: 0,
         status: 'Pagado',
         paid_date: new Date().toISOString().split('T')[0],
@@ -51,7 +53,7 @@ export default function PaymentsPage() {
             setLoading(true);
             const [paymentsData, playersData] = await Promise.all([
                 paymentService.getAllPayments(),
-                supabase.from('profiles').select('*').eq('role', 'jugador').order('full_name')
+                supabase.from('players').select('*').order('full_name')
             ]);
             setPayments(paymentsData);
             if (playersData.data) setPlayers(playersData.data as Player[]);
@@ -62,11 +64,21 @@ export default function PaymentsPage() {
         }
     };
 
-    const filteredPayments = payments.filter(p => {
-        const matchesSearch = p.player?.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = filterCategory === "all" || p.category === filterCategory;
-        return matchesSearch && matchesCategory;
+    const filteredPlayers = players.filter(p => {
+        const matchesSearch = p.full_name?.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesSearch;
     });
+
+    const getStatusUI = (status?: string, category: 'fee' | 'gear' = 'fee') => {
+        if (category === 'fee') {
+            if (status === 'up_to_date') return { icon: CheckCircle2, color: "text-emerald-500 bg-emerald-500/10", label: "Al día" };
+            return { icon: AlertCircle, color: "text-red-500 bg-red-500/10", label: "Atrasado" };
+        } else {
+            if (status === 'paid') return { icon: CheckCircle2, color: "text-emerald-500 bg-emerald-500/10", label: "Pagado" };
+            if (status === 'delivered') return { icon: CheckCircle2, color: "text-blue-500 bg-blue-500/10", label: "Entregado" };
+            return { icon: Clock, color: "text-amber-500 bg-amber-500/10", label: "Pendiente" };
+        }
+    };
     const handleAddSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newPayment.player_id || !newPayment.amount) return;
@@ -79,7 +91,7 @@ export default function PaymentsPage() {
             const player = players.find(p => p.id === newPayment.player_id);
             if (player) {
                 const updates: Partial<Player> = {};
-                if (newPayment.category === 'Cuota Club') updates.fee_status = 'up_to_date';
+                if (newPayment.category === 'Cuota Club' || newPayment.category === 'Pago Anual') updates.fee_status = 'up_to_date';
                 if (newPayment.category === 'Indumentaria') updates.gear_status = 'paid';
 
                 if (Object.keys(updates).length > 0) {
@@ -116,7 +128,7 @@ export default function PaymentsPage() {
             })
             .reduce((acc, curr) => acc + (curr.amount || 0), 0),
         pendingCount: payments.filter(p => p.status === 'Pendiente').length,
-        upToDatePercent: 85, // Dummy for now, should calculate based on players
+        upToDatePercent: players.length > 0 ? Math.round((players.filter(p => p.fee_status === 'up_to_date').length / players.length) * 100) : 0,
     };
 
     return (
@@ -212,6 +224,12 @@ export default function PaymentsPage() {
                         >
                             Indumentaria
                         </button>
+                        <button
+                            onClick={() => setFilterCategory("Pago Anual")}
+                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all whitespace-nowrap border ${filterCategory === 'Pago Anual' ? 'bg-secondary text-primary border-secondary shadow-lg shadow-secondary/20 scale-105' : 'bg-white border-border text-muted-foreground hover:border-secondary/50'}`}
+                        >
+                            Anual
+                        </button>
                     </div>
 
                     <div className="relative group min-w-[300px]">
@@ -238,90 +256,84 @@ export default function PaymentsPage() {
                             <thead>
                                 <tr className="bg-slate-50/30 text-[10px] uppercase font-black tracking-[0.2em] text-muted-foreground italic border-b border-border/40">
                                     <th className="px-8 py-4">Jugador</th>
-                                    <th className="px-8 py-4">Categoría</th>
-                                    <th className="px-8 py-4">Fecha / Periodo</th>
-                                    <th className="px-8 py-4">Monto</th>
-                                    <th className="px-8 py-4">Estado</th>
+                                    <th className="px-8 py-4 text-center">Estado Cuota</th>
+                                    <th className="px-8 py-4 text-center">Indumentaria</th>
+                                    <th className="px-8 py-4">Último Pago</th>
                                     <th className="px-8 py-4 text-center">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/20">
-                                {filteredPayments.length === 0 ? (
+                                {filteredPlayers.length === 0 ? (
                                     <tr>
-                                        <td colSpan={6} className="px-8 py-20 text-center">
+                                        <td colSpan={5} className="px-8 py-20 text-center">
                                             <div className="flex flex-col items-center gap-3 text-muted-foreground opacity-30">
                                                 <Banknote className="h-20 w-20" />
-                                                <p className="font-bold text-xl uppercase tracking-tighter italic">No se encontraron pagos</p>
+                                                <p className="font-bold text-xl uppercase tracking-tighter italic">No se encontraron jugadores</p>
                                             </div>
                                         </td>
                                     </tr>
                                 ) : (
-                                    filteredPayments.map((p) => (
-                                        <tr key={p.id} className="hover:bg-slate-50/50 transition-colors group">
-                                            <td className="px-8 py-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform overflow-hidden shadow-inner border border-border/50">
-                                                        {p.player?.photo_url ? (
-                                                            <img src={p.player.photo_url} alt="" className="h-full w-full object-cover" />
-                                                        ) : (
-                                                            <User className="h-5 w-5" />
-                                                        )}
+                                    filteredPlayers.map((p) => {
+                                        const lastPayment = payments
+                                            .filter(pay => pay.player_id === p.id)
+                                            .sort((a, b) => new Date(b.paid_date || b.due_date).getTime() - new Date(a.paid_date || a.due_date).getTime())[0];
+
+                                        const feeStatus = getStatusUI(p.fee_status, 'fee');
+                                        const gearStatus = getStatusUI(p.gear_status, 'gear');
+
+                                        return (
+                                            <tr key={p.id} className="hover:bg-slate-50/50 transition-colors group">
+                                                <td className="px-8 py-4">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform overflow-hidden shadow-inner border border-border/50">
+                                                            {p.photo_url ? (
+                                                                <img src={p.photo_url} alt="" className="h-full w-full object-cover" />
+                                                            ) : (
+                                                                <User className="h-5 w-5" />
+                                                            )}
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-black text-sm text-foreground uppercase tracking-tight">{p.full_name}</p>
+                                                            <p className="text-[10px] font-bold text-muted-foreground uppercase">{p.shirt_number ? `Dorsal ${p.shirt_number}` : 'Sin Dorsal'}</p>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <p className="font-black text-sm text-foreground uppercase tracking-tight">{p.player?.full_name}</p>
-                                                        <p className="text-[10px] font-bold text-muted-foreground uppercase">{p.player?.shirt_number ? `Dorsal ${p.player.shirt_number}` : 'Sin Dorsal'}</p>
+                                                </td>
+                                                <td className="px-8 py-4 text-center">
+                                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${feeStatus.color}`}>
+                                                        <feeStatus.icon className="h-3 w-3" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">{feeStatus.label}</span>
                                                     </div>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-4">
-                                                <div className="flex items-center gap-2">
-                                                    {p.category === 'Cuota Club' ? (
-                                                        <div className="p-1.5 bg-secondary/10 text-secondary rounded-lg">
-                                                            <Calendar className="h-3 w-3" />
+                                                </td>
+                                                <td className="px-8 py-4 text-center">
+                                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border ${gearStatus.color}`}>
+                                                        <gearStatus.icon className="h-3 w-3" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">{gearStatus.label}</span>
+                                                    </div>
+                                                </td>
+                                                <td className="px-8 py-4">
+                                                    {lastPayment ? (
+                                                        <div className="flex flex-col">
+                                                            <span className="text-xs font-bold text-foreground italic">
+                                                                ${lastPayment.amount?.toLocaleString()} - {lastPayment.category}
+                                                            </span>
+                                                            <span className="text-[10px] font-black text-muted-foreground uppercase">
+                                                                {lastPayment.paid_date ? new Date(lastPayment.paid_date).toLocaleDateString() : 'Pendiente'}
+                                                            </span>
                                                         </div>
                                                     ) : (
-                                                        <div className="p-1.5 bg-accent/10 text-accent rounded-lg">
-                                                            <Shirt className="h-3 w-3" />
-                                                        </div>
+                                                        <span className="text-[10px] font-black text-muted-foreground/30 uppercase italic">Sin registros</span>
                                                     )}
-                                                    <span className="text-xs font-black uppercase tracking-widest text-foreground">{p.category}</span>
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-4">
-                                                <div className="flex flex-col">
-                                                    <span className="text-xs font-bold text-foreground">
-                                                        {p.paid_date ? new Date(p.paid_date).toLocaleDateString() : p.due_date ? new Date(p.due_date).toLocaleDateString() : '-'}
-                                                    </span>
-                                                    {p.period_month && (
-                                                        <span className="text-[10px] font-black text-muted-foreground uppercase">Periodo: {new Date(0, p.period_month - 1).toLocaleString('es', { month: 'long' })} {p.period_year}</span>
-                                                    )}
-                                                </div>
-                                            </td>
-                                            <td className="px-8 py-4">
-                                                <span className="text-sm font-black text-foreground italic">${p.amount?.toLocaleString()}</span>
-                                            </td>
-                                            <td className="px-8 py-4">
-                                                {p.status === 'Pagado' ? (
-                                                    <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-600 rounded-full w-fit border border-emerald-500/20">
-                                                        <CheckCircle2 className="h-3 w-3" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest">Pagado</span>
+                                                </td>
+                                                <td className="px-8 py-4">
+                                                    <div className="flex justify-center">
+                                                        <Link href={`/dashboard/players/detail/${p.id}`} className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-muted-foreground hover:text-foreground">
+                                                            <Eye className="h-5 w-5" />
+                                                        </Link>
                                                     </div>
-                                                ) : (
-                                                    <div className="flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-600 rounded-full w-fit border border-amber-500/20">
-                                                        <Clock className="h-3 w-3" />
-                                                        <span className="text-[10px] font-black uppercase tracking-widest">Pendiente</span>
-                                                    </div>
-                                                )}
-                                            </td>
-                                            <td className="px-8 py-4">
-                                                <div className="flex justify-center">
-                                                    <button className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-muted-foreground hover:text-foreground">
-                                                        <MoreHorizontal className="h-5 w-5" />
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ))
+                                                </td>
+                                            </tr>
+                                        );
+                                    })
                                 )}
                             </tbody>
                         </table>
@@ -339,6 +351,7 @@ export default function PaymentsPage() {
                             <p className="text-primary/70 text-sm font-bold relative z-10">Ingresa los detalles de la nueva transacción.</p>
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
                             <button
+                                type="button"
                                 onClick={() => setShowAddModal(false)}
                                 className="absolute top-6 right-6 p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
                             >
@@ -372,6 +385,7 @@ export default function PaymentsPage() {
                                         className="w-full bg-slate-50 border border-border rounded-2xl p-4 text-sm font-bold outline-none focus:ring-4 focus:ring-accent/10 focus:border-accent transition-all"
                                     >
                                         <option value="Cuota Club">Cuota Club</option>
+                                        <option value="Pago Anual">Pago Anual</option>
                                         <option value="Indumentaria">Indumentaria</option>
                                         <option value="Recaudación">Recaudación</option>
                                         <option value="Extra">Extra</option>
