@@ -2,11 +2,12 @@
 
 import Sidebar from "@/components/Sidebar";
 import { useProfile } from "@/hooks/useProfile";
-import { Loader2, Menu, Bell, AlertTriangle, LogOut, ChevronDown } from "lucide-react";
+import { Loader2, Menu, Bell, AlertTriangle, LogOut, ChevronDown, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { playerService } from "@/services/playerService";
 import { getDocStatus } from "@/utils/playerUtils";
 import { supabase } from "@/lib/supabase";
+import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -19,6 +20,7 @@ export default function DashboardLayout({
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [alertCount, setAlertCount] = useState(0);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const { theme, toggleTheme } = useTheme();
     const router = useRouter();
 
     useEffect(() => {
@@ -66,6 +68,14 @@ export default function DashboardLayout({
                     </div>
 
                     <div className="flex items-center gap-3 sm:gap-4">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-all hover:rotate-12"
+                            title={theme === 'light' ? 'Activar modo oscuro' : 'Activar modo claro'}
+                        >
+                            {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5 text-amber-400" />}
+                        </button>
+
                         <Link href="/dashboard/alerts" className="p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 text-muted-foreground transition-colors relative group">
                             <Bell className="h-5 w-5 group-hover:shake transition-all" />
                             {alertCount > 0 && (
