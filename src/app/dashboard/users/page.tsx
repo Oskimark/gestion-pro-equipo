@@ -118,8 +118,9 @@ export default function UsersPage() {
                 if (authError) throw authError;
                 alert(`¡Invitación enviada a ${addForm.email}! El usuario debe revisar su correo para acceder.`);
             } else {
-                // Manual creation
-                const generatedEmail = addForm.email || `${addForm.username.toLowerCase().replace(/\s+/g, '')}@gestion-equipo.com`;
+                // Manual creation: Generamos un correo válido y simple para Supabase
+                const cleanUsername = addForm.username.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]/g, '');
+                const generatedEmail = `${cleanUsername}@gestion-equipo.com`;
 
                 const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
                     email: generatedEmail,
