@@ -28,10 +28,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { playerService } from "@/services/playerService";
 import { uploadService } from "@/services/uploadService";
 import { Player } from "@/types";
-import { Upload } from "lucide-react";
+import { Upload, Crop as CropIcon } from "lucide-react";
 import { generateWhatsAppLink, getDocStatus } from "@/utils/playerUtils";
 import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/lib/supabase";
+import ImageEditor from "@/components/ImageEditor";
 
 const navigationTabs = [
     { id: "sports", name: "Deportivo", icon: Shield },
@@ -76,6 +77,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
         gearData: true,
         paymentsData: true,
     });
+    const [editingImage, setEditingImage] = useState<{ url: string, field: string } | null>(null);
 
     const isVisitor = profile?.role === "visitante";
 
@@ -251,6 +253,32 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
         } catch (err) {
             console.error("Error rejecting document:", err);
             alert("Error al rechazar el documento.");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleSaveEditedImage = async (blob: Blob) => {
+        if (!editingImage || !player) return;
+        try {
+            setSaving(true);
+            const file = new File([blob], "edited_image.jpg", { type: "image/jpeg" });
+            const publicUrl = await uploadService.uploadFile(file, "player-docs");
+
+            const updates: any = { [editingImage.field]: publicUrl };
+
+            // Delete old file if it was a supabase URL
+            if (editingImage.url.includes("supabase.co")) {
+                await uploadService.deleteFile(editingImage.url, "player-docs");
+            }
+
+            await playerService.update(player.id, updates);
+            await loadPlayer();
+            setEditingImage(null);
+            alert("Imagen editada y guardada correctamente.");
+        } catch (err) {
+            console.error("Error saving edited image:", err);
+            alert("Error al guardar la imagen editada.");
         } finally {
             setSaving(false);
         }
@@ -874,13 +902,33 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                         <div className="text-[10px] space-y-1">
                                                             <p className="text-muted-foreground uppercase font-black">Frente</p>
                                                             {player.id_card_rev_url ? (
-                                                                <a href={player.id_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Frente</a>
+                                                                <div className="flex items-center gap-2">
+                                                                    <a href={player.id_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Frente</a>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setEditingImage({ url: player.id_card_rev_url!, field: 'id_card_rev_url' })}
+                                                                        className="p-1 hover:bg-blue-100 rounded text-blue-500 transition-colors"
+                                                                        title="Editar imagen"
+                                                                    >
+                                                                        <CropIcon className="h-3 w-3" />
+                                                                    </button>
+                                                                </div>
                                                             ) : <p className="text-slate-500 italic">Sin archivo</p>}
                                                         </div>
                                                         <div className="text-[10px] space-y-1">
                                                             <p className="text-muted-foreground uppercase font-black">Dorso</p>
                                                             {player.id_card_rev_back_url ? (
-                                                                <a href={player.id_card_rev_back_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Dorso</a>
+                                                                <div className="flex items-center gap-2">
+                                                                    <a href={player.id_card_rev_back_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Dorso</a>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setEditingImage({ url: player.id_card_rev_back_url!, field: 'id_card_rev_back_url' })}
+                                                                        className="p-1 hover:bg-blue-100 rounded text-blue-500 transition-colors"
+                                                                        title="Editar imagen"
+                                                                    >
+                                                                        <CropIcon className="h-3 w-3" />
+                                                                    </button>
+                                                                </div>
                                                             ) : <p className="text-slate-500 italic">Sin archivo</p>}
                                                         </div>
                                                     </div>
@@ -933,6 +981,16 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                                         <X className="h-6 w-6 text-white" />
                                                                     </button>
                                                                 )}
+                                                                {!isEditing && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setEditingImage({ url: player.id_card_url!, field: 'id_card_url' })}
+                                                                        className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-white rounded shadow-sm text-secondary transition-colors"
+                                                                        title="Recortar / Rotar"
+                                                                    >
+                                                                        <CropIcon className="h-3 w-3" />
+                                                                    </button>
+                                                                )}
                                                             </div>
                                                         ) : (
                                                             isEditing ? (
@@ -967,6 +1025,16 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                                 {isEditing && (
                                                                     <button type="button" onClick={() => { setIdCardBackFile(null); setIdCardBackPreview(null); setFormData(p => ({ ...p, id_card_back_url: null as any })); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
                                                                         <X className="h-6 w-6 text-white" />
+                                                                    </button>
+                                                                )}
+                                                                {!isEditing && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setEditingImage({ url: player.id_card_back_url!, field: 'id_card_back_url' })}
+                                                                        className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-white rounded shadow-sm text-secondary transition-colors"
+                                                                        title="Recortar / Rotar"
+                                                                    >
+                                                                        <CropIcon className="h-3 w-3" />
                                                                     </button>
                                                                 )}
                                                             </div>
@@ -1326,6 +1394,24 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                             <Printer className="h-5 w-5" />
                             Generar e Imprimir Ficha
                         </button>
+                    </div>
+                </div>
+            )}
+
+            {editingImage && (
+                <ImageEditor
+                    imageUrl={editingImage.url}
+                    onSave={handleSaveEditedImage}
+                    onCancel={() => setEditingImage(null)}
+                    aspectRatio={1.58}
+                />
+            )}
+
+            {saving && (
+                <div className="fixed inset-0 z-[110] bg-black/50 backdrop-blur-sm flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4">
+                        <Loader2 className="h-10 w-10 animate-spin text-accent" />
+                        <p className="text-sm font-black uppercase tracking-widest text-slate-600">Procesando...</p>
                     </div>
                 </div>
             )}
