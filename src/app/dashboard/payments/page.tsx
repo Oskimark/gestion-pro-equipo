@@ -102,7 +102,7 @@ export default function PaymentsPage() {
     };
 
     const sendWaPaymentNotification = (player: Player, phone?: string) => {
-        const feeStatus = player.fee_status === 'up_to_date' ? '✅ Al día' : '⚠️ Atrasada';
+        const feeStatus = player.fee_status === 'up_to_date' ? 'Al día' : 'Atrasada';
         const msg = waPaymentText
             .replace('{nombre}', player.full_name)
             .replace('{estado}', feeStatus);
