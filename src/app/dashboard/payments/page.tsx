@@ -341,11 +341,11 @@ export default function PaymentsPage() {
                                             <tr key={p.id} className="hover:bg-slate-50/50 transition-colors group">
                                                 <td className="px-8 py-4">
                                                     <div className="flex items-center gap-4">
-                                                        <div className="h-10 w-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400 group-hover:scale-110 transition-transform overflow-hidden shadow-inner border border-border/50">
+                                                        <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center border border-border text-slate-400 shrink-0 group-hover:scale-110 transition-transform overflow-hidden shadow-inner uppercase">
                                                             {p.photo_url ? (
                                                                 <img src={p.photo_url} alt="" className="h-full w-full object-cover" />
                                                             ) : (
-                                                                <User className="h-5 w-5" />
+                                                                <User className="h-6 w-6" />
                                                             )}
                                                         </div>
                                                         <div>
