@@ -39,25 +39,43 @@ export default function ImageEditor({ imageUrl, onSave, onCancel, aspectRatio }:
         img.src = imageUrl;
         img.onload = () => {
             setImage(img);
-            // Initialize crop rect to 80% of image size
-            const size = Math.min(img.width, img.height) * 0.8;
-            let w = size;
-            let h = size;
-            if (aspectRatio) {
-                if (aspectRatio > 1) {
-                    h = w / aspectRatio;
-                } else {
-                    w = h * aspectRatio;
-                }
-            }
-            setCropRect({
-                x: (img.width - w) / 2,
-                y: (img.height - h) / 2,
-                width: w,
-                height: h
-            });
         };
-    }, [imageUrl, aspectRatio]);
+    }, [imageUrl]);
+
+    // Initialize layout when image and container are ready
+    useEffect(() => {
+        if (!image || !containerRef.current) return;
+
+        const container = containerRef.current;
+        const cw = container.clientWidth;
+        const ch = container.clientHeight;
+
+        // 1. Initialize zoom to fit the image
+        const scaleX = (cw * 0.8) / image.width;
+        const scaleY = (ch * 0.8) / image.height;
+        const initialZoom = Math.min(scaleX, scaleY, 1);
+        setZoom(initialZoom);
+        setOffset({ x: 0, y: 0 });
+
+        // 2. Initialize crop rect based on screen size
+        const size = Math.min(cw, ch) * 0.6;
+        let w = size;
+        let h = size;
+        if (aspectRatio) {
+            if (aspectRatio > 1) {
+                h = w / aspectRatio;
+            } else {
+                w = h * aspectRatio;
+            }
+        }
+
+        setCropRect({
+            x: (cw - w) / 2,
+            y: (ch - h) / 2,
+            width: w,
+            height: h
+        });
+    }, [image, aspectRatio]);
 
     const draw = useCallback(() => {
         if (!canvasRef.current || !image) return;
