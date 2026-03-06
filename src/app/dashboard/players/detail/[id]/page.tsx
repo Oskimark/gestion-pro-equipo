@@ -381,13 +381,13 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                     ${printOptions.idCard && p.id_card_url ? `
                         <div style="text-align: center;">
                             <p style="font-weight: bold; margin-bottom: 5px; font-size: 10px; text-transform: uppercase; color: #64748b;">Cédula de Identidad</p>
-                            <img src="${p.id_card_url}" style="width: 280px; height: 180px; object-fit: cover; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <img src="${p.id_card_url}" style="width: 320px; height: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
                         </div>
                     ` : ''}
                     ${printOptions.healthCard && p.health_card_url ? `
-                        <div style="text-align: center;">
-                            <p style="font-weight: bold; margin-bottom: 5px; font-size: 10px; text-transform: uppercase; color: #64748b;">Ficha Médica</p>
-                            <img src="${p.health_card_url}" style="width: 280px; height: 180px; object-fit: cover; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        <div style="text-align: center; margin-top: 10px;">
+                            <p style="font-weight: bold; margin-bottom: 5px; font-size: 10px; text-transform: uppercase; color: #64748b;">Ficha Médica / Carnet Deportivo</p>
+                            <img src="${p.health_card_url}" style="width: 450px; height: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
                         </div>
                     ` : ''}
                 </div>
