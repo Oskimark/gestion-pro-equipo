@@ -365,7 +365,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
 
         const photoSection = printOptions.photo && p.photo_url ? `
             <div style="margin-bottom: 20px; text-align: center;">
-                <img src="${p.photo_url}" style="width: 150px; hieght: 150px; object-fit: cover; border-radius: 50%; border: 4px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+                <img src="${p.photo_url}" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%; border: 4px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
             </div>
         ` : '';
 
