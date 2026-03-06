@@ -1,0 +1,69 @@
+# Payments Module Implementation Plan
+
+This plan details the development of the Payments module for Club 33.
+
+## User Review Required
+
+> [!IMPORTANT]
+> **Database Schema Changes**: I will be using a single `payments` table with a `category` field to distinguish between Club Fees (Cuota), Gear (Indumentaria), and other types. This avoids table fragmentation.
+
+## Proposed Changes
+
+### [Database & Types]
+
+#### [MODIFY] [types/index.ts](file:///g:/gestion33/src/types/index.ts)
+- Add `fee_status` and `gear_status` to [Player](file:///g:/gestion33/src/types/index.ts#1-55).
+- Expand [Payment](file:///g:/gestion33/src/types/index.ts#56-69) type with `period_month` and `period_year`.
+- Add fee configuration fields to [ClubSettings](file:///g:/gestion33/src/types/index.ts#101-117).
+
+### [Configuration]
+
+#### [MODIFY] [settings/page.tsx](file:///g:/gestion33/src/app/dashboard/settings/page.tsx)
+- Add "Configuración de Pagos" section.
+- Inputs for: Cuota Mensual ($), Cuota Anual ($), Descuento Anual (%), Precio Indumentaria ($).
+- Implement automatic `annual_fee` calculation when `monthly_fee` or `annual_discount_percent` changes.
+- Add a helper function to perform the calculation: `monthly_fee * 12 * (1 - discount/100)`.
+
+### [Payments Dashboard]
+
+#### [NEW] [payments/page.tsx](file:///g:/gestion33/src/app/dashboard/payments/page.tsx)
+- Summary cards: Total recaudado este mes, Pendientes, Al día vs Atrasados.
+- Table listing all payments with filters by category and player.
+- Modal to "Registrar Pago".
+- [FIX] Update [loadData](file:///g:/gestion33/src/app/dashboard/payments/page.tsx#51-66) to fetch players from the `players` table instead of `profiles`.
+- [FIX] Ensure the `X` close button in the modal correctly triggers `setShowAddModal(false)`.
+- [ENHANCE] Update the dashboard table to list players and their current payment status (monthly/annual) using notification icons similar to the documentation module.
+- [ENHANCE] Add "Pago Anual" as an option in the category selection.
+
+### [Player Detail Integration]
+
+#### [MODIFY] [players/detail/[id]/page.tsx](file:///g:/gestion33/src/app/dashboard/players/detail/[id]/page.tsx)
+- Add "Pagos" tab.
+- History table for the specific player.
+- Status badges: "Al día" / "Atrasado" for fees, "Pagado" / "Entregado" for gear.
+
+## Verification Plan
+
+### Automated Tests
+- `npm run build` to ensure type safety.
+
+### Manual Verification
+1.  Set fees in Settings and verify they are saved.
+2.  Register a monthly fee for a player and check if their status updates to "Al día".
+3.  Register a gear payment and verify the delivery status can be toggled.
+- Manual verification of player list in dropdown.
+- Check annual fee update in UI when parameters change.
+- Verify status icons in the payments table.
+
+### [Manual User Creation]
+
+#### [MODIFY] [users/page.tsx](file:///g:/gestion33/src/app/dashboard/users/page.tsx)
+- Add a toggle or tabs in the "Nuevo Personal" modal to switch between "Enviar Invitación" (Email) and "Creación Manual" (Name/Password).
+- For Manual Creation, add fields for `full_name` and `password`.
+- Update [handleAddSubmit](file:///g:/gestion33/src/app/dashboard/payments/page.tsx#82-121) to handle both methods.
+- Implement `handleManualCreate` using Supabase Auth (Sign Up) and then creating the profile.
+
+#### [NEW] [adminService.ts](file:///g:/gestion33/src/services/adminService.ts)
+- Create a service to handle administrative actions like manual user creation.
+- Note: Manual creation via `admin.auth.createUser` requires a Service Role Key, which shouldn't be on the client. Alternatively, use a standard `signUp` with a placeholder email (like `username@gestion33.com`) if the user only wants "Name and Password".
+- *Correction*: The user said "only name and password". In Supabase, Auth requires an email or phone for standard signup. I will propose using a formatted email based on the name (e.g., `name@club33.com`) or asking the user if they want to use a "Username" field that maps to email internally.

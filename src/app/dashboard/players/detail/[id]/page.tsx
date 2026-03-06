@@ -64,6 +64,16 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     const [healthCardPreview, setHealthCardPreview] = useState<string | null>(null);
     const [payments, setPayments] = useState<any[]>([]);
     const [loadingPayments, setLoadingPayments] = useState(false);
+    const [printOptions, setPrintOptions] = useState({
+        photo: true,
+        idCard: true,
+        healthCard: true,
+        personalData: true,
+        sportsData: true,
+        contactData: true,
+        gearData: true,
+        paymentsData: true,
+    });
 
     const isVisitor = profile?.role === "visitante";
 
@@ -311,29 +321,105 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                     status === 'delivered' ? 'Entregado ✅' :
                         status === 'behind' ? 'Atrasado ⚠️' : 'Pendiente ⚠️';
 
-        const rows = [
-            ['Nombre Completo', p.full_name],
-            ['Dorsal', p.shirt_number ? `#${p.shirt_number}` : '-'],
-            ['Posición', p.position || '-'],
-            ['Fecha de Nacimiento', p.birth_date ? new Date(p.birth_date).toLocaleDateString('es') : '-'],
-            ['Edad', calculateAge(p.birth_date) + ' años'],
-            ['Nº Cédula', p.id_card_num || '-'],
-            ['Vto. Cédula', p.id_card_expiry || '-'],
-            ['Vto. Carnet Deportivo', p.health_card_expiry || '-'],
-            ['Nombre Padre / Referente', p.father_name || p.referent_name || '-'],
-            ['Tel. Padre / Referente', p.father_phone || p.referent_phone || '-'],
-            ['Nombre Madre', p.mother_name || '-'],
-            ['Tel. Madre', p.mother_phone || '-'],
-            ['Dirección', p.address || '-'],
-            ['Estado Cuota', getStatus(p.fee_status)],
-            ['Indumentaria', getStatus(p.gear_status)],
-        ].map(([label, val]) => `<tr><td style="padding:6px 12px;border:1px solid #e2e8f0;font-weight:600;background:#f8fafc;width:40%">${label}</td><td style="padding:6px 12px;border:1px solid #e2e8f0">${val}</td></tr>`).join('');
+        let rows = [];
+        if (printOptions.personalData) {
+            rows.push(
+                ['Nombre Completo', p.full_name],
+                ['Nº Cédula', p.id_card_num || '-'],
+                ['Fecha de Nacimiento', p.birth_date ? new Date(p.birth_date).toLocaleDateString('es') : '-'],
+                ['Edad', calculateAge(p.birth_date) + ' años'],
+                ['Dirección', p.address || '-'],
+            );
+        }
+
+        if (printOptions.sportsData) {
+            rows.push(
+                ['Dorsal', p.shirt_number ? `#${p.shirt_number}` : '-'],
+                ['Posición', p.position || '-'],
+                ['Vto. Cédula', p.id_card_expiry || '-'],
+                ['Vto. Carnet Deportivo', p.health_card_expiry || '-'],
+                ['Estado Cuota', getStatus(p.fee_status)],
+            );
+        }
+
+        if (printOptions.contactData) {
+            rows.push(
+                ['Nombre Madre', p.mother_name || '-'],
+                ['Tel. Madre', p.mother_phone || '-'],
+                ['Nombre Padre', p.father_name || '-'],
+                ['Tel. Padre', p.father_phone || '-'],
+                ['Referente', p.referent_name || '-'],
+                ['Tel. Referente', p.referent_phone || '-'],
+            );
+        }
+
+        if (printOptions.gearData) {
+            rows.push(
+                ['Indumentaria', getStatus(p.gear_status)],
+                ['Talle Camiseta', p.shirt_size || '-'],
+                ['Talle Short', p.short_size || '-'],
+            );
+        }
+
+        const tableContent = rows.map(([label, val]) => `<tr><td style="padding:6px 12px;border:1px solid #e2e8f0;font-weight:600;background:#f8fafc;width:40%">${label}</td><td style="padding:6px 12px;border:1px solid #e2e8f0">${val}</td></tr>`).join('');
+
+        const photoSection = printOptions.photo && p.photo_url ? `
+            <div style="margin-bottom: 20px; text-align: center;">
+                <img src="${p.photo_url}" style="width: 150px; hieght: 150px; object-fit: cover; border-radius: 50%; border: 4px solid #f1f5f9; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);">
+            </div>
+        ` : '';
+
+        const docsSection = (printOptions.idCard && p.id_card_url) || (printOptions.healthCard && p.health_card_url) ? `
+            <div style="margin-top: 30px;">
+                <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; color: #1e293b;">Documentos Adjuntos</h3>
+                <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
+                    ${printOptions.idCard && p.id_card_url ? `
+                        <div style="text-align: center;">
+                            <p style="font-weight: bold; margin-bottom: 5px; font-size: 10px; text-transform: uppercase; color: #64748b;">Cédula de Identidad</p>
+                            <img src="${p.id_card_url}" style="width: 280px; height: 180px; object-fit: cover; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        </div>
+                    ` : ''}
+                    ${printOptions.healthCard && p.health_card_url ? `
+                        <div style="text-align: center;">
+                            <p style="font-weight: bold; margin-bottom: 5px; font-size: 10px; text-transform: uppercase; color: #64748b;">Ficha Médica</p>
+                            <img src="${p.health_card_url}" style="width: 280px; height: 180px; object-fit: cover; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        ` : '';
+
+        const paymentsSection = printOptions.paymentsData && payments.length > 0 ? `
+            <div style="margin-top: 30px;">
+                <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; color: #1e293b;">Últimos Pagos</h3>
+                <table style="width: 100%; margin-top: 10px; font-size: 11px;">
+                    <thead>
+                        <tr style="background: #f8fafc;">
+                            <th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">Concepto</th>
+                            <th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">Fecha</th>
+                            <th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">Monto</th>
+                            <th style="padding: 8px; border: 1px solid #e2e8f0; text-align: left;">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${payments.slice(0, 5).map(pay => `
+                            <tr>
+                                <td style="padding: 6px 8px; border: 1px solid #e2e8f0;">${pay.category}</td>
+                                <td style="padding: 6px 8px; border: 1px solid #e2e8f0;">${pay.paid_date ? new Date(pay.paid_date).toLocaleDateString() : '-'}</td>
+                                <td style="padding: 6px 8px; border: 1px solid #e2e8f0;">$${pay.amount?.toLocaleString()}</td>
+                                <td style="padding: 6px 8px; border: 1px solid #e2e8f0;">${pay.status}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            </div>
+        ` : '';
 
         const notesSection = printNotes ? `<div style="margin-top:20px;padding:12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc"><strong>Notas adicionales:</strong><br>${printNotes}</div>` : '';
 
-        const html = `<html><head><title>Ficha Jugador – ${p.full_name}</title><style>body{font-family:Arial,sans-serif;font-size:12px;padding:24px}table{border-collapse:collapse;width:100%}h2{margin-bottom:4px}@media print{button{display:none}}</style></head><body><h2>Ficha del Jugador</h2><p style="color:#64748b;margin-bottom:16px">Club 33 – Churrinches Gen 2017 – ${new Date().toLocaleDateString('es')}</p><table>${rows}</table>${notesSection}<br><button onclick="window.print()">Imprimir Ficha</button></body></html>`;
+        const html = `<html><head><title>Ficha Jugador – ${p.full_name}</title><style>body{font-family:Arial,sans-serif;font-size:12px;padding:24px}table{border-collapse:collapse;width:100%}h2{margin-bottom:4px}@media print{button{display:none}.no-print{display:none}}</style></head><body><div style="display:flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;"><div><h2>Ficha del Jugador</h2><p style="color:#64748b;margin-bottom:16px">Club 33 – Churrinches Gen 2017 – ${new Date().toLocaleDateString('es')}</p></div>${photoSection}</div><table>${tableContent}</table>${paymentsSection}${docsSection}${notesSection}<br><button class="no-print" onclick="window.print()" style="padding: 10px 20px; background: #2563eb; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Imprimir Ficha</button></body></html>`;
         const win = window.open('', '_blank');
-        if (win) { win.document.write(html); win.document.close(); win.print(); }
+        if (win) { win.document.write(html); win.document.close(); }
         setShowPrintModal(false);
         setPrintNotes("");
     };
@@ -1111,20 +1197,47 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                             </button>
                         </div>
 
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Notas o información adicional (opcional)</label>
-                            <textarea
-                                rows={3}
-                                value={printNotes}
-                                onChange={(e) => setPrintNotes(e.target.value)}
-                                placeholder="Ej: Autorizado para partidos de liga. Renovación pendiente..."
-                                className="w-full border border-border/40 rounded-2xl p-4 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all resize-none"
-                            />
-                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="col-span-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3 block">Elementos a incluir</label>
+                                <div className="grid grid-cols-2 gap-3">
+                                    {[
+                                        { id: 'photo', name: 'Foto del Jugador' },
+                                        { id: 'idCard', name: 'Documento CI' },
+                                        { id: 'healthCard', name: 'Ficha Médica' },
+                                        { id: 'personalData', name: 'Datos Personales' },
+                                        { id: 'sportsData', name: 'Datos Deportivos' },
+                                        { id: 'contactData', name: 'Contactos' },
+                                        { id: 'gearData', name: 'Indumentaria' },
+                                        { id: 'paymentsData', name: 'Pagos' },
+                                    ].map((opt) => (
+                                        <label key={opt.id} className="flex items-center gap-2 cursor-pointer group">
+                                            <div className="relative flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={(printOptions as any)[opt.id]}
+                                                    onChange={(e) => setPrintOptions(prev => ({ ...prev, [opt.id]: e.target.checked }))}
+                                                    className="peer h-5 w-5 appearance-none rounded-md border-2 border-slate-200 checked:bg-accent checked:border-accent transition-all cursor-pointer"
+                                                />
+                                                <Check className="absolute h-3 w-3 text-white left-1 opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none" />
+                                            </div>
+                                            <span className="text-xs font-bold text-slate-600 group-hover:text-foreground transition-colors">{opt.name}</span>
+                                        </label>
+                                    ))}
+                                </div>
+                            </div>
 
-                        <p className="text-xs text-muted-foreground bg-slate-50 p-3 rounded-xl">
-                            Se imprimirá una ficha completa con todos los datos del jugador, estado de documentos, cuotas e indumentaria.
-                        </p>
+                            <div className="col-span-2 space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Notas o información adicional (opcional)</label>
+                                <textarea
+                                    rows={2}
+                                    value={printNotes}
+                                    onChange={(e) => setPrintNotes(e.target.value)}
+                                    placeholder="Ej: Autorizado para partidos de liga..."
+                                    className="w-full border border-border/40 rounded-2xl p-3 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all resize-none"
+                                />
+                            </div>
+                        </div>
 
                         <button
                             onClick={printPlayerDoc}
