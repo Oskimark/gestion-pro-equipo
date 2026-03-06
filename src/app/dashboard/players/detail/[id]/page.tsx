@@ -77,7 +77,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
         gearData: true,
         paymentsData: true,
     });
-    const [editingImage, setEditingImage] = useState<{ url: string, field: string } | null>(null);
+    const [editingImage, setEditingImage] = useState<{ url: string, field: string, aspectRatio?: number } | null>(null);
 
     const isVisitor = profile?.role === "visitante";
 
@@ -906,7 +906,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                                     <a href={player.id_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Frente</a>
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => setEditingImage({ url: player.id_card_rev_url!, field: 'id_card_rev_url' })}
+                                                                        onClick={() => setEditingImage({ url: player.id_card_rev_url!, field: 'id_card_rev_url', aspectRatio: 1.58 })}
                                                                         className="p-1 hover:bg-blue-100 rounded text-blue-500 transition-colors"
                                                                         title="Editar imagen"
                                                                     >
@@ -922,7 +922,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                                     <a href={player.id_card_rev_back_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Dorso</a>
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => setEditingImage({ url: player.id_card_rev_back_url!, field: 'id_card_rev_back_url' })}
+                                                                        onClick={() => setEditingImage({ url: player.id_card_rev_back_url!, field: 'id_card_rev_back_url', aspectRatio: 1.58 })}
                                                                         className="p-1 hover:bg-blue-100 rounded text-blue-500 transition-colors"
                                                                         title="Editar imagen"
                                                                     >
@@ -984,7 +984,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                                 {!isEditing && (
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => setEditingImage({ url: player.id_card_url!, field: 'id_card_url' })}
+                                                                        onClick={() => setEditingImage({ url: player.id_card_url!, field: 'id_card_url', aspectRatio: 1.58 })}
                                                                         className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-white rounded shadow-sm text-secondary transition-colors"
                                                                         title="Recortar / Rotar"
                                                                     >
@@ -1030,7 +1030,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                                 {!isEditing && (
                                                                     <button
                                                                         type="button"
-                                                                        onClick={() => setEditingImage({ url: player.id_card_back_url!, field: 'id_card_back_url' })}
+                                                                        onClick={() => setEditingImage({ url: player.id_card_back_url!, field: 'id_card_back_url', aspectRatio: 1.58 })}
                                                                         className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-white rounded shadow-sm text-secondary transition-colors"
                                                                         title="Recortar / Rotar"
                                                                     >
@@ -1119,7 +1119,17 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                         <div className="text-[10px] space-y-1">
                                                             <p className="text-muted-foreground uppercase font-black">Documento</p>
                                                             {player.health_card_rev_url ? (
-                                                                <a href={player.health_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-green-500 font-bold underline">Ver Archivo</a>
+                                                                <div className="flex items-center gap-2">
+                                                                    <a href={player.health_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-green-500 font-bold underline">Ver Archivo</a>
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setEditingImage({ url: player.health_card_rev_url!, field: 'health_card_rev_url' })}
+                                                                        className="p-1 hover:bg-green-100 rounded text-green-500 transition-colors"
+                                                                        title="Editar imagen"
+                                                                    >
+                                                                        <CropIcon className="h-3 w-3" />
+                                                                    </button>
+                                                                </div>
                                                             ) : <p className="text-slate-500 italic">Sin archivo</p>}
                                                         </div>
                                                     </div>
@@ -1164,6 +1174,16 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                                 {isEditing && (
                                                                     <button type="button" onClick={() => { setHealthCardFile(null); setHealthCardPreview(null); setFormData(p => ({ ...p, health_card_url: null as any })); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
                                                                         <X className="h-6 w-6 text-white" />
+                                                                    </button>
+                                                                )}
+                                                                {!isEditing && (
+                                                                    <button
+                                                                        type="button"
+                                                                        onClick={() => setEditingImage({ url: player.health_card_url!, field: 'health_card_url' })}
+                                                                        className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-white rounded shadow-sm text-secondary transition-colors"
+                                                                        title="Recortar / Rotar"
+                                                                    >
+                                                                        <CropIcon className="h-3 w-3" />
                                                                     </button>
                                                                 )}
                                                             </div>
@@ -1403,7 +1423,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                     imageUrl={editingImage.url}
                     onSave={handleSaveEditedImage}
                     onCancel={() => setEditingImage(null)}
-                    aspectRatio={1.58}
+                    aspectRatio={editingImage.aspectRatio}
                 />
             )}
 
