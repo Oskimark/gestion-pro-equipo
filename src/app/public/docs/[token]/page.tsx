@@ -24,6 +24,7 @@ export default function PublicDocUploadPage({ params }: { params: Promise<{ toke
 
     // Form states
     const [idCardFile, setIdCardFile] = useState<File | null>(null);
+    const [idCardBackFile, setIdCardBackFile] = useState<File | null>(null);
     const [idCardExpiry, setIdCardExpiry] = useState("");
     const [healthCardFile, setHealthCardFile] = useState<File | null>(null);
     const [healthCardExpiry, setHealthCardExpiry] = useState("");
@@ -49,7 +50,7 @@ export default function PublicDocUploadPage({ params }: { params: Promise<{ toke
         e.preventDefault();
         if (!player) return;
 
-        if (!idCardFile && !healthCardFile && !idCardExpiry && !healthCardExpiry) {
+        if (!idCardFile && !idCardBackFile && !healthCardFile && !idCardExpiry && !healthCardExpiry) {
             alert("Por favor, completa al menos un campo para enviar.");
             return;
         }
@@ -62,6 +63,11 @@ export default function PublicDocUploadPage({ params }: { params: Promise<{ toke
                 const url = await uploadService.uploadFile(idCardFile, "player-docs");
                 updates.id_card_rev_url = url;
                 updates.id_card_rev_status = 'pending';
+            }
+            if (idCardBackFile) {
+                const url = await uploadService.uploadFile(idCardBackFile, "player-docs");
+                updates.id_card_rev_back_url = url;
+                if (!updates.id_card_rev_status) updates.id_card_rev_status = 'pending';
             }
             if (idCardExpiry) {
                 updates.id_card_rev_expiry = idCardExpiry;
@@ -169,28 +175,53 @@ export default function PublicDocUploadPage({ params }: { params: Promise<{ toke
                             </div>
 
                             <div className="space-y-4">
-                                <label className="block">
-                                    <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] mb-2 block">Foto del Documento</span>
-                                    <div className={`relative border-2 border-dashed rounded-[1.5rem] p-8 flex flex-col items-center justify-center transition-all cursor-pointer ${idCardFile ? 'border-green-500/50 bg-green-500/5' : 'border-slate-800 hover:border-blue-500/50 hover:bg-white/5'}`}>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={(e) => setIdCardFile(e.target.files?.[0] || null)}
-                                            className="absolute inset-0 opacity-0 cursor-pointer"
-                                        />
-                                        {idCardFile ? (
-                                            <>
-                                                <CheckCircle2 className="h-8 w-8 text-green-500 mb-2" />
-                                                <span className="text-xs font-bold text-green-500">{idCardFile.name}</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Upload className="h-8 w-8 text-slate-600 mb-2" />
-                                                <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest text-center">Toca para subir o tomar foto</span>
-                                            </>
-                                        )}
-                                    </div>
-                                </label>
+                                <div className="grid grid-cols-1 gap-4">
+                                    <label className="block">
+                                        <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] mb-2 block">Frente de Cédula</span>
+                                        <div className={`relative border-2 border-dashed rounded-[1.5rem] p-6 flex flex-col items-center justify-center transition-all cursor-pointer ${idCardFile ? 'border-green-500/50 bg-green-500/5' : 'border-slate-800 hover:border-blue-500/50 hover:bg-white/5'}`}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => setIdCardFile(e.target.files?.[0] || null)}
+                                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                            />
+                                            {idCardFile ? (
+                                                <>
+                                                    <CheckCircle2 className="h-6 w-6 text-green-500 mb-1" />
+                                                    <span className="text-[10px] font-bold text-green-500 truncate max-w-full px-2">{idCardFile.name}</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Upload className="h-6 w-6 text-slate-600 mb-1" />
+                                                    <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest text-center">Subir Frente</span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </label>
+
+                                    <label className="block">
+                                        <span className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] mb-2 block">Dorso de Cédula</span>
+                                        <div className={`relative border-2 border-dashed rounded-[1.5rem] p-6 flex flex-col items-center justify-center transition-all cursor-pointer ${idCardBackFile ? 'border-green-500/50 bg-green-500/5' : 'border-slate-800 hover:border-blue-500/50 hover:bg-white/5'}`}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={(e) => setIdCardBackFile(e.target.files?.[0] || null)}
+                                                className="absolute inset-0 opacity-0 cursor-pointer"
+                                            />
+                                            {idCardBackFile ? (
+                                                <>
+                                                    <CheckCircle2 className="h-6 w-6 text-green-500 mb-1" />
+                                                    <span className="text-[10px] font-bold text-green-500 truncate max-w-full px-2">{idCardBackFile.name}</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Upload className="h-6 w-6 text-slate-600 mb-1" />
+                                                    <span className="text-[10px] font-black uppercase text-slate-500 tracking-widest text-center">Subir Dorso</span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </label>
+                                </div>
 
                                 <div>
                                     <label className="text-[10px] font-black uppercase text-slate-500 tracking-[0.2em] mb-2 block">Nueva Fecha Vencimiento</label>

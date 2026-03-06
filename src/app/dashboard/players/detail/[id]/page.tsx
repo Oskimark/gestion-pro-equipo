@@ -60,6 +60,8 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     const [photoPreview, setPhotoPreview] = useState<string | null>(null);
     const [idCardFile, setIdCardFile] = useState<File | null>(null);
     const [idCardPreview, setIdCardPreview] = useState<string | null>(null);
+    const [idCardBackFile, setIdCardBackFile] = useState<File | null>(null);
+    const [idCardBackPreview, setIdCardBackPreview] = useState<string | null>(null);
     const [healthCardFile, setHealthCardFile] = useState<File | null>(null);
     const [healthCardPreview, setHealthCardPreview] = useState<string | null>(null);
     const [payments, setPayments] = useState<any[]>([]);
@@ -156,10 +158,22 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     };
 
     const handleIdCardChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
+        const file = e.target.files?.[0];
+        if (file) {
             setIdCardFile(file);
-            setIdCardPreview(URL.createObjectURL(file));
+            const reader = new FileReader();
+            reader.onloadend = () => setIdCardPreview(reader.result as string);
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleIdCardBackChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setIdCardBackFile(file);
+            const reader = new FileReader();
+            reader.onloadend = () => setIdCardBackPreview(reader.result as string);
+            reader.readAsDataURL(file);
         }
     };
 
@@ -178,9 +192,11 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             const updates: Partial<Player> = {};
             if (type === 'id') {
                 updates.id_card_url = player.id_card_rev_url;
+                updates.id_card_back_url = player.id_card_rev_back_url;
                 updates.id_card_expiry = player.id_card_rev_expiry;
                 updates.id_card_rev_status = 'none';
                 updates.id_card_rev_url = null as any;
+                updates.id_card_rev_back_url = null as any;
                 updates.id_card_rev_expiry = null as any;
                 updates.id_card_notified_count = 0; // Reset notifications on approval
             } else {
@@ -213,6 +229,7 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             if (type === 'id') {
                 updates.id_card_rev_status = 'none';
                 updates.id_card_rev_url = null as any;
+                updates.id_card_rev_back_url = null as any;
                 updates.id_card_rev_expiry = null as any;
             } else {
                 updates.health_card_rev_status = 'none';
@@ -224,6 +241,9 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
             const urlToDelete = type === 'id' ? player.id_card_rev_url : player.health_card_rev_url;
             if (urlToDelete) {
                 await uploadService.deleteFile(urlToDelete, "player-docs");
+            }
+            if (type === 'id' && player.id_card_rev_back_url) {
+                await uploadService.deleteFile(player.id_card_rev_back_url, "player-docs");
             }
 
             await playerService.update(player.id, updates);
@@ -258,6 +278,13 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                 updatedData.id_card_notified_count = 0; // Reset count on new upload
                 if (player?.id_card_url) {
                     await uploadService.deleteFile(player.id_card_url, "player-docs");
+                }
+            }
+            if (idCardBackFile) {
+                const publicUrl = await uploadService.uploadFile(idCardBackFile, "player-docs");
+                updatedData.id_card_back_url = publicUrl;
+                if (player?.id_card_back_url) {
+                    await uploadService.deleteFile(player.id_card_back_url, "player-docs");
                 }
             }
             if (healthCardFile) {
@@ -380,8 +407,14 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                 <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
                     ${printOptions.idCard && p.id_card_url ? `
                         <div style="text-align: center;">
-                            <p style="font-weight: bold; margin-bottom: 5px; font-size: 10px; text-transform: uppercase; color: #64748b;">Cédula de Identidad</p>
+                            <p style="font-weight: bold; margin-bottom: 5px; font-size: 10px; text-transform: uppercase; color: #64748b;">Cédula de Identidad (Frente)</p>
                             <img src="${p.id_card_url}" style="width: 320px; height: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+                        </div>
+                    ` : ''}
+                    ${printOptions.idCard && p.id_card_back_url ? `
+                        <div style="text-align: center; margin-top: 10px;">
+                            <p style="font-weight: bold; margin-bottom: 5px; font-size: 10px; text-transform: uppercase; color: #64748b;">Cédula de Identidad (Dorso)</p>
+                            <img src="${p.id_card_back_url}" style="width: 320px; height: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
                         </div>
                     ` : ''}
                     ${printOptions.healthCard && p.health_card_url ? `
@@ -839,9 +872,15 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                             <p className="text-blue-500 font-black">{player.id_card_rev_expiry || "No especificado"}</p>
                                                         </div>
                                                         <div className="text-[10px] space-y-1">
-                                                            <p className="text-muted-foreground uppercase font-black">Documento</p>
+                                                            <p className="text-muted-foreground uppercase font-black">Frente</p>
                                                             {player.id_card_rev_url ? (
-                                                                <a href={player.id_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Archivo</a>
+                                                                <a href={player.id_card_rev_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Frente</a>
+                                                            ) : <p className="text-slate-500 italic">Sin archivo</p>}
+                                                        </div>
+                                                        <div className="text-[10px] space-y-1">
+                                                            <p className="text-muted-foreground uppercase font-black">Dorso</p>
+                                                            {player.id_card_rev_back_url ? (
+                                                                <a href={player.id_card_rev_back_url} target="_blank" rel="noopener noreferrer" className="text-blue-500 font-bold underline">Ver Dorso</a>
                                                             ) : <p className="text-slate-500 italic">Sin archivo</p>}
                                                         </div>
                                                     </div>
@@ -876,14 +915,14 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                     <input type="date" name="id_card_expiry" value={formData.id_card_expiry || ""} onChange={handleChange} disabled={!isEditing} className="w-full bg-white border border-border rounded-lg p-2 text-sm" />
                                                 </div>
                                                 <div className="pt-2">
-                                                    <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Foto / Documento</label>
+                                                    <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Cédula Frente</label>
                                                     <div className="flex items-center gap-4">
                                                         {(idCardPreview || formData.id_card_url) ? (
                                                             <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-border group">
                                                                 <a href={idCardPreview || formData.id_card_url || ""} target="_blank" rel="noopener noreferrer">
                                                                     <Image
                                                                         src={idCardPreview || formData.id_card_url || ""}
-                                                                        alt="CI"
+                                                                        alt="CI Frente"
                                                                         width={128}
                                                                         height={80}
                                                                         className="h-full w-full object-cover group-hover:opacity-70 transition-opacity"
@@ -899,12 +938,48 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                             isEditing ? (
                                                                 <label className="cursor-pointer bg-slate-50 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 transition-all w-full">
                                                                     <Upload className="h-4 w-4 text-muted-foreground mb-2" />
-                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Foto</span>
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Frente</span>
                                                                     <input type="file" accept="image/*" onChange={handleIdCardChange} className="hidden" />
                                                                 </label>
                                                             ) : (
                                                                 <div className="bg-slate-50 border border-dashed border-border rounded-lg p-4 flex items-center justify-center w-full">
-                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Sin documento</span>
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Sin Frente</span>
+                                                                </div>
+                                                            )
+                                                        )}
+                                                    </div>
+                                                </div>
+
+                                                <div className="pt-2">
+                                                    <label className="block text-[10px] font-bold text-muted-foreground uppercase mb-2">Cédula Dorso</label>
+                                                    <div className="flex items-center gap-4">
+                                                        {(idCardBackPreview || formData.id_card_back_url) ? (
+                                                            <div className="relative h-20 w-32 rounded-lg overflow-hidden border border-border group">
+                                                                <a href={idCardBackPreview || formData.id_card_back_url || ""} target="_blank" rel="noopener noreferrer">
+                                                                    <Image
+                                                                        src={idCardBackPreview || formData.id_card_back_url || ""}
+                                                                        alt="CI Dorso"
+                                                                        width={128}
+                                                                        height={80}
+                                                                        className="h-full w-full object-cover group-hover:opacity-70 transition-opacity"
+                                                                    />
+                                                                </a>
+                                                                {isEditing && (
+                                                                    <button type="button" onClick={() => { setIdCardBackFile(null); setIdCardBackPreview(null); setFormData(p => ({ ...p, id_card_back_url: null as any })); }} className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                                                                        <X className="h-6 w-6 text-white" />
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        ) : (
+                                                            isEditing ? (
+                                                                <label className="cursor-pointer bg-slate-50 border border-dashed border-border rounded-lg p-4 flex flex-col items-center justify-center hover:bg-slate-100 transition-all w-full">
+                                                                    <Upload className="h-4 w-4 text-muted-foreground mb-2" />
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Subir Dorso</span>
+                                                                    <input type="file" accept="image/*" onChange={handleIdCardBackChange} className="hidden" />
+                                                                </label>
+                                                            ) : (
+                                                                <div className="bg-slate-50 border border-dashed border-border rounded-lg p-4 flex items-center justify-center w-full">
+                                                                    <span className="text-[10px] uppercase font-bold text-muted-foreground">Sin Dorso</span>
                                                                 </div>
                                                             )
                                                         )}
