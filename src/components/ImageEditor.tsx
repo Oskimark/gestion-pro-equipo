@@ -152,14 +152,14 @@ export default function ImageEditor({ imageUrl, onSave, onCancel, aspectRatio }:
         draw();
     }, [draw]);
 
-    const handleMouseDown = (e: React.MouseEvent) => {
+    const handlePointerDown = (e: React.PointerEvent) => {
         const rect = canvasRef.current?.getBoundingClientRect();
         if (!rect) return;
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
         // Check if hitting a handle
-        const handleSize = 20;
+        const handleSize = 25; // Slightly larger for touch
         const corners = [
             { id: 'tl', x: cropRect.x, y: cropRect.y },
             { id: 'tr', x: cropRect.x + cropRect.width, y: cropRect.y },
@@ -179,9 +179,11 @@ export default function ImageEditor({ imageUrl, onSave, onCancel, aspectRatio }:
 
         setIsDragging(true);
         setDragStart({ x, y });
+        // Set pointer capture to handle movement outside canvas
+        (e.target as HTMLElement).setPointerCapture(e.pointerId);
     };
 
-    const handleMouseMove = (e: React.MouseEvent) => {
+    const handlePointerMove = (e: React.PointerEvent) => {
         if (!isDragging) return;
         const rect = canvasRef.current?.getBoundingClientRect();
         if (!rect) return;
@@ -215,9 +217,10 @@ export default function ImageEditor({ imageUrl, onSave, onCancel, aspectRatio }:
         setDragStart({ x, y });
     };
 
-    const handleMouseUp = () => {
+    const handlePointerUp = (e: React.PointerEvent) => {
         setIsDragging(false);
         setActiveHandle(null);
+        (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     };
 
     const handleRotate = (dir: number) => {
@@ -275,11 +278,11 @@ export default function ImageEditor({ imageUrl, onSave, onCancel, aspectRatio }:
             </div>
 
             {/* Canvas Area */}
-            <div ref={containerRef} className="flex-1 relative cursor-crosshair overflow-hidden"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}>
+            <div ref={containerRef} className="flex-1 relative cursor-crosshair overflow-hidden touch-none"
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onContextMenu={(e) => e.preventDefault()}>
                 <canvas ref={canvasRef} className="absolute inset-0" />
             </div>
 
