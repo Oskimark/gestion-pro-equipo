@@ -28,6 +28,7 @@ export type Player = {
   id_card_num?: string;
   id_card_expiry?: string;
   id_card_url?: string;
+  id_card_back_url?: string;
   health_card_expiry?: string;
   health_card_url?: string;
   permit_info?: string;
@@ -40,6 +41,7 @@ export type Player = {
   // New Revision fields
   access_token?: string;
   id_card_rev_url?: string;
+  id_card_rev_back_url?: string;
   id_card_rev_expiry?: string;
   health_card_rev_url?: string;
   health_card_rev_expiry?: string;
