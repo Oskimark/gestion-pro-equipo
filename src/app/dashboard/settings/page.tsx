@@ -335,7 +335,7 @@ export default function SettingsPage() {
                                 rows={3}
                                 value={settings.wa_payment_text || ''}
                                 onChange={(e) => setSettings({ ...settings, wa_payment_text: e.target.value })}
-                                placeholder="Hola {nombre}! Tu estado de cuota en el Club 33 es *{estado}*. Contactá a la administración para más información."
+                                placeholder="Hola, te recordamos desde el club 33 que la cuota social de {nombre} esta {estado}. contacta con el administrador para conocer detalles. Gracias!"
                                 className="w-full border border-border/40 rounded-2xl p-4 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all resize-none bg-white "
                             />
                             <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">

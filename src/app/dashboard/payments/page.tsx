@@ -34,6 +34,7 @@ export default function PaymentsPage() {
     const [players, setPlayers] = useState<Player[]>([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filterCategory, setFilterCategory] = useState<string>("all");
+    const [settings, setSettings] = useState<any>(null);
 
     // Modal states
     const [showAddModal, setShowAddModal] = useState(false);
@@ -48,6 +49,18 @@ export default function PaymentsPage() {
         period_month: new Date().getMonth() + 1,
         period_year: new Date().getFullYear()
     });
+
+    useEffect(() => {
+        if (!settings) return;
+        let amount = 0;
+        if (newPayment.category === 'Cuota Club') amount = settings.monthly_fee || 0;
+        if (newPayment.category === 'Pago Anual') amount = settings.annual_fee || 0;
+        if (newPayment.category === 'Indumentaria') amount = settings.gear_price || 0;
+
+        if (amount > 0 && newPayment.amount !== amount) {
+            setNewPayment(prev => ({ ...prev, amount }));
+        }
+    }, [newPayment.category, settings]);
 
     useEffect(() => {
         loadData();
@@ -72,10 +85,11 @@ export default function PaymentsPage() {
             }
 
             try {
-                const settings = await settingsService.getSettings();
-                setWaPaymentText(settings.wa_payment_text || 'Hola {nombre}! Te informamos que tu estado de cuota en el Club 33 es *{estado}*. Para más información, contactá a la administración.');
+                const s = await settingsService.getSettings();
+                setSettings(s);
+                setWaPaymentText(s.wa_payment_text || 'Hola, te recordamos desde el club 33 que la cuota social de {nombre} esta {estado}. contacta con el administrador para conocer detalles. Gracias!');
             } catch (err) {
-                setWaPaymentText('Hola {nombre}! Te informamos que tu estado de cuota en el Club 33 es *{estado}*. Para más información, contactá a la administración.');
+                setWaPaymentText('Hola, te recordamos desde el club 33 que la cuota social de {nombre} esta {estado}. contacta con el administrador para conocer detalles. Gracias!');
             }
 
             setPayments(loadedPayments);
