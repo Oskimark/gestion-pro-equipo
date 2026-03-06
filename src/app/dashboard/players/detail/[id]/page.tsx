@@ -338,7 +338,6 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                 ['Posición', p.position || '-'],
                 ['Vto. Cédula', p.id_card_expiry || '-'],
                 ['Vto. Carnet Deportivo', p.health_card_expiry || '-'],
-                ['Estado Cuota', getStatus(p.fee_status)],
             );
         }
 
@@ -355,9 +354,15 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
 
         if (printOptions.gearData) {
             rows.push(
-                ['Indumentaria', getStatus(p.gear_status)],
                 ['Talle Camiseta', p.shirt_size || '-'],
                 ['Talle Short', p.short_size || '-'],
+            );
+        }
+
+        if (printOptions.paymentsData) {
+            rows.push(
+                ['Estado Cuota', getStatus(p.fee_status)],
+                ['Indumentaria', getStatus(p.gear_status)],
             );
         }
 
