@@ -1,0 +1,70 @@
+# Task Checklist
+
+## Módulo de Pagos
+- [x] Definir Esquema de Base de Datos y Tipos
+    - [x] Definir esquema de base de datos (`payments`)
+- [x] Actualizar tipos TypeScript ([types/index.ts](file:///g:/gestion33/src/types/index.ts))
+- [x] Crear [paymentService.ts](file:///g:/gestion33/src/services/paymentService.ts)
+- [x] Integrar configuración de pagos en Ajustes ([dashboard/settings/page.tsx](file:///g:/gestion33/src/app/dashboard/settings/page.tsx))
+[/] Implementar Dashboard de Pagos ([dashboard/payments/page.tsx](file:///g:/gestion33/src/app/dashboard/payments/page.tsx))
+[/] Integrar historial de pagos en perfil de jugador (`dashboard/players/detail/[id]/page.tsx`)
+- [ ] Implementar lógica de cálculo de estados (Al día/Atrasado)
+- [ ] Verificación y UI final (diseño premium)
+- [ ] Lógica de Cálculo de Estado de Deuda
+    - [ ] Payment history list
+    - [ ] Status indicators (Al día/Atrasado, Pagado/Pendiente/Entregado)
+- [ ] Logic & Alerts
+    - [ ] Calculate "Al día" status based on period and last payment
+- [ ] UI Consistency (Document module style)
+
+## Dashboard Navigation & Alerts Module
+- [x] Create new Alerts module ([app/dashboard/alerts/page.tsx](file:///g:/gestion33/src/app/dashboard/alerts/page.tsx))
+- [x] Make "Total Jugadores" card clickable (redirect to `/dashboard/players`)
+- [x] Make "Alerta Docs" summary card clickable (redirect to `/dashboard/alerts`)
+- [x] Make notification bell clickable (redirect to `/dashboard/alerts`)
+- [x] Make documentation warnings in player list clickable (redirect to player detail)
+- [x] Add logout functionality to user profile circle in header
+- [x] Add "Alertas" to Sidebar navigation
+- [x] Verify all navigation and logout functionality
+
+## WhatsApp Customization & Alerts Refinement
+- [x] Add notification settings columns to `club_settings` table
+- [x] Update [ClubSettings](file:///g:/gestion33/src/types/index.ts#101-117) type in [src/types/index.ts](file:///g:/gestion33/src/types/index.ts)
+- [x] Update Settings page ([app/dashboard/settings/page.tsx](file:///g:/gestion33/src/app/dashboard/settings/page.tsx)) with new notification toggles and custom text field
+- [x] Modify notification logic in [DashboardPage](file:///g:/gestion33/src/app/dashboard/page.tsx#23-324) and [AlertsPage](file:///g:/gestion33/src/app/dashboard/alerts/page.tsx#36-301) to respect new settings
+- [x] Update Alerts module UI to show document type next to status
+- [x] Verify all customization and UI changes
+
+## Notification Template & UI Refinement
+- [x] Make WhatsApp message textarea always visible in Settings
+- [x] Implement read-only default template vs editable custom template
+- [x] Improve dark mode contrast for grey/muted text (switch to white in dark mode)
+- [x] Verify template switching and visual accessibility
+
+## Image Performance Optimization
+- [x] Configure Supabase remote patterns in [next.config.ts](file:///g:/gestion33/next.config.ts)
+- [x] Implement `next/image` in [DashboardPage](file:///g:/gestion33/src/app/dashboard/page.tsx#23-324)
+- [x] Implement `next/image` in [PlayersPage](file:///g:/gestion33/src/app/dashboard/players/page.tsx#28-229)
+- [x] Implement `next/image` in [AlertsPage](file:///g:/gestion33/src/app/dashboard/alerts/page.tsx#36-301)
+- [x] Implement `next/image` in [PlayerDetail](file:///g:/gestion33/src/app/dashboard/players/detail/%5Bid%5D/page.tsx#43-1054)
+- [x] Verify image weight reduction in browser dev tools
+## Theme Switcher (Dark/Light/System Mode)
+- [x] Create [ThemeContext.tsx](file:///g:/gestion33/src/context/ThemeContext.tsx) for 3-state management
+- [x] Wrap application with `ThemeProvider` in [app/layout.tsx](file:///g:/gestion33/src/app/layout.tsx)
+- [x] Add theme toggle (Light/Dark/System) to Dashboard header
+- [x] Adjust [globals.css](file:///g:/gestion33/src/app/globals.css) with `color-scheme` property
+- [x] Verify native integration (scrollbars, system sync)
+## Manual Theme Control & Visibility Fixes
+- [x] Disable native browser `color-scheme` to prevent interference
+- [x] Set explicit background/foreground colors in `:root` and `.dark`
+- [x] Fix player name visibility in all lists (Dashboard, Players, Matches)
+- [x] Fix match card visibility ("vs team", date, etc.)
+- [x] Audit all secondary/muted text for contrast in both modes
+- [x] Verify manual toggle still works without system interference
+
+## Nuevos Requerimientos (Marzo 5)
+- [ ] Módulo Pagos: Corregir error "Error al registrar el pago"
+- [ ] Configuración: Añadir plantilla de WhatsApp para Pagos (`wa_payment_text`)
+- [ ] Módulo Pagos: Añadir botón de WhatsApp en la lista para notificar estado de pago
+- [ ] Perfil Jugador: Añadir funcionalidad de "Imprimir Documentación" con selección de documento y notas
+- [ ] Módulo Jugadores: Añadir funcionalidad de "Imprimir Tabla" general con columnas elegibles

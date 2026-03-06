@@ -19,7 +19,8 @@ import {
     Banknote,
     Clock,
     CheckCircle2,
-    Calendar
+    Calendar,
+    Printer
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -48,6 +49,8 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
     const { profile, loading: profileLoading } = useProfile();
 
     const [activeTab, setActiveTab] = useState("sports");
+    const [showPrintModal, setShowPrintModal] = useState(false);
+    const [printNotes, setPrintNotes] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [isEditing, setIsEditing] = useState(isEditingParam);
@@ -299,6 +302,42 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
         }
     };
 
+    const printPlayerDoc = () => {
+        if (!player) return;
+        const p = player;
+        const getStatus = (status?: string) =>
+            status === 'up_to_date' ? 'Al día ✅' :
+                status === 'paid' ? 'Pagado ✅' :
+                    status === 'delivered' ? 'Entregado ✅' :
+                        status === 'behind' ? 'Atrasado ⚠️' : 'Pendiente ⚠️';
+
+        const rows = [
+            ['Nombre Completo', p.full_name],
+            ['Dorsal', p.shirt_number ? `#${p.shirt_number}` : '-'],
+            ['Posición', p.position || '-'],
+            ['Fecha de Nacimiento', p.birth_date ? new Date(p.birth_date).toLocaleDateString('es') : '-'],
+            ['Edad', calculateAge(p.birth_date) + ' años'],
+            ['Nº Cédula', p.id_card_num || '-'],
+            ['Vto. Cédula', p.id_card_expiry || '-'],
+            ['Vto. Carnet Deportivo', p.health_card_expiry || '-'],
+            ['Nombre Padre / Referente', p.father_name || p.referent_name || '-'],
+            ['Tel. Padre / Referente', p.father_phone || p.referent_phone || '-'],
+            ['Nombre Madre', p.mother_name || '-'],
+            ['Tel. Madre', p.mother_phone || '-'],
+            ['Dirección', p.address || '-'],
+            ['Estado Cuota', getStatus(p.fee_status)],
+            ['Indumentaria', getStatus(p.gear_status)],
+        ].map(([label, val]) => `<tr><td style="padding:6px 12px;border:1px solid #e2e8f0;font-weight:600;background:#f8fafc;width:40%">${label}</td><td style="padding:6px 12px;border:1px solid #e2e8f0">${val}</td></tr>`).join('');
+
+        const notesSection = printNotes ? `<div style="margin-top:20px;padding:12px;border:1px solid #e2e8f0;border-radius:8px;background:#f8fafc"><strong>Notas adicionales:</strong><br>${printNotes}</div>` : '';
+
+        const html = `<html><head><title>Ficha Jugador – ${p.full_name}</title><style>body{font-family:Arial,sans-serif;font-size:12px;padding:24px}table{border-collapse:collapse;width:100%}h2{margin-bottom:4px}@media print{button{display:none}}</style></head><body><h2>Ficha del Jugador</h2><p style="color:#64748b;margin-bottom:16px">Club 33 – Churrinches Gen 2017 – ${new Date().toLocaleDateString('es')}</p><table>${rows}</table>${notesSection}<br><button onclick="window.print()">Imprimir Ficha</button></body></html>`;
+        const win = window.open('', '_blank');
+        if (win) { win.document.write(html); win.document.close(); win.print(); }
+        setShowPrintModal(false);
+        setPrintNotes("");
+    };
+
     if (loading) {
         return (
             <div className="h-[60vh] flex flex-col items-center justify-center gap-4 text-muted-foreground">
@@ -334,13 +373,22 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                 </div>
 
                 {!isEditing && !isVisitor && (
-                    <button
-                        onClick={() => setIsEditing(true)}
-                        className="btn-secondary flex items-center gap-2"
-                    >
-                        <Edit2 className="h-4 w-4" />
-                        Editar Datos
-                    </button>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={() => setShowPrintModal(true)}
+                            className="p-2 rounded-full hover:bg-white text-muted-foreground hover:text-foreground transition-all shadow-sm"
+                            title="Imprimir ficha"
+                        >
+                            <Printer className="h-5 w-5" />
+                        </button>
+                        <button
+                            onClick={() => setIsEditing(true)}
+                            className="btn-secondary flex items-center gap-2"
+                        >
+                            <Edit2 className="h-4 w-4" />
+                            Editar Datos
+                        </button>
+                    </div>
                 )}
 
                 {isEditing && (
@@ -1048,6 +1096,46 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                     </div>
                 </div>
             </form>
+
+            {/* Print Modal */}
+            {showPrintModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-[32px] shadow-2xl border border-border/40 w-full max-w-md p-8 space-y-6 animate-in zoom-in-95 duration-300">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-xl font-black text-foreground uppercase italic tracking-tighter">Imprimir Ficha</h2>
+                                <p className="text-xs text-muted-foreground font-medium">{player?.full_name}</p>
+                            </div>
+                            <button onClick={() => setShowPrintModal(false)} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                                <X className="h-5 w-5 text-muted-foreground" />
+                            </button>
+                        </div>
+
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Notas o información adicional (opcional)</label>
+                            <textarea
+                                rows={3}
+                                value={printNotes}
+                                onChange={(e) => setPrintNotes(e.target.value)}
+                                placeholder="Ej: Autorizado para partidos de liga. Renovación pendiente..."
+                                className="w-full border border-border/40 rounded-2xl p-4 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all resize-none"
+                            />
+                        </div>
+
+                        <p className="text-xs text-muted-foreground bg-slate-50 p-3 rounded-xl">
+                            Se imprimirá una ficha completa con todos los datos del jugador, estado de documentos, cuotas e indumentaria.
+                        </p>
+
+                        <button
+                            onClick={printPlayerDoc}
+                            className="w-full btn-primary flex items-center justify-center gap-2 py-4"
+                        >
+                            <Printer className="h-5 w-5" />
+                            Generar e Imprimir Ficha
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

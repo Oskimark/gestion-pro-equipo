@@ -105,6 +105,7 @@ export type ClubSettings = {
   wa_send_form_link?: boolean;
   wa_custom_text_enabled?: boolean;
   wa_custom_text?: string;
+  wa_payment_text?: string;
 
   // Payments Config
   monthly_fee: number;

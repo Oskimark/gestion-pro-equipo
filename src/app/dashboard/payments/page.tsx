@@ -18,11 +18,13 @@ import {
     MoreHorizontal,
     Shirt,
     X,
-    Eye
+    Eye,
+    MessageCircle
 } from "lucide-react";
 import Link from "next/link";
 import { paymentService } from "@/services/paymentService";
 import { playerService } from "@/services/playerService";
+import { settingsService } from "@/services/settingsService";
 import { Payment, Player } from "@/types";
 import { supabase } from "@/lib/supabase";
 
@@ -36,11 +38,13 @@ export default function PaymentsPage() {
     // Modal states
     const [showAddModal, setShowAddModal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [waPaymentText, setWaPaymentText] = useState<string>("");
     const [newPayment, setNewPayment] = useState<Partial<Payment>>({
-        category: 'Cuota Club', // Default to 'Cuota Club' as a single value
+        category: 'Cuota Club',
         amount: 0,
         status: 'Pagado',
         paid_date: new Date().toISOString().split('T')[0],
+        due_date: new Date().toISOString().split('T')[0],
         period_month: new Date().getMonth() + 1,
         period_year: new Date().getFullYear()
     });
@@ -67,6 +71,13 @@ export default function PaymentsPage() {
                 console.error("Error loading players:", err);
             }
 
+            try {
+                const settings = await settingsService.getSettings();
+                setWaPaymentText(settings.wa_payment_text || 'Hola {nombre}! Te informamos que tu estado de cuota en el Club 33 es *{estado}*. Para más información, contactá a la administración.');
+            } catch (err) {
+                setWaPaymentText('Hola {nombre}! Te informamos que tu estado de cuota en el Club 33 es *{estado}*. Para más información, contactá a la administración.');
+            }
+
             setPayments(loadedPayments);
             setPlayers(loadedPlayers);
         } catch (error) {
@@ -74,6 +85,19 @@ export default function PaymentsPage() {
         } finally {
             setLoading(false);
         }
+    };
+
+    const sendWaPaymentNotification = (player: Player, phone?: string) => {
+        const feeStatus = player.fee_status === 'up_to_date' ? '✅ Al día' : '⚠️ Atrasada';
+        const msg = waPaymentText
+            .replace('{nombre}', player.full_name)
+            .replace('{estado}', feeStatus);
+        const encodedMsg = encodeURIComponent(msg);
+        const phoneNum = (phone || '').replace(/\D/g, '');
+        const url = phoneNum
+            ? `https://wa.me/${phoneNum}?text=${encodedMsg}`
+            : `https://wa.me/?text=${encodedMsg}`;
+        window.open(url, '_blank');
     };
 
     const filteredPlayers = players.filter(p => {
@@ -97,7 +121,12 @@ export default function PaymentsPage() {
 
         try {
             setIsSubmitting(true);
-            await paymentService.addPayment(newPayment as Payment);
+            // Ensure due_date is always set (required by DB)
+            const paymentToInsert: Payment = {
+                ...newPayment,
+                due_date: newPayment.paid_date || new Date().toISOString().split('T')[0],
+            } as Payment;
+            await paymentService.addPayment(paymentToInsert);
 
             // Update player status if it was a fee or gear
             const player = players.find(p => p.id === newPayment.player_id);
@@ -120,6 +149,7 @@ export default function PaymentsPage() {
                 amount: 0,
                 status: 'Pagado',
                 paid_date: new Date().toISOString().split('T')[0],
+                due_date: new Date().toISOString().split('T')[0],
                 period_month: new Date().getMonth() + 1,
                 period_year: new Date().getFullYear()
             });
@@ -337,8 +367,15 @@ export default function PaymentsPage() {
                                                     )}
                                                 </td>
                                                 <td className="px-8 py-4">
-                                                    <div className="flex justify-center">
-                                                        <Link href={`/dashboard/players/detail/${p.id}`} className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-muted-foreground hover:text-foreground">
+                                                    <div className="flex justify-center items-center gap-2">
+                                                        <button
+                                                            onClick={() => sendWaPaymentNotification(p, p.father_phone || p.mother_phone || '')}
+                                                            title="Notificar por WhatsApp"
+                                                            className="p-2 hover:bg-emerald-50 rounded-xl transition-colors text-emerald-500 hover:text-emerald-600"
+                                                        >
+                                                            <MessageCircle className="h-5 w-5" />
+                                                        </button>
+                                                        <Link href={`/dashboard/players/detail/${p.id}`} className="p-2 hover:bg-slate-100 rounded-xl transition-colors text-muted-foreground hover:text-foreground" title="Ver jugador">
                                                             <Eye className="h-5 w-5" />
                                                         </Link>
                                                     </div>

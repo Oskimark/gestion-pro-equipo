@@ -13,7 +13,8 @@ import {
     Check,
     X,
     AlertTriangle,
-    FileDown
+    FileDown,
+    Printer
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -32,6 +33,17 @@ export default function PlayersPage() {
     const [players, setPlayers] = useState<Player[]>([]);
     const [loading, setLoading] = useState(true);
     const [reportPlayer, setReportPlayer] = useState<Player | null>(null);
+    const [showPrintModal, setShowPrintModal] = useState(false);
+    const [printColumns, setPrintColumns] = useState({
+        shirt_number: true,
+        position: true,
+        birth_date: true,
+        father_phone: true,
+        mother_phone: true,
+        fee_status: true,
+        gear_status: false,
+        id_card_num: false,
+    });
 
     const isVisitor = profile?.role === "visitante";
 
@@ -67,6 +79,42 @@ export default function PlayersPage() {
         p.shirt_number?.toString() === searchTerm
     );
 
+    const columnLabels: Record<string, string> = {
+        shirt_number: 'Dorsal',
+        position: 'Posición',
+        birth_date: 'Fecha Nac.',
+        father_phone: 'Tel. Padre/Ref.',
+        mother_phone: 'Tel. Madre',
+        fee_status: 'Estado Cuota',
+        gear_status: 'Indumentaria',
+        id_card_num: 'Nº Cédula',
+    };
+
+    const printList = () => {
+        const cols = Object.entries(printColumns).filter(([, v]) => v).map(([k]) => k);
+        const rows = filteredPlayers.map((p, i) => {
+            const cells = cols.map(col => {
+                let val = '';
+                if (col === 'shirt_number') val = p.shirt_number ? `#${p.shirt_number}` : '-';
+                else if (col === 'position') val = p.position || '-';
+                else if (col === 'birth_date') val = p.birth_date ? new Date(p.birth_date).toLocaleDateString('es') : '-';
+                else if (col === 'father_phone') val = p.father_phone || p.referent_phone || '-';
+                else if (col === 'mother_phone') val = p.mother_phone || '-';
+                else if (col === 'fee_status') val = p.fee_status === 'up_to_date' ? 'Al día' : 'Atrasado';
+                else if (col === 'gear_status') val = p.gear_status === 'paid' ? 'Pagado' : p.gear_status === 'delivered' ? 'Entregado' : 'Pendiente';
+                else if (col === 'id_card_num') val = p.id_card_num || '-';
+                return `<td style="padding:6px 10px;border:1px solid #e2e8f0">${val}</td>`;
+            }).join('');
+            const bg = i % 2 === 0 ? '#f8fafc' : '#ffffff';
+            return `<tr style="background:${bg}"><td style="padding:6px 10px;border:1px solid #e2e8f0;font-weight:700">${i + 1}. ${p.full_name}</td>${cells}</tr>`;
+        }).join('');
+        const headers = ['Jugador', ...cols.map(c => columnLabels[c] || c)].map(h => `<th style="padding:8px 10px;background:#1e293b;color:#fff;text-align:left;border:1px solid #334155">${h}</th>`).join('');
+        const html = `<html><head><title>Plantel Club 33</title><style>body{font-family:Arial,sans-serif;font-size:12px}table{border-collapse:collapse;width:100%}@media print{button{display:none}}</style></head><body><h2 style="margin-bottom:12px">Plantel Club 33 – ${new Date().toLocaleDateString('es')}</h2><table><thead><tr>${headers}</tr></thead><tbody>${rows}</tbody></table><br><button onclick="window.print()">Imprimir</button></body></html>`;
+        const win = window.open('', '_blank');
+        if (win) { win.document.write(html); win.document.close(); win.print(); }
+        setShowPrintModal(false);
+    };
+
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -75,10 +123,20 @@ export default function PlayersPage() {
                     <p className="text-muted-foreground">Listado completo del plantel actual.</p>
                 </div>
                 {!isVisitor && (
-                    <Link href="/dashboard/players/new" className="btn-primary flex items-center gap-2 self-start sm:self-auto">
-                        <Plus className="h-5 w-5" />
-                        Nuevo Jugador
-                    </Link>
+                    <div className="flex items-center gap-3 self-start sm:self-auto">
+                        <button
+                            onClick={() => setShowPrintModal(true)}
+                            className="btn-secondary flex items-center gap-2"
+                            title="Imprimir plantel"
+                        >
+                            <Printer className="h-5 w-5" />
+                            Imprimir
+                        </button>
+                        <Link href="/dashboard/players/new" className="btn-primary flex items-center gap-2">
+                            <Plus className="h-5 w-5" />
+                            Nuevo Jugador
+                        </Link>
+                    </div>
                 )}
             </div>
 
@@ -223,6 +281,51 @@ export default function PlayersPage() {
                 onClose={() => setReportPlayer(null)}
                 player={reportPlayer}
             />
+
+            {/* Print List Modal */}
+            {showPrintModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-[32px] shadow-2xl border border-border/40 w-full max-w-md p-8 space-y-6 animate-in zoom-in-95 duration-300">
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-xl font-black text-foreground uppercase italic tracking-tighter">Imprimir Plantel</h2>
+                                <p className="text-xs text-muted-foreground font-medium">{filteredPlayers.length} jugadores en la lista actual</p>
+                            </div>
+                            <button onClick={() => setShowPrintModal(false)} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                                <X className="h-5 w-5 text-muted-foreground" />
+                            </button>
+                        </div>
+
+                        <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">Columnas a incluir</p>
+                            <div className="grid grid-cols-2 gap-2">
+                                {Object.entries(columnLabels).map(([key, label]) => (
+                                    <label key={key} className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${printColumns[key as keyof typeof printColumns] ? 'border-secondary bg-secondary/5' : 'border-border/40 hover:border-secondary/30'}`}>
+                                        <input
+                                            type="checkbox"
+                                            checked={printColumns[key as keyof typeof printColumns]}
+                                            onChange={(e) => setPrintColumns({ ...printColumns, [key]: e.target.checked })}
+                                            className="sr-only"
+                                        />
+                                        <div className={`h-5 w-5 rounded-md flex items-center justify-center transition-colors ${printColumns[key as keyof typeof printColumns] ? 'bg-secondary' : 'bg-border/30'}`}>
+                                            {printColumns[key as keyof typeof printColumns] && <Check className="h-3 w-3 text-primary" />}
+                                        </div>
+                                        <span className="text-xs font-bold text-foreground">{label}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={printList}
+                            className="w-full btn-primary flex items-center justify-center gap-2 py-4"
+                        >
+                            <Printer className="h-5 w-5" />
+                            Generar e Imprimir
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
