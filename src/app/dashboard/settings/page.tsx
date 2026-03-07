@@ -348,11 +348,17 @@ export default function SettingsPage() {
                                                 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET || 'development_secret'}`
                                             }
                                         });
+
+                                        if (res.status === 401) {
+                                            alert("Error de Autorización (401): No se pudo verificar el CRON_SECRET. Revisa las variables de entorno NEXT_PUBLIC_CRON_SECRET.");
+                                            return;
+                                        }
+
                                         const data = await res.json();
                                         if (data.success) {
                                             alert(`Revisión completada.\nProcesados: ${data.processed}\nNotificaciones enviadas: ${data.notifications_sent}`);
                                         } else {
-                                            alert(`Error: ${data.error}`);
+                                            alert(`Error del Servidor: ${data.error}`);
                                         }
                                     } catch (err) {
                                         console.error(err);

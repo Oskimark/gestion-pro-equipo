@@ -10,7 +10,7 @@ export async function GET(request: Request) {
     // 1. Security Check
     const authHeader = request.headers.get('authorization');
     if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-        return new NextResponse('Unauthorized', { status: 401 });
+        return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
     try {
