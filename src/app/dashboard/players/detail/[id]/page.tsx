@@ -20,7 +20,8 @@ import {
     Clock,
     CheckCircle2,
     Calendar,
-    Printer
+    Printer,
+    BellRing
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -887,6 +888,24 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 </button>
                                             </div>
 
+                                            {/* Automatic Notification Toggle for ID Card */}
+                                            <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-border/20">
+                                                <div className="flex items-center gap-2">
+                                                    <BellRing className={`h-3.5 w-3.5 ${formData.notify_id_card !== false ? 'text-blue-500' : 'text-slate-400'}`} />
+                                                    <span className="text-[10px] font-bold text-slate-600 uppercase">Notificar Auto</span>
+                                                </div>
+                                                <label className="relative inline-flex items-center cursor-pointer scale-75">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.notify_id_card !== false}
+                                                        onChange={(e) => setFormData(prev => ({ ...prev, notify_id_card: e.target.checked }))}
+                                                        disabled={!isEditing}
+                                                        className="sr-only peer"
+                                                    />
+                                                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-blue-500"></div>
+                                                </label>
+                                            </div>
+
                                             {/* Revision Section for ID Card */}
                                             {player?.id_card_rev_status === 'pending' && (
                                                 <div className="mt-2 p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
@@ -1104,6 +1123,24 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                 </button>
                                             </div>
 
+                                            {/* Automatic Notification Toggle for Health Card */}
+                                            <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-border/20">
+                                                <div className="flex items-center gap-2">
+                                                    <BellRing className={`h-3.5 w-3.5 ${formData.notify_health_card !== false ? 'text-green-500' : 'text-slate-400'}`} />
+                                                    <span className="text-[10px] font-bold text-slate-600 uppercase">Notificar Auto</span>
+                                                </div>
+                                                <label className="relative inline-flex items-center cursor-pointer scale-75">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.notify_health_card !== false}
+                                                        onChange={(e) => setFormData(prev => ({ ...prev, notify_health_card: e.target.checked }))}
+                                                        disabled={!isEditing}
+                                                        className="sr-only peer"
+                                                    />
+                                                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                                                </label>
+                                            </div>
+
                                             {/* Revision Section for Health Card */}
                                             {player?.health_card_rev_status === 'pending' && (
                                                 <div className="mt-2 p-4 rounded-xl bg-green-500/10 border border-green-500/30">
@@ -1212,6 +1249,24 @@ export default function PlayerDetailPage({ params }: { params: Promise<{ id: str
                                                     <Edit2 className="h-4 w-4" />
                                                 </div>
                                                 <p className="text-sm font-bold text-foreground">Permisos y Otros</p>
+                                            </div>
+
+                                            {/* Automatic Notification Toggle for Permits */}
+                                            <div className="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-border/20">
+                                                <div className="flex items-center gap-2">
+                                                    <BellRing className={`h-3.5 w-3.5 ${formData.notify_permit !== false ? 'text-yellow-600' : 'text-slate-400'}`} />
+                                                    <span className="text-[10px] font-bold text-slate-600 uppercase">Notificar Auto</span>
+                                                </div>
+                                                <label className="relative inline-flex items-center cursor-pointer scale-75">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={formData.notify_permit !== false}
+                                                        onChange={(e) => setFormData(prev => ({ ...prev, notify_permit: e.target.checked }))}
+                                                        disabled={!isEditing}
+                                                        className="sr-only peer"
+                                                    />
+                                                    <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-yellow-600"></div>
+                                                </label>
                                             </div>
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                 <div>

@@ -38,6 +38,9 @@ CREATE TABLE players (
     health_card_rev_expiry DATE,
     fee_status TEXT DEFAULT 'pending',
     gear_status TEXT DEFAULT 'pending',
+    notify_id_card BOOLEAN DEFAULT true,
+    notify_health_card BOOLEAN DEFAULT true,
+    notify_permit BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );

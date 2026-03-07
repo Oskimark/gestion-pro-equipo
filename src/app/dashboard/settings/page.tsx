@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type, Banknote } from "lucide-react";
+import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type, Banknote, Clock } from "lucide-react";
 import { settingsService } from "@/services/settingsService";
 import { ClubSettings } from "@/types";
 import { useProfile } from "@/hooks/useProfile";
@@ -316,55 +316,106 @@ export default function SettingsPage() {
                                 )}
                             </div>
                         </div>
-                    </div>
 
-                    {/* WA Payment Notification Template */}
-                    <div className="p-8 border-t border-border/10">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
-                                <MessageCircle className="h-5 w-5" />
+                        {/* Automation Section */}
+                        <div className="mt-12 flex items-center gap-3 mb-6 pb-6 border-b border-border/10">
+                            <div className="p-3 bg-indigo-100 text-indigo-600 rounded-xl">
+                                <Clock className="h-6 w-6" />
                             </div>
                             <div>
-                                <h3 className="font-black text-foreground uppercase tracking-tighter italic text-lg">WhatsApp – Estado de Pago</h3>
-                                <p className="text-xs text-muted-foreground font-medium">Plantilla del mensaje de notificación de estado de cuota a jugadores.</p>
+                                <h2 className="text-xl font-bold text-foreground">Automatización</h2>
+                                <p className="text-sm text-muted-foreground">Gestiona la ejecución automática de alertas de vencimiento.</p>
                             </div>
                         </div>
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mensaje de Estado de Cuota</label>
-                            <textarea
-                                rows={3}
-                                value={settings.wa_payment_text || ''}
-                                onChange={(e) => setSettings({ ...settings, wa_payment_text: e.target.value })}
-                                placeholder="Hola, te recordamos desde el club 33 que la cuota social de {nombre} esta {estado}. contacta con el administrador para conocer detalles. Gracias!"
-                                className="w-full border border-border/40 rounded-2xl p-4 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all resize-none bg-white "
-                            />
-                            <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
-                                <BellRing className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
-                                <p className="text-[10px] text-emerald-700 font-medium leading-relaxed">
-                                    Variables: <span className="font-bold">{"{nombre}"}</span> nombre del jugador, <span className="font-bold">{"{estado}"}</span> estado de cuota.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="mt-8 pt-6 border-t border-border/10 flex items-center justify-end gap-4">
-                        {saved && (
-                            <span className="text-green-600  flex items-center gap-2 text-sm font-bold animate-in fade-in slide-in-from-right-4">
-                                <CheckCircle2 className="h-4 w-4" />
-                                Guardado correctamente
-                            </span>
-                        )}
-                        <button
-                            type="submit"
-                            disabled={saving}
-                            className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white transition-all shadow-md ${saving ? 'bg-secondary/70 cursor-not-allowed' : 'bg-secondary hover:bg-secondary/90 hover:shadow-lg hover:-translate-y-0.5'}`}
-                        >
-                            {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
-                            {saving ? "Guardando..." : "Guardar Cambios"}
-                        </button>
-                    </div>
-                </div>
-            </form>
-        </div>
+                        <div className="space-y-6">
+                            <div className="p-6 bg-slate-50 rounded-2xl border border-border/20 flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="space-y-1">
+                                    <h3 className="font-bold text-foreground">Revisión Automática</h3>
+                                    <p className="text-xs text-muted-foreground max-w-md">
+                                        El sistema revisa diariamente a las 09:00 UTC todos los jugadores. Si detecta documentos por vencer, envía un WhatsApp según las preferencias de cada perfil.
+                                    </p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        if (!confirm("¿Deseas ejecutar la revisión de vencimientos manualmente ahora? Se enviarán mensajes a los jugadores correspondientes.")) return;
+                                        try {
+                                            setSaving(true);
+                                            const res = await fetch('/api/cron/check-vencimientos', {
+                                                headers: {
+                                                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET || 'development_secret'}`
+                                                }
+                                            });
+                                            const data = await res.json();
+                                            if (data.success) {
+                                                alert(`Revisión completada.\nProcesados: ${data.processed}\nNotificaciones enviadas: ${data.notifications_sent}`);
+                                            } else {
+                                                alert(`Error: ${data.error}`);
+                                            }
+                                        } catch (err) {
+                                            console.error(err);
+                                            alert("Error al ejecutar la revisión manual.");
+                                        } finally {
+                                            setSaving(false);
+                                        }
+                                    }}
+                                    disabled={saving}
+                                    className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center gap-2 shrink-0"
+                                >
+                                    <BellRing className="h-4 w-4" />
+                                    Ejecutar Revisión Manual
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* WA Payment Notification Template */}
+                        <div className="p-8 border-t border-border/10">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-500">
+                                    <MessageCircle className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-foreground uppercase tracking-tighter italic text-lg">WhatsApp – Estado de Pago</h3>
+                                    <p className="text-xs text-muted-foreground font-medium">Plantilla del mensaje de notificación de estado de cuota a jugadores.</p>
+                                </div>
+                            </div>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mensaje de Estado de Cuota</label>
+                                <textarea
+                                    rows={3}
+                                    value={settings.wa_payment_text || ''}
+                                    onChange={(e) => setSettings({ ...settings, wa_payment_text: e.target.value })}
+                                    placeholder="Hola, te recordamos desde el club 33 que la cuota social de {nombre} esta {estado}. contacta con el administrador para conocer detalles. Gracias!"
+                                    className="w-full border border-border/40 rounded-2xl p-4 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all resize-none bg-white "
+                                />
+                                <div className="flex items-start gap-2 p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                                    <BellRing className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
+                                    <p className="text-[10px] text-emerald-700 font-medium leading-relaxed">
+                                        Variables: <span className="font-bold">{"{nombre}"}</span> nombre del jugador, <span className="font-bold">{"{estado}"}</span> estado de cuota.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 pt-6 border-t border-border/10 flex items-center justify-end gap-4">
+                            {saved && (
+                                <span className="text-green-600  flex items-center gap-2 text-sm font-bold animate-in fade-in slide-in-from-right-4">
+                                    <CheckCircle2 className="h-4 w-4" />
+                                    Guardado correctamente
+                                </span>
+                            )}
+                            <button
+                                type="submit"
+                                disabled={saving}
+                                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-white transition-all shadow-md ${saving ? 'bg-secondary/70 cursor-not-allowed' : 'bg-secondary hover:bg-secondary/90 hover:shadow-lg hover:-translate-y-0.5'}`}
+                            >
+                                {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+                                {saving ? "Guardando..." : "Guardar Cambios"}
+                            </button>
+                        </div>
+                    </div >
+            </form >
+        </div >
     );
 }

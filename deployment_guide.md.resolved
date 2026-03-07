@@ -1,0 +1,219 @@
+# 📋 Bitácora de Despliegue: Proyecto Club 33 (Aislamiento Total)
+
+Esta guía consolida todos los pasos, correcciones y scripts necesarios para replicar el proyecto en un entorno 100% independiente (nueva cuenta de GitHub, Supabase y Vercel).
+
+---
+
+## 1. Código Fuente (GitHub)
+1. **Fork**: Realiza un fork del repositorio a tu nueva cuenta de GitHub.
+2. **Clonado Local**: Clona tu nuevo fork en una **nueva carpeta** en tu computadora.
+   ```bash
+   git clone <URL_DE_TU_NUEVO_FORK> gestion-copia
+   cd gestion-copia
+   ```
+3. **Instalación**: Instala las dependencias necesarias.
+   ```bash
+   npm install
+   ```
+
+---
+
+## 2. Base de Datos y Lógica (Supabase)
+1. **Nuevo Proyecto**: Crea un proyecto en tu nueva cuenta de Supabase.
+2. **Script SQL Maestro**: Ve al **SQL Editor** -> **New Query** y ejecuta este bloque completo (ordenado para evitar errores):
+
+```sql
+-- A. Habilitar Extensiones
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+-- B. Crear Tablas Principales
+CREATE TABLE IF NOT EXISTS players (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    full_name TEXT NOT NULL,
+    photo_url TEXT,
+    shirt_number INTEGER,
+    birth_date DATE,
+    position TEXT,
+    shirt_size TEXT, short_size TEXT, socks_size TEXT,
+    long_jersey_size TEXT, long_shorts_size TEXT, 
+    jacket_size TEXT, shoe_size TEXT,
+    father_name TEXT, father_phone TEXT,
+    mother_name TEXT, mother_phone TEXT,
+    referent_name TEXT, referent_phone TEXT,
+    address TEXT, id_card_num TEXT,
+    id_card_expiry DATE, health_card_expiry DATE,
+    id_card_url TEXT, id_card_back_url TEXT,
+    health_card_url TEXT, permit_info TEXT, permit_expiry DATE,
+    health_insurance TEXT, allergies TEXT,
+    id_card_notified_count INTEGER DEFAULT 0,
+    health_card_notified_count INTEGER DEFAULT 0,
+    access_token UUID DEFAULT uuid_generate_v4(),
+    id_card_rev_url TEXT, id_card_rev_back_url TEXT, id_card_rev_expiry DATE,
+    health_card_rev_url TEXT, health_card_rev_expiry DATE,
+    id_card_rev_status TEXT DEFAULT 'none',
+    health_card_rev_status TEXT DEFAULT 'none',
+    fee_status TEXT DEFAULT 'pending',
+    gear_status TEXT DEFAULT 'pending',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS profiles (
+    id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
+    role TEXT DEFAULT 'ayudante',
+    full_name TEXT, phone TEXT, observations TEXT,
+    status TEXT DEFAULT 'active', is_online BOOLEAN DEFAULT false,
+    last_seen TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    CONSTRAINT profiles_role_check CHECK (role IN ('admin', 'ayudante', 'visitante'))
+);
+
+CREATE TABLE IF NOT EXISTS payments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    player_id UUID REFERENCES players(id) ON DELETE CASCADE,
+    amount DECIMAL(10, 2) NOT NULL, category TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'Pendiente',
+    period_month INTEGER, period_year INTEGER,
+    due_date DATE NOT NULL, paid_date DATE, notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS matches (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    date TIMESTAMP WITH TIME ZONE NOT NULL,
+    rival TEXT NOT NULL, venue TEXT,
+    score_home INTEGER, score_away INTEGER,
+    status TEXT DEFAULT 'Próximo',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS player_stats (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    match_id UUID REFERENCES matches(id) ON DELETE CASCADE,
+    player_id UUID REFERENCES players(id) ON DELETE CASCADE,
+    goals INTEGER DEFAULT 0, assists INTEGER DEFAULT 0,
+    yellow_cards INTEGER DEFAULT 0, red_cards INTEGER DEFAULT 0,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS club_settings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id_card_alert_days INTEGER DEFAULT 30,
+    health_card_alert_days INTEGER DEFAULT 30,
+    wa_send_form_link BOOLEAN DEFAULT true,
+    wa_custom_text_enabled BOOLEAN DEFAULT false,
+    wa_custom_text TEXT,
+    monthly_fee INTEGER DEFAULT 1000,
+    annual_fee INTEGER DEFAULT 10000,
+    annual_discount_percent INTEGER DEFAULT 15,
+    gear_price INTEGER DEFAULT 5000,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- C. Lógica de Usuarios (Trigger Ultra-Seguro)
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger AS $$
+BEGIN
+  INSERT INTO public.profiles (id, full_name, role, status)
+  VALUES (new.id, 'Usuario Nuevo', 'ayudante', 'active')
+  ON CONFLICT (id) DO NOTHING;
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
+
+-- D. Seguridad (RLS) para Tablas
+ALTER TABLE players ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE matches ENABLE ROW LEVEL SECURITY;
+ALTER TABLE player_stats ENABLE ROW LEVEL SECURITY;
+ALTER TABLE club_settings ENABLE ROW LEVEL SECURITY;
+
+-- E. Políticas de Acceso (Basadas en Rol Admin)
+CREATE OR REPLACE FUNCTION public.is_admin() 
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin');
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+-- Políticas universales de lectura
+CREATE POLICY "read_all" ON players FOR SELECT TO authenticated USING (true);
+CREATE POLICY "read_all" ON profiles FOR SELECT TO authenticated USING (true);
+CREATE POLICY "read_all" ON payments FOR SELECT TO authenticated USING (true);
+CREATE POLICY "read_all" ON matches FOR SELECT TO authenticated USING (true);
+CREATE POLICY "read_all" ON player_stats FOR SELECT TO authenticated USING (true);
+CREATE POLICY "read_all" ON club_settings FOR SELECT TO authenticated USING (true);
+
+-- Políticas de escritura solo para Admins
+CREATE POLICY "admin_all" ON players FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "admin_all" ON profiles FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "admin_all" ON payments FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "admin_all" ON matches FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "admin_all" ON player_stats FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+CREATE POLICY "admin_all" ON club_settings FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+```
+
+3. **Storage (Buckets)**:
+   - Ve a **Storage** y crea: `player-photos` y `player-docs` (ambos deben ser **Públicos**).
+   - Ejecuta este SQL para las políticas de imágenes:
+
+```sql
+-- Políticas para Buckets
+CREATE POLICY "Public Access" ON storage.objects FOR SELECT TO public USING (bucket_id IN ('player-photos', 'player-docs'));
+CREATE POLICY "Auth Upload" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id IN ('player-photos', 'player-docs'));
+CREATE POLICY "Auth Manage" ON storage.objects FOR ALL TO authenticated USING (bucket_id IN ('player-photos', 'player-docs'));
+CREATE POLICY "Anon Upload Docs" ON storage.objects FOR INSERT TO anon WITH CHECK (bucket_id = 'player-docs');
+```
+
+4. **Auth Settings**:
+   - Ve a **Authentication** -> **Providers** -> **Email**.
+   - **Desactiva** "Confirm email" para facilitar las pruebas iniciales.
+
+---
+
+## 3. Configuración de Entorno (.env / Vercel)
+1. **Variables**: Tanto en Vercel como en tu archivo [.env.local](file:///g:/gestion33/.env.local), coloca tus nuevas llaves de Supabase:
+   - `NEXT_PUBLIC_SUPABASE_URL`: (Sin barra diagonal al final `/`)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: (Tu llave pública)
+2. **IMPORTANTE**: Si cambias estas variables en Vercel, haz un **Redeploy** manual para que tengan efecto.
+
+---
+
+## 4. Configuración del Código (Next.js)
+1. **Autorizar Imágenes**: Abre [next.config.ts](file:///g:/gestion33/next.config.ts) (o `.js`) y cambia el `hostname` para que coincida con tu nuevo proyecto:
+   ```typescript
+   hostname: 'NUEVO_ID.supabase.co'
+   ```
+2. **Reinicio**: Si estás en local, detén `npm run dev` y reinicia. Si estás en Vercel, haz un **Redeploy**.
+
+---
+
+## 5. Primer Usuario y Admin
+1. **Registro**: Regístrate a través de la web (`/register`).
+2. **Promoción**: Ve a la tabla `profiles` en Supabase y cambia manualmente tu `role` a **'admin'**.
+3. **Login**: Ya puedes entrar y gestionar todo el club.
+
+---
+
+## 6. Datos de Prueba (Opcional)
+Para ver el Dashboard con vida, ejecuta este SQL:
+
+```sql
+INSERT INTO players (full_name, shirt_number, birth_date, position, shirt_size) VALUES 
+('Mateo García', 10, '2017-03-10', 'Delantero', '8'),
+('Benjamín Sosa', 1, '2017-08-15', 'Golero', '8');
+
+INSERT INTO matches (date, rival, venue, status) VALUES 
+(NOW() + interval '3 days', 'Huracán FC', 'Propia', 'Próximo');
+```
+
+---
+
+> [!TIP]
+> Si recibes un error tipo **"failed to fetch"**, revisa que la URL de Supabase no tenga espacios adicionales ni barra final, y que el Adblocker no esté bloqueando las peticiones en tu navegador.

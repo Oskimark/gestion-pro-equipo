@@ -38,6 +38,11 @@ export type Player = {
   id_card_notified_count?: number;
   health_card_notified_count?: number;
 
+  // Notification Preferences
+  notify_id_card?: boolean;
+  notify_health_card?: boolean;
+  notify_permit?: boolean;
+
   // New Revision fields
   access_token?: string;
   id_card_rev_url?: string;
