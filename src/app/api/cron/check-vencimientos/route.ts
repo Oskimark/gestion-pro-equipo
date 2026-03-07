@@ -84,10 +84,17 @@ export async function GET(request: Request) {
                     try {
                         await twilioService.sendWhatsApp(phone, messageBody);
                         results.push({ player: player.full_name, status: 'sent', phone });
-                    } catch (err) {
+                    } catch (err: any) {
                         console.error(`Error sending to ${player.full_name}:`, err);
-                        results.push({ player: player.full_name, status: 'error', error: String(err) });
+                        results.push({
+                            player: player.full_name,
+                            status: 'error',
+                            phone,
+                            error: err.message || String(err)
+                        });
                     }
+                } else {
+                    results.push({ player: player.full_name, status: 'skipped', reason: 'No phone number found' });
                 }
             }
         }
