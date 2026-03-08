@@ -3,8 +3,11 @@
 import { useState, useEffect } from "react";
 import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type, Banknote, Clock } from "lucide-react";
 import { settingsService } from "@/services/settingsService";
-import { ClubSettings } from "@/types";
+import { ClubSettings, NotificationLog } from "@/types";
 import { useProfile } from "@/hooks/useProfile";
+import { supabase } from "@/lib/supabase";
+import { format } from "date-fns";
+import { es } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
@@ -22,6 +25,8 @@ export default function SettingsPage() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [saved, setSaved] = useState(false);
+    const [logs, setLogs] = useState<NotificationLog[]>([]);
+    const [loadingLogs, setLoadingLogs] = useState(false);
 
     const loadSettings = async () => {
         try {
@@ -32,6 +37,24 @@ export default function SettingsPage() {
             console.error("Failed to load settings:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchLogs = async () => {
+        setLoadingLogs(true);
+        try {
+            const { data, error } = await supabase
+                .from('notification_logs')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(10);
+
+            if (error) throw error;
+            setLogs(data || []);
+        } catch (err) {
+            console.error("Error fetching logs:", err);
+        } finally {
+            setLoadingLogs(false);
         }
     };
 
@@ -56,6 +79,8 @@ export default function SettingsPage() {
         if (!profileLoading && profile?.role === "visitante") {
             router.push("/dashboard");
         }
+        loadSettings();
+        fetchLogs();
     }, [profile, profileLoading, router]);
 
     useEffect(() => {
@@ -423,6 +448,92 @@ export default function SettingsPage() {
                     </div>
                 </div>
             </form>
+
+            {/* Notification History Section */}
+            <div className="bg-white p-6 md:p-8 rounded-3xl border border-border/40 relative overflow-hidden mt-8">
+                <div className="flex items-center justify-between mb-6 pb-6 border-b border-border/10">
+                    <div className="flex items-center gap-3">
+                        <div className="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                            <Clock className="h-6 w-6" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-foreground">Historial de Notificaciones</h2>
+                            <p className="text-sm text-muted-foreground">Últimos mensajes enviados automáticamente por el sistema.</p>
+                        </div>
+                    </div>
+                    <button
+                        onClick={fetchLogs}
+                        disabled={loadingLogs}
+                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                        title="Actualizar historial"
+                    >
+                        <Loader2 className={`h-5 w-5 ${loadingLogs ? 'animate-spin' : ''} text-muted-foreground`} />
+                    </button>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left">
+                        <thead>
+                            <tr className="border-b border-border/5">
+                                <th className="pb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Fecha</th>
+                                <th className="pb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Jugador</th>
+                                <th className="pb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Teléfono</th>
+                                <th className="pb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-border/5">
+                            {logs.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className="py-8 text-center text-sm text-muted-foreground italic">
+                                        No hay registros de notificaciones aún.
+                                    </td>
+                                </tr>
+                            ) : (
+                                logs.map((log) => (
+                                    <tr key={log.id} className="group hover:bg-slate-50/50 transition-colors">
+                                        <td className="py-4 whitespace-nowrap">
+                                            <span className="text-xs font-medium text-foreground">
+                                                {format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: es })}
+                                            </span>
+                                        </td>
+                                        <td className="py-4">
+                                            <span className="text-xs font-bold text-foreground block">
+                                                {log.player_name || 'Desconocido'}
+                                            </span>
+                                            {log.variables?.["2"] && (
+                                                <span className="text-[9px] font-black uppercase text-muted-foreground tracking-tighter">
+                                                    {log.variables["2"]} ({log.variables["3"]})
+                                                </span>
+                                            )}
+                                        </td>
+                                        <td className="py-4">
+                                            <span className="text-xs font-medium text-slate-500">{log.phone}</span>
+                                        </td>
+                                        <td className="py-4">
+                                            {log.status === 'sent' ? (
+                                                <span className="text-[10px] font-black uppercase text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-100 inline-flex items-center gap-1">
+                                                    <CheckCircle2 className="h-3 w-3" /> Enviado
+                                                </span>
+                                            ) : (
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[10px] font-black uppercase text-red-600 bg-red-50 px-2 py-0.5 rounded-full border border-red-100 inline-flex items-center gap-1 w-fit">
+                                                        <X className="h-3 w-3" /> Error
+                                                    </span>
+                                                    {log.error_message && (
+                                                        <span className="text-[9px] text-red-500 max-w-[150px] truncate" title={log.error_message}>
+                                                            {log.error_message}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     );
 }

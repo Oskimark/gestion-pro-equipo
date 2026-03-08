@@ -64,26 +64,33 @@ export async function GET(request: Request) {
             if (notificationsToSend.length > 0) {
                 const phone = player.referent_phone || player.father_phone || player.mother_phone;
                 if (phone) {
-                    const docText = notificationsToSend.map(n => `${n.type} (${n.status})`).join(', ');
+                    const docText = notificationsToSend.map(n => n.type).join(', ');
+                    const statusText = notificationsToSend.map(n => n.status).join(', ');
+                    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://gestion-pro-equipo.vercel.app';
+                    const formLink = `${baseUrl}/public/docs/${player.access_token}`;
 
-                    let messageBody = '';
-                    if (settings.wa_custom_text_enabled && settings.wa_custom_text) {
-                        messageBody = settings.wa_custom_text
-                            .replace('$jugador', player.full_name)
-                            .replace('$documento', docText)
-                            .replace('$estado', 'próximo a vencer/vencido');
-                    } else {
-                        messageBody = `Hola! Te escribimos de CLUB 33. Te avisamos que la documentación de ${player.full_name} requiere atención: ${docText}.`;
-                    }
-
-                    if (settings.wa_send_form_link) {
-                        const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://gestion-pro-equipo.vercel.app';
-                        messageBody += `\n\nPuedes subir los documentos aquí: ${baseUrl}/public/docs/${player.access_token}`;
-                    }
+                    const templateSid = 'HX01f0bc7cd60a15ec3d3fb845aa4ac9c2';
+                    const variables = {
+                        "1": player.full_name,
+                        "2": docText,
+                        "3": statusText,
+                        "4": formLink
+                    };
 
                     try {
-                        await twilioService.sendWhatsApp(phone, messageBody);
+                        await twilioService.sendWhatsApp(phone, undefined, templateSid, variables);
                         results.push({ player: player.full_name, status: 'sent', phone });
+
+                        // Log to database
+                        await supabase.from('notification_logs').insert({
+                            player_id: player.id,
+                            player_name: player.full_name,
+                            phone,
+                            message_type: 'expiracion',
+                            content_sid: templateSid,
+                            variables,
+                            status: 'sent'
+                        });
                     } catch (err: any) {
                         console.error(`Error sending to ${player.full_name}:`, err);
                         results.push({
@@ -91,6 +98,18 @@ export async function GET(request: Request) {
                             status: 'error',
                             phone,
                             error: err.message || String(err)
+                        });
+
+                        // Log error to database
+                        await supabase.from('notification_logs').insert({
+                            player_id: player.id,
+                            player_name: player.full_name,
+                            phone,
+                            message_type: 'expiracion',
+                            content_sid: templateSid,
+                            variables,
+                            status: 'error',
+                            error_message: err.message || String(err)
                         });
                     }
                 } else {

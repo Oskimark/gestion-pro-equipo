@@ -122,3 +122,16 @@ export type ClubSettings = {
 
   updated_at?: string;
 };
+
+export type NotificationLog = {
+  id: string;
+  player_id?: string;
+  player_name?: string;
+  phone: string;
+  message_type: string;
+  content_sid?: string;
+  variables?: any;
+  status: 'sent' | 'error' | 'delivered' | 'read';
+  error_message?: string;
+  created_at: string;
+};

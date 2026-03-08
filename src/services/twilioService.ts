@@ -38,9 +38,16 @@ export const twilioService = {
     /**
      * Sends a WhatsApp message using Twilio.
      * @param to The recipient's phone number
-     * @param body The message content
+     * @param body The message content (for freeform messages)
+     * @param contentSid The Twilio Content SID (for templates)
+     * @param contentVariables Variables for the template
      */
-    async sendWhatsApp(to: string, body: string): Promise<any> {
+    async sendWhatsApp(
+        to: string,
+        body?: string,
+        contentSid?: string,
+        contentVariables?: Record<string, string>
+    ): Promise<any> {
         if (!client) {
             console.error('Twilio client not initialized. Check environment variables.');
             return { error: 'Twilio not configured' };
@@ -48,13 +55,24 @@ export const twilioService = {
 
         const normalizedTo = normalizePhone(to);
         const formattedTo = normalizedTo.startsWith('whatsapp:') ? normalizedTo : `whatsapp:${normalizedTo}`;
+        const formattedFrom = fromNumber.startsWith('whatsapp:') ? fromNumber : `whatsapp:${fromNumber}`;
 
         try {
-            const message = await client.messages.create({
-                body,
-                from: fromNumber.startsWith('whatsapp:') ? fromNumber : `whatsapp:${fromNumber}`,
+            const payload: any = {
+                from: formattedFrom,
                 to: formattedTo
-            });
+            };
+
+            if (contentSid) {
+                payload.contentSid = contentSid;
+                if (contentVariables) {
+                    payload.contentVariables = JSON.stringify(contentVariables);
+                }
+            } else {
+                payload.body = body;
+            }
+
+            const message = await client.messages.create(payload);
             console.log(`WhatsApp message sent to ${normalizedTo}: ${message.sid}`);
             return message;
         } catch (error) {

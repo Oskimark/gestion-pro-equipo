@@ -127,4 +127,20 @@ CREATE POLICY "profiles_update_self" ON profiles FOR UPDATE TO authenticated USI
 -- Administración: Admins gestionan todo
 CREATE POLICY "profiles_admin_all" ON profiles FOR ALL TO authenticated USING (public.is_admin());
 
--- ... repetir para otras tablas
+-- Notification Logs table
+CREATE TABLE notification_logs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    player_id UUID REFERENCES players(id) ON DELETE CASCADE,
+    player_name TEXT,
+    phone TEXT,
+    message_type TEXT, -- 'expiracion'
+    content_sid TEXT,
+    variables JSONB,
+    status TEXT DEFAULT 'sent', -- 'sent', 'error'
+    error_message TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE notification_logs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "notification_logs_read_all" ON notification_logs FOR SELECT TO authenticated USING (true);
+CREATE POLICY "notification_logs_admin_all" ON notification_logs FOR ALL TO authenticated USING (public.is_admin());
