@@ -1,13 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type, Banknote, Clock } from "lucide-react";
+import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type, Banknote, Clock, X } from "lucide-react";
 import { settingsService } from "@/services/settingsService";
 import { ClubSettings, NotificationLog } from "@/types";
 import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/lib/supabase";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
@@ -493,7 +491,13 @@ export default function SettingsPage() {
                                     <tr key={log.id} className="group hover:bg-slate-50/50 transition-colors">
                                         <td className="py-4 whitespace-nowrap">
                                             <span className="text-xs font-medium text-foreground">
-                                                {format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: es })}
+                                                {new Date(log.created_at).toLocaleString("es-UY", {
+                                                    day: '2-digit',
+                                                    month: '2-digit',
+                                                    year: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit'
+                                                })}
                                             </span>
                                         </td>
                                         <td className="py-4">
