@@ -247,8 +247,8 @@ export default function SettingsPage() {
                             <MessageCircle className="h-6 w-6" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-foreground ">Notificaciones WhatsApp</h2>
-                            <p className="text-sm text-muted-foreground ">Personaliza los mensajes que se envían a los padres.</p>
+                            <h2 className="text-xl font-bold text-foreground ">Configuración de Mensajes WhatsApp</h2>
+                            <p className="text-sm text-muted-foreground ">Gestiona el contenido de los avisos enviados por el sistema.</p>
                         </div>
                     </div>
 
@@ -282,8 +282,8 @@ export default function SettingsPage() {
                                     <Type className="h-5 w-5 text-muted-foreground " />
                                 </div>
                                 <div>
-                                    <h3 className="text-sm font-bold text-foreground ">Contenido del Mensaje</h3>
-                                    <p className="text-xs text-muted-foreground ">Elige si usar el texto predeterminado del sistema o uno propio.</p>
+                                    <h3 className="text-sm font-bold text-foreground ">Mensajes MANUALES (Vía Botón)</h3>
+                                    <p className="text-xs text-muted-foreground ">Personaliza el texto que se envía al presionar el botón de WhatsApp en la ficha del jugador.</p>
                                 </div>
                             </div>
 
@@ -304,6 +304,21 @@ export default function SettingsPage() {
                                     <p className="font-bold text-sm mb-1 ">Personalizado</p>
                                     <p className="text-[10px] text-muted-foreground  uppercase font-black">Manual</p>
                                 </button>
+                            </div>
+
+                            <div className="p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-start gap-3 mt-4">
+                                <BellRing className="h-5 w-5 text-amber-500 mt-1 shrink-0" />
+                                <div>
+                                    <p className="text-xs text-amber-800 font-bold mb-1">Nota sobre Mensajes Automáticos</p>
+                                    <p className="text-[10px] text-amber-700 leading-relaxed">
+                                        El mensaje automático (Revisiones de sistema) no se puede cambiar desde aquí por requerimientos de Twilio.
+                                        Contacte con el administrador para modificarlo.
+                                        <br />
+                                        <span className="font-mono mt-1 block italic bg-amber-100/50 p-1 rounded">
+                                            "Hola! Te escribimos de CLUB 33. Te avisamos que la documentación de $jugador requiere atención: $documento ($estado). Puedes subir los documentos aquí: $enlace"
+                                        </span>
+                                    </p>
+                                </div>
                             </div>
 
                             {/* Textarea is always visible now */}

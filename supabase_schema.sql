@@ -127,6 +127,11 @@ CREATE POLICY "profiles_update_self" ON profiles FOR UPDATE TO authenticated USI
 -- Administración: Admins gestionan todo
 CREATE POLICY "profiles_admin_all" ON profiles FOR ALL TO authenticated USING (public.is_admin());
 
+-- 3. Políticas de Acceso Público (Autogestión)
+CREATE POLICY "players_read_public_token" ON players 
+FOR SELECT TO anon 
+USING (access_token IS NOT NULL);
+
 -- Notification Logs table
 CREATE TABLE notification_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

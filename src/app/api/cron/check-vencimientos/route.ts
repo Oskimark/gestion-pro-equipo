@@ -66,8 +66,11 @@ export async function GET(request: Request) {
                 if (phone) {
                     const docText = notificationsToSend.map(n => n.type).join(', ');
                     const statusText = notificationsToSend.map(n => n.status).join(', ');
-                    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://gestion-pro-equipo.vercel.app';
-                    const formLink = `${baseUrl}/public/docs/${player.access_token}`;
+                    const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://gestion-pro-equipo.vercel.app';
+                    if (!process.env.NEXT_PUBLIC_APP_URL) {
+                        console.warn('NEXT_PUBLIC_APP_URL not set, using fallback:', appUrl);
+                    }
+                    const formLink = `${appUrl}/public/docs/${player.access_token}`;
 
                     const templateSid = 'HX01f0bc7cd60a15ec3d3fb845aa4ac9c2';
                     const variables = {
