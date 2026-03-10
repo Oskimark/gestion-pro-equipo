@@ -22,7 +22,7 @@ import Link from "next/link";
 
 export default function DashboardPage() {
     const { profile, loading: profileLoading } = useProfile();
-    const [counts, setCounts] = useState({ players: 0, payments: 0, goals: 0 });
+    const [counts, setCounts] = useState({ players: 0, enabled: 0, payments: 0, goals: 0 });
     const [nextMatch, setNextMatch] = useState<Match | null>(null);
     const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[]>([]);
     const [loading, setLoading] = useState(true);
@@ -40,8 +40,16 @@ export default function DashboardPage() {
                 settingsService.getSettings()
             ]);
 
+            // Calculate Enabled Players
+            const enabledCount = players.filter(p => {
+                const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
+                const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
+                return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
+            }).length;
+
             setCounts({
                 players: players.length,
+                enabled: enabledCount,
                 payments: 8,
                 goals: 12
             });
@@ -142,7 +150,14 @@ export default function DashboardPage() {
     };
 
     const stats = [
-        { name: "Total Jugadores", value: counts.players.toString(), icon: Users, color: "text-blue-600", bg: "bg-blue-100", href: "/dashboard/players" },
+        {
+            name: "Total Jugadores",
+            value: `${counts.enabled} / ${counts.players}`,
+            icon: Users,
+            color: counts.enabled === counts.players ? "text-blue-600" : "text-red-600",
+            bg: counts.enabled === counts.players ? "bg-blue-100" : "bg-red-100",
+            href: "/dashboard/players"
+        },
         { name: "Alertas Docs", value: alerts.length.toString(), icon: AlertTriangle, color: alerts.length > 0 ? "text-red-600" : "text-green-600", bg: alerts.length > 0 ? "bg-red-100" : "bg-green-100", href: "/dashboard/alerts" },
         {
             name: "Próximo Partido",
@@ -185,7 +200,12 @@ export default function DashboardPage() {
                             </div>
                             <div className="mt-6">
                                 <p className="text-small font-medium text-muted-foreground">{stat.name}</p>
-                                <p className="text-3xl font-extrabold text-foreground  mt-1">{stat.value}</p>
+                                <div className="flex items-baseline gap-2 mt-1">
+                                    <p className={`text-3xl font-extrabold ${stat.color}`}>{stat.value}</p>
+                                    {stat.name === "Total Jugadores" && (
+                                        <span className="text-xs font-bold text-muted-foreground uppercase">Habilitados</span>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     );
@@ -286,18 +306,31 @@ export default function DashboardPage() {
                         Próximo Encuentro
                     </h3>
                     {nextMatch ? (
-                        <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-border/20">
-                            <div className="flex flex-col">
-                                <span className="font-bold text-lg text-foreground ">vs {nextMatch.rival}</span>
-                                <span className="text-sm text-muted-foreground ">
-                                    {new Date(nextMatch.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
-                                </span>
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-border/20">
+                                <div className="flex flex-col">
+                                    <span className="font-bold text-lg text-foreground ">vs {nextMatch.rival}</span>
+                                    <span className="text-sm text-muted-foreground ">
+                                        {new Date(nextMatch.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                                    </span>
+                                </div>
+                                <div className="text-right">
+                                    <span className="block font-black text-xl text-primary">
+                                        {new Date(nextMatch.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                                    </span>
+                                    <span className="text-[10px] font-bold text-muted-foreground uppercase">{nextMatch.venue}</span>
+                                </div>
                             </div>
-                            <div className="text-right">
-                                <span className="block font-black text-xl text-primary">
-                                    {new Date(nextMatch.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                                </span>
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase">{nextMatch.venue}</span>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="p-3 rounded-xl bg-blue-50 border border-blue-100 flex flex-col items-center justify-center">
+                                    <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest">Habilitados</span>
+                                    <span className="text-xl font-black text-blue-700">{counts.enabled}</span>
+                                </div>
+                                <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center">
+                                    <span className="text-[10px] font-black uppercase text-indigo-600 tracking-widest">Disponibles</span>
+                                    <span className="text-xl font-black text-indigo-700">{counts.enabled}</span>
+                                </div>
                             </div>
                         </div>
                     ) : (
