@@ -5,7 +5,8 @@ import {
     CreditCard,
     Calendar,
     Trophy,
-    User
+    User,
+    Loader2
 } from "lucide-react";
 import { useProfile } from "@/hooks/useProfile";
 import Image from "next/image";
@@ -14,7 +15,7 @@ import { useState, useEffect } from "react";
 import { playerService } from "@/services/playerService";
 import { matchService } from "@/services/matchService";
 import { settingsService } from "@/services/settingsService";
-import { Player, Match } from "@/types";
+import { Player, Match, MatchResponse } from "@/types";
 
 import { AlertTriangle, ChevronRight, Check, MessageCircle } from "lucide-react";
 import { getDocStatus, generateWhatsAppLink } from "@/utils/playerUtils";
@@ -23,10 +24,12 @@ import Link from "next/link";
 export default function DashboardPage() {
     const { profile, loading: profileLoading } = useProfile();
     const [players, setPlayers] = useState<Player[]>([]);
-    const [counts, setCounts] = useState({ players: 0, enabled: 0, payments: 0, goals: 0 });
+    const [counts, setCounts] = useState({ players: 0, enabled: 0, available: 0, payments: 0, goals: 0 });
     const [nextMatch, setNextMatch] = useState<Match | null>(null);
+    const [matchResponses, setMatchResponses] = useState<MatchResponse[]>([]);
     const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isLaunching, setIsLaunching] = useState(false);
 
     useEffect(() => {
         loadDashboardData();
@@ -43,6 +46,15 @@ export default function DashboardPage() {
 
             setPlayers(playersData);
 
+            const upcoming = matches.find(m => m.status === "Próximo");
+            setNextMatch(upcoming || null);
+
+            let responses: MatchResponse[] = [];
+            if (upcoming) {
+                responses = await matchService.getMatchResponses(upcoming.id);
+                setMatchResponses(responses);
+            }
+
             // Calculate Enabled Players
             const enabledCount = playersData.filter(p => {
                 const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
@@ -50,13 +62,16 @@ export default function DashboardPage() {
                 return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
             }).length;
 
+            // Calculate Available (Those who confirmed attendance)
+            const availableCount = responses.filter(r => r.status === 'asiste').length;
+
             setCounts({
                 players: playersData.length,
                 enabled: enabledCount,
+                available: availableCount,
                 payments: 8,
                 goals: 12
             });
-            // ... (rest of the logic remains same until return)
 
             // Calculate Alerts
             const docAlerts: { id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[] = [];
@@ -121,7 +136,13 @@ export default function DashboardPage() {
         const playersToPrint = players.filter(p => {
             const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
             const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
-            return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
+            const isEnabled = idStatus.label === 'Al día' && healthStatus.label === 'Al día';
+
+            if (type === 'disponibles') {
+                const response = matchResponses.find(r => r.player_id === p.id);
+                return isEnabled && response?.status === 'asiste';
+            }
+            return isEnabled;
         }).sort((a, b) => (a.shirt_number || 99) - (b.shirt_number || 99));
 
         const rows = playersToPrint.map((p, i) => {
@@ -241,6 +262,37 @@ export default function DashboardPage() {
             window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
         } catch (error) {
             console.error("Error updating notification count:", error);
+        }
+    };
+
+    const handleStartConvocatoria = async () => {
+        if (!nextMatch) return;
+        if (!confirm(`¿Estás seguro de iniciar la convocatoria para el partido vs ${nextMatch.rival}? Se enviarán enlaces de confirmación.`)) return;
+
+        try {
+            setIsLaunching(true);
+            const settings = await settingsService.getSettings();
+
+            // 1. Filter enabled players
+            const enabledPlayers = players.filter(p => {
+                const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
+                const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
+                return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
+            });
+
+            // 2. Initialize responses in DB
+            await matchService.initializeMatchResponses(nextMatch.id, enabledPlayers.map(p => p.id));
+
+            // 3. Generate batch message logic (Simulated for now, would open WhatsApp for each or use API)
+            alert(`Convocatoria iniciada para ${enabledPlayers.length} jugadores. En una versión real, esto dispararía notificaciones automáticas vía Twilio/WhatsApp.`);
+
+            // Reload to show current status
+            loadDashboardData();
+        } catch (error) {
+            console.error("Error starting convocatoria:", error);
+            alert("Error al iniciar la convocatoria.");
+        } finally {
+            setIsLaunching(false);
         }
     };
 
@@ -444,9 +496,24 @@ export default function DashboardPage() {
                                     title="Imprimir Lista de Buena Fe (Disponibles)"
                                 >
                                     <span className="text-[10px] font-black uppercase text-indigo-600 tracking-widest group-hover/btn:scale-105 transition-transform">Disponibles</span>
-                                    <span className="text-2xl font-black text-indigo-700">{counts.enabled}</span>
+                                    <span className="text-2xl font-black text-indigo-700">{counts.available || counts.enabled}</span>
                                 </button>
                             </div>
+
+                            {!isVisitor && (
+                                <button
+                                    onClick={handleStartConvocatoria}
+                                    disabled={isLaunching}
+                                    className="w-full mt-4 btn-primary py-3 flex items-center justify-center gap-2 group/conv"
+                                >
+                                    {isLaunching ? (
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                    ) : (
+                                        <MessageCircle className="h-5 w-5 group-hover/conv:scale-110 transition-transform" />
+                                    )}
+                                    Iniciar Convocatoria
+                                </button>
+                            )}
                         </div>
                     ) : (
                         <div className="p-8 text-center text-muted-foreground italic">

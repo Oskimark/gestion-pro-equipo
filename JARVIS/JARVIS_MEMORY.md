@@ -12,7 +12,14 @@
     - Implementación de "Lista de Buena Fe" imprimible desde el Dashboard con filtros de habilitación/disponibilidad.
     - **Optimización UI/Mobile**: Layout de jugadores rediseñado para celulares (nombres envolventes y fila de acciones deslizable). Imágenes optimizadas en Pagos.
 
+## Estado Actual: Módulo de Convocatorias
+- **Meta**: Gestionar invitaciones a partidos y tracking de disponibilidad en tiempo real.
+- **Logros**: 
+    - Implementada tabla `match_responses` y lógica de servicios.
+    - Dashboard: Botón "Iniciar Convocatoria" y contador dinámico de "Disponibles".
+    - Portal Público: Página `/public/convocatoria/[token]` para confirmación de padres.
+    - Impresión: "Lista de Buena Fe" ahora filtra por jugadores que confirmaron asistencia.
+
 ## Próximos Pasos
-- **Módulo de Convocatorias**: Implementar sistema para iniciar partidos y enviar convocatorias. Padres confirmarán asistencia (Sí/No) mediante el link de autogestión.
-- **Cálculo de Disponibilidad**: Automatizar el contador de "Disponibles" del Dashboard usando las confirmaciones de asistencia (cruzando datos con jugadores habilitados).
-- **Integración Final**: Sincronización de variables de entorno en Vercel.
+- **WhatsApp Masivo**: Integrar el botón "Iniciar Convocatoria" con la API de Twilio para enviar mensajes automáticos.
+- **Sincronización Final**: Validar flujos con datos reales en el entorno de producción.

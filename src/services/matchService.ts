@@ -54,5 +54,47 @@ export const matchService = {
 
         if (error) throw error;
         return true;
+    },
+
+    async getMatchResponses(matchId: string) {
+        const { data, error } = await supabase
+            .from("match_responses")
+            .select("*")
+            .eq("match_id", matchId);
+
+        if (error) throw error;
+        return data;
+    },
+
+    async updateMatchResponse(matchId: string, playerId: string, status: 'asiste' | 'no_asiste' | 'pendiente') {
+        const { data, error } = await supabase
+            .from("match_responses")
+            .upsert({
+                match_id: matchId,
+                player_id: playerId,
+                status,
+                confirmed_at: status !== 'pendiente' ? new Date().toISOString() : null,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'match_id,player_id' })
+            .select()
+            .single();
+
+        if (error) throw error;
+        return data;
+    },
+
+    async initializeMatchResponses(matchId: string, playerIds: string[]) {
+        const responses = playerIds.map(playerId => ({
+            match_id: matchId,
+            player_id: playerId,
+            status: 'pendiente'
+        }));
+
+        const { data, error } = await supabase
+            .from("match_responses")
+            .upsert(responses, { onConflict: 'match_id,player_id' });
+
+        if (error) throw error;
+        return data;
     }
 };

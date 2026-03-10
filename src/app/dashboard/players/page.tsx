@@ -206,12 +206,12 @@ export default function PlayersPage() {
                         <table className="w-full text-left border-separate border-spacing-0">
                             <thead className="sticky top-0 z-30">
                                 <tr className="border-b border-border/40 bg-slate-50 shadow-sm">
-                                    <th className="px-3 sm:px-4 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50 min-w-[140px] sm:min-w-[200px]">Jugador</th>
-                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Habilitado</th>
-                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
-                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
-                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Cédula</th>
-                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Carnet</th>
+                                    <th className="px-2 sm:px-4 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50 min-w-[110px] sm:min-w-[200px]">Jugador</th>
+                                    <th className="px-1 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">HABIL</th>
+                                    <th className="px-1 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground">POS</th>
+                                    <th className="px-1 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
+                                    <th className="px-1 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">C.I</th>
+                                    <th className="px-1 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">MED</th>
                                     <th className="px-4 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground hidden sm:table-cell">Acciones</th>
                                 </tr>
                             </thead>
@@ -222,34 +222,34 @@ export default function PlayersPage() {
                                             onClick={() => setExpandedPlayerId(expandedPlayerId === player.id ? null : player.id)}
                                             className={`hover:bg-slate-50 transition-colors group cursor-pointer sm:cursor-default ${expandedPlayerId === player.id ? 'bg-slate-50/80' : ''}`}
                                         >
-                                            <td className="p-2 sm:px-4 py-4 whitespace-normal sticky left-0 z-20 bg-white sm:static sm:bg-transparent min-w-[130px] sm:min-w-[200px] group-hover:bg-slate-50 transition-colors border-r border-border/10 sm:border-r-0">
-                                                <div className="flex items-center gap-2 sm:gap-3">
+                                            <td className="p-1.5 sm:px-4 py-4 whitespace-normal sticky left-0 z-20 bg-white sm:static sm:bg-transparent min-w-[110px] sm:min-w-[200px] group-hover:bg-slate-50 transition-colors border-r border-border/10 sm:border-r-0">
+                                                <div className="flex items-center gap-1.5 sm:gap-3">
                                                     <div className="relative shrink-0">
                                                         {player.photo_url ? (
                                                             <Image
                                                                 src={player.photo_url}
                                                                 alt={player.full_name}
-                                                                width={44}
-                                                                height={44}
-                                                                className="h-9 w-9 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white shadow-sm"
+                                                                width={36}
+                                                                height={36}
+                                                                className="h-8 w-8 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white shadow-sm"
                                                             />
                                                         ) : (
-                                                            <div className="h-9 w-9 sm:h-12 sm:w-12 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white text-slate-400 shadow-sm group-hover:border-secondary transition-colors">
-                                                                <User className="h-5 w-5 sm:h-7 sm:w-7" />
+                                                            <div className="h-8 w-8 sm:h-12 sm:w-12 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white text-slate-400 shadow-sm group-hover:border-secondary transition-colors">
+                                                                <User className="h-4 w-4 sm:h-7 sm:w-7" />
                                                             </div>
                                                         )}
                                                         {player.shirt_number && (
-                                                            <div className="absolute -bottom-1 -right-1 h-4 w-4 sm:h-6 sm:w-6 rounded-lg bg-secondary flex items-center justify-center font-black text-[8px] sm:text-[10px] text-primary border-2 border-white shadow-md">
+                                                            <div className="absolute -bottom-1 -right-1 h-3.5 w-3.5 sm:h-6 sm:w-6 rounded bg-secondary flex items-center justify-center font-black text-[7px] sm:text-[10px] text-primary border border-white shadow-md">
                                                                 {player.shirt_number}
                                                             </div>
                                                         )}
                                                     </div>
-                                                    <span className="font-bold text-foreground text-[10px] sm:text-sm leading-tight sm:truncate line-clamp-3 sm:line-clamp-none whitespace-normal uppercase italic tracking-tight flex-1">
+                                                    <span className="font-bold text-foreground text-[9px] sm:text-sm leading-tight sm:truncate line-clamp-2 sm:line-clamp-none whitespace-normal uppercase italic tracking-tight flex-1">
                                                         {player.full_name}
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center">
+                                            <td className="px-1 sm:px-6 py-4 whitespace-nowrap text-center">
                                                 {(() => {
                                                     const idStatus = getDocStatus(player.id_card_expiry, 30, player.id_card_rev_status);
                                                     const healthStatus = getDocStatus(player.health_card_expiry, 30, player.health_card_rev_status);
@@ -279,15 +279,23 @@ export default function PlayersPage() {
                                                     );
                                                 })()}
                                             </td>
-                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap">
-                                                <span className="px-1.5 sm:px-3 py-1 rounded-full text-[9px] sm:text-xs font-bold bg-blue-100 text-blue-700">
-                                                    {player.position || "N/A"}
+                                            <td className="px-1 sm:px-6 py-4 whitespace-nowrap">
+                                                <span className="px-1 sm:px-3 py-0.5 rounded-full text-[8px] sm:text-xs font-bold bg-blue-100 text-blue-700">
+                                                    {(() => {
+                                                        const pos = (player.position || "").toLowerCase();
+                                                        if (pos.includes("medio") || pos === "mc") return "MC";
+                                                        if (pos.includes("def") || pos === "df") return "Def";
+                                                        if (pos.includes("del") || pos === "dl") return "Del";
+                                                        if (pos.includes("ext") || pos === "ex") return "Ext";
+                                                        if (pos.includes("por") || pos.includes("arq") || pos === "gk") return "Por";
+                                                        return player.position?.substring(0, 3) || "N/A";
+                                                    })()}
                                                 </span>
                                             </td>
-                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center font-medium text-muted-foreground text-[10px] sm:text-sm">
+                                            <td className="px-1 sm:px-6 py-4 whitespace-nowrap text-center font-medium text-muted-foreground text-[9px] sm:text-sm">
                                                 {calculateAge(player.birth_date)}
                                             </td>
-                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center">
+                                            <td className="px-1 sm:px-6 py-4 whitespace-nowrap text-center">
                                                 {(() => {
                                                     const status = getDocStatus(player.id_card_expiry);
                                                     return (
@@ -297,7 +305,7 @@ export default function PlayersPage() {
                                                     );
                                                 })()}
                                             </td>
-                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center">
+                                            <td className="px-1 sm:px-6 py-4 whitespace-nowrap text-center">
                                                 {(() => {
                                                     const status = getDocStatus(player.health_card_expiry);
                                                     return (
