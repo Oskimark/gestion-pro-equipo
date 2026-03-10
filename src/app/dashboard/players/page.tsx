@@ -14,7 +14,8 @@ import {
     X,
     AlertTriangle,
     FileDown,
-    Printer
+    Printer,
+    BellRing
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -71,6 +72,42 @@ export default function PlayersPage() {
             } catch (error) {
                 alert("Error al eliminar el jugador");
             }
+        }
+    };
+
+    const handleNotifyPlayer = async (player: Player) => {
+        if (!confirm(`¿Estás seguro de ejecutar la notificación automática para ${player.full_name}?`)) return;
+
+        try {
+            setLoading(true);
+            const res = await fetch(`/api/cron/check-vencimientos?manual=true&playerId=${player.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET || 'development_secret'}`
+                }
+            });
+
+            if (res.status === 401) {
+                alert("Error de Autorización (401): No se pudo verificar el CRON_SECRET.");
+                return;
+            }
+
+            const data = await res.json();
+            if (data.success) {
+                if (data.notifications_sent > 0) {
+                    alert(`Notificación enviada con éxito a ${player.full_name}.`);
+                } else if (data.skipped) {
+                    alert(`No se envió notificación: ${data.reason}`);
+                } else {
+                    alert(`No hay documentos por vencer para ${player.full_name}, no se envió mensaje.`);
+                }
+            } else {
+                alert(`Error del Servidor: ${data.error}`);
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error al ejecutar la notificación.");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -169,6 +206,7 @@ export default function PlayersPage() {
                             <thead className="sticky top-0 z-30">
                                 <tr className="border-b border-border/40 bg-slate-50  shadow-sm">
                                     <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50  min-w-[200px] max-w-[200px]">Jugador</th>
+                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Habilitado</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Cédula</th>
@@ -203,6 +241,36 @@ export default function PlayersPage() {
                                                 </div>
                                                 <span className="font-bold text-foreground  truncate">{player.full_name}</span>
                                             </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                                            {(() => {
+                                                const idStatus = getDocStatus(player.id_card_expiry, 30, player.id_card_rev_status);
+                                                const healthStatus = getDocStatus(player.health_card_expiry, 30, player.health_card_rev_status);
+
+                                                const isOk = idStatus.label === 'Al día' && healthStatus.label === 'Al día';
+                                                const isVencido = idStatus.label === 'Vencido' || healthStatus.label === 'Vencido' || idStatus.label === 'Faltante' || healthStatus.label === 'Faltante';
+
+                                                let icon = Check;
+                                                let color = "text-green-500 bg-green-500/10";
+                                                let label = "Habilitado";
+
+                                                if (isVencido) {
+                                                    icon = X;
+                                                    color = "text-red-500 bg-red-500/10";
+                                                    label = "No Habilitado";
+                                                } else if (!isOk) {
+                                                    icon = AlertTriangle;
+                                                    color = "text-amber-500 bg-amber-500/10";
+                                                    label = "Por vencer";
+                                                }
+
+                                                const Icon = icon;
+                                                return (
+                                                    <div className={`inline-flex items-center justify-center p-1.5 rounded-full ${color}`} title={label}>
+                                                        <Icon className="h-4 w-4" />
+                                                    </div>
+                                                );
+                                            })()}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700  ">
@@ -249,6 +317,13 @@ export default function PlayersPage() {
                                                                 title="Generar Reporte"
                                                             >
                                                                 <FileDown className="h-5 w-5" />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleNotifyPlayer(player)}
+                                                                className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-indigo-500 transition-colors"
+                                                                title="Notificar Automáticamente"
+                                                            >
+                                                                <BellRing className="h-5 w-5" />
                                                             </button>
                                                             <button
                                                                 onClick={() => handleDelete(player.id, player.full_name)}

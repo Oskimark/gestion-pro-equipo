@@ -49,10 +49,15 @@ export async function GET(request: Request) {
             permit: 30
         };
 
-        // 3. Fetch Players with their notification preferences
-        const { data: players, error: playersError } = await supabase
-            .from('players')
-            .select('*');
+        // 3. Fetch Players (Support single player filtering)
+        const playerId = url.searchParams.get('playerId');
+        let query = supabase.from('players').select('*');
+
+        if (playerId) {
+            query = query.eq('id', playerId);
+        }
+
+        const { data: players, error: playersError } = await query;
 
         if (playersError) throw playersError;
 
