@@ -113,18 +113,18 @@ export default function DashboardPage() {
         return age.toString();
     };
 
-    const printGoodFaithList = async (e: React.MouseEvent) => {
+    const printGoodFaithList = async (e: React.MouseEvent, type: 'habilitados' | 'disponibles' = 'habilitados') => {
         e.preventDefault();
         e.stopPropagation();
 
         const settings = await settingsService.getSettings();
-        const enabledPlayers = players.filter(p => {
+        const playersToPrint = players.filter(p => {
             const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
             const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
             return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
         }).sort((a, b) => (a.shirt_number || 99) - (b.shirt_number || 99));
 
-        const rows = enabledPlayers.map((p, i) => {
+        const rows = playersToPrint.map((p, i) => {
             const age = calculateAge(p.birth_date);
             const bg = i % 2 === 0 ? '#f8fafc' : '#ffffff';
             return `
@@ -139,7 +139,7 @@ export default function DashboardPage() {
         const html = `
             <html>
             <head>
-                <title>Lista de Buena Fe - Club 33</title>
+                <title>Lista de Buena Fe (${type}) - Club 33</title>
                 <style>
                     body { font-family: 'Inter', system-ui, -apple-system, sans-serif; padding: 50px; color: #1e293b; background: white; }
                     .header { border-bottom: 5px solid #1e293b; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
@@ -158,11 +158,11 @@ export default function DashboardPage() {
                 <div class="header">
                     <div>
                         <h1>Lista de Buena Fe</h1>
-                        <div class="subtitle">CLUB 33 – Temporada 2026</div>
+                        <div class="subtitle">CLUB 33 – Temporada 2026 – ${type.toUpperCase()}</div>
                     </div>
                     <div style="text-align: right">
                         <div class="subtitle">Emisión: ${new Date().toLocaleDateString('es-UY')}</div>
-                        <div class="subtitle">Total Habilitados: ${enabledPlayers.length}</div>
+                        <div class="subtitle">Total: ${playersToPrint.length}</div>
                     </div>
                 </div>
                 <table>
@@ -296,15 +296,21 @@ export default function DashboardPage() {
                             <div className="mt-6">
                                 <p className="text-small font-medium text-muted-foreground">{stat.name}</p>
                                 <div className="flex items-baseline gap-2 mt-1">
-                                    <p className={`text-3xl font-extrabold ${stat.color}`}>{stat.value}</p>
-                                    {stat.name === "Total Jugadores" && (
-                                        <button
-                                            onClick={printGoodFaithList}
-                                            className="text-[10px] font-black uppercase text-muted-foreground hover:text-accent hover:underline tracking-widest transition-all"
-                                            title="Ver Lista de Buena Fe"
-                                        >
-                                            Habilitados
-                                        </button>
+                                    {stat.name === "Total Jugadores" ? (
+                                        <div className="flex items-baseline gap-1">
+                                            <p className="text-3xl font-extrabold text-foreground">{counts.players}</p>
+                                            <span className="text-xl text-muted-foreground font-light">/</span>
+                                            <button
+                                                onClick={printGoodFaithList}
+                                                className={`text-3xl font-extrabold transition-all hover:scale-110 active:scale-95 ${stat.color} hover:underline cursor-pointer`}
+                                                title="Imprimir Lista de Buena Fe"
+                                            >
+                                                {counts.enabled}
+                                            </button>
+                                            <span className="ml-2 text-[10px] font-black uppercase text-muted-foreground tracking-widest">Habilitados</span>
+                                        </div>
+                                    ) : (
+                                        <p className={`text-3xl font-extrabold ${stat.color}`}>{stat.value}</p>
                                     )}
                                 </div>
                             </div>
@@ -425,20 +431,20 @@ export default function DashboardPage() {
 
                             <div className="grid grid-cols-2 gap-3">
                                 <button
-                                    onClick={printGoodFaithList}
-                                    className="p-3 rounded-xl bg-blue-50 border border-blue-100 flex flex-col items-center justify-center hover:bg-blue-100 transition-all group/btn"
-                                    title="Imprimir Lista de Buena Fe"
+                                    onClick={(e) => printGoodFaithList(e, 'habilitados')}
+                                    className="p-4 rounded-2xl bg-blue-50 border-2 border-blue-100 flex flex-col items-center justify-center hover:bg-blue-100 transition-all group/btn cursor-pointer"
+                                    title="Imprimir Lista de Buena Fe (Habilitados)"
                                 >
                                     <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest group-hover/btn:scale-105 transition-transform">Habilitados</span>
-                                    <span className="text-xl font-black text-blue-700">{counts.enabled}</span>
+                                    <span className="text-2xl font-black text-blue-700">{counts.enabled}</span>
                                 </button>
                                 <button
-                                    onClick={printGoodFaithList}
-                                    className="p-3 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center hover:bg-indigo-100 transition-all group/btn"
+                                    onClick={(e) => printGoodFaithList(e, 'disponibles')}
+                                    className="p-4 rounded-2xl bg-indigo-50 border-2 border-indigo-100 flex flex-col items-center justify-center hover:bg-indigo-100 transition-all group/btn cursor-pointer"
                                     title="Imprimir Lista de Buena Fe (Disponibles)"
                                 >
                                     <span className="text-[10px] font-black uppercase text-indigo-600 tracking-widest group-hover/btn:scale-105 transition-transform">Disponibles</span>
-                                    <span className="text-xl font-black text-indigo-700">{counts.enabled}</span>
+                                    <span className="text-2xl font-black text-indigo-700">{counts.enabled}</span>
                                 </button>
                             </div>
                         </div>
