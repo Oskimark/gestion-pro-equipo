@@ -7,8 +7,10 @@
     - Implementada la unificación de columnas en la tabla de jugadores (Dorsal embebido en la foto).
     - Configuración de cron personalizable (hora y días, horario Uruguay).
     - Sistema de limpieza de historial de notificaciones.
-    - RLS activado para permitir acceso público vía token a los formularios de documentación.
+    - Implementación de columna "Habilitado" en tabla de jugadores y Dashboard (Cédula + Ficha Médica al día).
+    - Botón de notificación individual (Campana) directo desde la gestión de jugadores.
+    - Implementación de "Lista de Buena Fe" imprimible desde el Dashboard con filtros de habilitación/disponibilidad.
 
 ## Próximos Pasos
-- **Integración Final**: Asegurar que las variables de entorno en Vercel (`CRON_SECRET`, `TWILIO_AUTH_TOKEN`, etc.) estén sincronizadas con Supabase.
-- **Optimización**: Monitorear el consumo de créditos de Twilio y la precisión del Cron en Vercel.
+- **Módulo de Convocatorias**: Sistema para iniciar partidos, convocar jugadores y registrar confirmaciones de asistencia.
+- **Integración Final**: Sincronización de variables de entorno en Vercel.

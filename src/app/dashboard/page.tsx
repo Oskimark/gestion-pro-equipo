@@ -22,6 +22,7 @@ import Link from "next/link";
 
 export default function DashboardPage() {
     const { profile, loading: profileLoading } = useProfile();
+    const [players, setPlayers] = useState<Player[]>([]);
     const [counts, setCounts] = useState({ players: 0, enabled: 0, payments: 0, goals: 0 });
     const [nextMatch, setNextMatch] = useState<Match | null>(null);
     const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[]>([]);
@@ -34,25 +35,28 @@ export default function DashboardPage() {
     const loadDashboardData = async () => {
         try {
             setLoading(true);
-            const [players, matches, settings] = await Promise.all([
+            const [playersData, matches, settings] = await Promise.all([
                 playerService.getAll(),
                 matchService.getAll(),
                 settingsService.getSettings()
             ]);
 
+            setPlayers(playersData);
+
             // Calculate Enabled Players
-            const enabledCount = players.filter(p => {
+            const enabledCount = playersData.filter(p => {
                 const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
                 const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
                 return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
             }).length;
 
             setCounts({
-                players: players.length,
+                players: playersData.length,
                 enabled: enabledCount,
                 payments: 8,
                 goals: 12
             });
+            // ... (rest of the logic remains same until return)
 
             // Calculate Alerts
             const docAlerts: { id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[] = [];
@@ -94,6 +98,97 @@ export default function DashboardPage() {
             console.error("Error loading dashboard data:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const calculateAge = (birthDate?: string): string => {
+        if (!birthDate) return "N/A";
+        const today = new Date();
+        const birth = new Date(birthDate);
+        let age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+            age--;
+        }
+        return age.toString();
+    };
+
+    const printGoodFaithList = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const settings = await settingsService.getSettings();
+        const enabledPlayers = players.filter(p => {
+            const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
+            const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
+            return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
+        }).sort((a, b) => (a.shirt_number || 99) - (b.shirt_number || 99));
+
+        const rows = enabledPlayers.map((p, i) => {
+            const age = calculateAge(p.birth_date);
+            const bg = i % 2 === 0 ? '#f8fafc' : '#ffffff';
+            return `
+                <tr style="background:${bg}">
+                    <td style="padding:10px;border:1px solid #e2e8f0;font-weight:700;text-align:center">${p.shirt_number || '-'}</td>
+                    <td style="padding:10px;border:1px solid #e2e8f0">${p.full_name}</td>
+                    <td style="padding:10px;border:1px solid #e2e8f0">${p.position || '-'}</td>
+                    <td style="padding:10px;border:1px solid #e2e8f0;text-align:center">${age}</td>
+                </tr>`;
+        }).join('');
+
+        const html = `
+            <html>
+            <head>
+                <title>Lista de Buena Fe - Club 33</title>
+                <style>
+                    body { font-family: 'Inter', system-ui, -apple-system, sans-serif; padding: 50px; color: #1e293b; background: white; }
+                    .header { border-bottom: 5px solid #1e293b; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
+                    h1 { text-transform: uppercase; letter-spacing: -1px; margin: 0; font-weight: 900; font-size: 32px; font-style: italic; }
+                    .subtitle { color: #64748b; font-size: 14px; font-weight: 600; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                    th { background: #1e293b; color: white; text-align: left; padding: 12px 10px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; }
+                    td { font-size: 14px; border: 1px solid #e2e8f0; }
+                    .footer { margin-top: 50px; font-size: 10px; color: #94a3b8; text-align: center; border-top: 1px solid #e2e8f0; padding-top: 20px; }
+                    @media print { .no-print { display: none; } body { padding: 20px; } }
+                    .btn-print { padding: 12px 24px; background: #1e293b; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: 800; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; transition: all 0.2s; }
+                    .btn-print:hover { background: #334155; transform: translateY(-2px); }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div>
+                        <h1>Lista de Buena Fe</h1>
+                        <div class="subtitle">CLUB 33 – Temporada 2026</div>
+                    </div>
+                    <div style="text-align: right">
+                        <div class="subtitle">Emisión: ${new Date().toLocaleDateString('es-UY')}</div>
+                        <div class="subtitle">Total Habilitados: ${enabledPlayers.length}</div>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width:60px;text-align:center">Dorsal</th>
+                            <th>Nombre del Jugador</th>
+                            <th>Posición</th>
+                            <th style="width:60px;text-align:center">Edad</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+                <div class="footer">
+                    Documento generado automáticamente por Sistema de Gestión Club 33.
+                </div>
+                <div style="margin-top:40px; display: flex; justify-content: center;" class="no-print">
+                    <button onclick="window.print()" class="btn-print">Imprimir Documento</button>
+                </div>
+            </body>
+            </html>`;
+
+        const win = window.open('', '_blank');
+        if (win) {
+            win.document.write(html);
+            win.document.close();
         }
     };
 
@@ -152,7 +247,7 @@ export default function DashboardPage() {
     const stats = [
         {
             name: "Total Jugadores",
-            value: `${counts.enabled} / ${counts.players}`,
+            value: `${counts.players} / ${counts.enabled}`,
             icon: Users,
             color: counts.enabled === counts.players ? "text-blue-600" : "text-red-600",
             bg: counts.enabled === counts.players ? "bg-blue-100" : "bg-red-100",
@@ -203,7 +298,13 @@ export default function DashboardPage() {
                                 <div className="flex items-baseline gap-2 mt-1">
                                     <p className={`text-3xl font-extrabold ${stat.color}`}>{stat.value}</p>
                                     {stat.name === "Total Jugadores" && (
-                                        <span className="text-xs font-bold text-muted-foreground uppercase">Habilitados</span>
+                                        <button
+                                            onClick={printGoodFaithList}
+                                            className="text-[10px] font-black uppercase text-muted-foreground hover:text-accent hover:underline tracking-widest transition-all"
+                                            title="Ver Lista de Buena Fe"
+                                        >
+                                            Habilitados
+                                        </button>
                                     )}
                                 </div>
                             </div>
@@ -323,14 +424,22 @@ export default function DashboardPage() {
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
-                                <div className="p-3 rounded-xl bg-blue-50 border border-blue-100 flex flex-col items-center justify-center">
-                                    <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest">Habilitados</span>
+                                <button
+                                    onClick={printGoodFaithList}
+                                    className="p-3 rounded-xl bg-blue-50 border border-blue-100 flex flex-col items-center justify-center hover:bg-blue-100 transition-all group/btn"
+                                    title="Imprimir Lista de Buena Fe"
+                                >
+                                    <span className="text-[10px] font-black uppercase text-blue-600 tracking-widest group-hover/btn:scale-105 transition-transform">Habilitados</span>
                                     <span className="text-xl font-black text-blue-700">{counts.enabled}</span>
-                                </div>
-                                <div className="p-3 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center">
-                                    <span className="text-[10px] font-black uppercase text-indigo-600 tracking-widest">Disponibles</span>
+                                </button>
+                                <button
+                                    onClick={printGoodFaithList}
+                                    className="p-3 rounded-xl bg-indigo-50 border border-indigo-100 flex flex-col items-center justify-center hover:bg-indigo-100 transition-all group/btn"
+                                    title="Imprimir Lista de Buena Fe (Disponibles)"
+                                >
+                                    <span className="text-[10px] font-black uppercase text-indigo-600 tracking-widest group-hover/btn:scale-105 transition-transform">Disponibles</span>
                                     <span className="text-xl font-black text-indigo-700">{counts.enabled}</span>
-                                </div>
+                                </button>
                             </div>
                         </div>
                     ) : (
