@@ -21,7 +21,9 @@ export const settingsService = {
                     monthly_fee: 1000,
                     annual_fee: 10000,
                     annual_discount_percent: 15,
-                    gear_price: 5000
+                    gear_price: 5000,
+                    cron_hour: '09:00',
+                    cron_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
                 };
             }
             console.error('Error fetching settings:', error);
@@ -35,7 +37,9 @@ export const settingsService = {
                 monthly_fee: 1000,
                 annual_fee: 10000,
                 annual_discount_percent: 15,
-                gear_price: 5000
+                gear_price: 5000,
+                cron_hour: '09:00',
+                cron_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             };
         }
 

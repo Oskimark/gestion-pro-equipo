@@ -132,6 +132,28 @@ CREATE POLICY "players_read_public_token" ON players
 FOR SELECT TO anon 
 USING (access_token IS NOT NULL);
 
+-- Club Settings table
+CREATE TABLE IF NOT EXISTS club_settings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id_card_alert_days INTEGER DEFAULT 30,
+    health_card_alert_days INTEGER DEFAULT 30,
+    wa_send_form_link BOOLEAN DEFAULT true,
+    wa_custom_text_enabled BOOLEAN DEFAULT false,
+    wa_custom_text TEXT,
+    wa_payment_text TEXT,
+    monthly_fee INTEGER DEFAULT 1000,
+    annual_fee INTEGER DEFAULT 10000,
+    annual_discount_percent INTEGER DEFAULT 15,
+    gear_price INTEGER DEFAULT 5000,
+    cron_hour TEXT DEFAULT '09:00',
+    cron_days TEXT[] DEFAULT ARRAY['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+ALTER TABLE club_settings ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "club_settings_read_all" ON club_settings FOR SELECT TO authenticated USING (true);
+CREATE POLICY "club_settings_admin_all" ON club_settings FOR ALL TO authenticated USING (public.is_admin());
+
 -- Notification Logs table
 CREATE TABLE notification_logs (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

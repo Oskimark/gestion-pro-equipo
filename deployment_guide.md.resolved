@@ -107,6 +107,8 @@ CREATE TABLE IF NOT EXISTS club_settings (
     annual_fee INTEGER DEFAULT 10000,
     annual_discount_percent INTEGER DEFAULT 15,
     gear_price INTEGER DEFAULT 5000,
+    cron_hour TEXT DEFAULT '09:00',
+    cron_days TEXT[] DEFAULT ARRAY['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

@@ -120,6 +120,10 @@ export type ClubSettings = {
   annual_discount_percent: number;
   gear_price: number;
 
+  // Cron Scheduling
+  cron_hour?: string; // e.g., "09:00"
+  cron_days?: string[]; // e.g., ["Monday", "Wednesday"]
+
   updated_at?: string;
 };
 

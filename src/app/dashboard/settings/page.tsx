@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type, Banknote, Clock, X } from "lucide-react";
+import { Settings as SettingsIcon, Save, BellRing, Loader2, CheckCircle2, MessageCircle, Link2, Type, Banknote, Clock, X, Trash2, Trash } from "lucide-react";
 import { settingsService } from "@/services/settingsService";
 import { ClubSettings, NotificationLog } from "@/types";
 import { useProfile } from "@/hooks/useProfile";
@@ -17,7 +17,9 @@ export default function SettingsPage() {
         monthly_fee: 1000,
         annual_fee: 10000,
         annual_discount_percent: 15,
-        gear_price: 5000
+        gear_price: 5000,
+        cron_hour: '09:00',
+        cron_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
     });
 
     const [loading, setLoading] = useState(true);
@@ -45,7 +47,7 @@ export default function SettingsPage() {
                 .from('notification_logs')
                 .select('*')
                 .order('created_at', { ascending: false })
-                .limit(10);
+                .limit(20);
 
             if (error) throw error;
             setLogs(data || []);
@@ -53,6 +55,30 @@ export default function SettingsPage() {
             console.error("Error fetching logs:", err);
         } finally {
             setLoadingLogs(false);
+        }
+    };
+
+    const handleDeleteLog = async (id: string) => {
+        if (!confirm("¿Deseas eliminar este registro del historial?")) return;
+        try {
+            const { error } = await supabase.from('notification_logs').delete().eq('id', id);
+            if (error) throw error;
+            setLogs(logs.filter(log => log.id !== id));
+        } catch (err) {
+            console.error("Error deleting log:", err);
+            alert("Error al eliminar el registro.");
+        }
+    };
+
+    const handleDeleteAllLogs = async () => {
+        if (!confirm("¿ESTÁS SEGURO? Se borrará TODO el historial de notificaciones permanentemente.")) return;
+        try {
+            const { error } = await supabase.from('notification_logs').delete().neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all
+            if (error) throw error;
+            setLogs([]);
+        } catch (err) {
+            console.error("Error clearing logs:", err);
+            alert("Error al vaciar el historial.");
         }
     };
 
@@ -368,49 +394,97 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="space-y-6">
-                        <div className="p-6 bg-slate-50 rounded-2xl border border-border/20 flex flex-col md:flex-row items-center justify-between gap-6">
-                            <div className="space-y-1">
-                                <h3 className="font-bold text-foreground">Revisión Automática</h3>
-                                <p className="text-xs text-muted-foreground max-w-md">
-                                    El sistema revisa diariamente a las 09:00 UTC todos los jugadores. Si detecta documentos por vencer, envía un WhatsApp según las preferencias de cada perfil.
-                                </p>
+                        <div className="p-6 bg-slate-50 rounded-2xl border border-border/20 space-y-6">
+                            <div className="flex flex-col md:flex-row items-start justify-between gap-6 pb-6 border-b border-border/10">
+                                <div className="space-y-1">
+                                    <h3 className="font-bold text-foreground">Programación Semanal</h3>
+                                    <p className="text-xs text-muted-foreground max-w-md">
+                                        Define qué días y a qué hora (Uruguay) se ejecutará el envío automático de alertas.
+                                    </p>
+                                </div>
+                                <div className="flex items-center gap-4 bg-white p-3 rounded-xl border border-border/40 shadow-sm">
+                                    <Clock className="h-5 w-5 text-indigo-500" />
+                                    <input
+                                        type="time"
+                                        value={settings.cron_hour || '09:00'}
+                                        onChange={(e) => setSettings({ ...settings, cron_hour: e.target.value })}
+                                        className="font-bold text-lg bg-transparent outline-none text-foreground"
+                                    />
+                                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest pl-2 border-l">UY Time</span>
+                                </div>
                             </div>
-                            <button
-                                type="button"
-                                onClick={async () => {
-                                    if (!confirm("¿Deseas ejecutar la revisión de vencimientos manualmente ahora? Se enviarán mensajes a los jugadores correspondientes.")) return;
-                                    try {
-                                        setSaving(true);
-                                        const res = await fetch('/api/cron/check-vencimientos', {
-                                            headers: {
-                                                'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET || 'development_secret'}`
+
+                            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+                                {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day) => {
+                                    const dayNames: Record<string, string> = {
+                                        Monday: 'Lun', Tuesday: 'Mar', Wednesday: 'Mié', Thursday: 'Jue',
+                                        Friday: 'Vie', Saturday: 'Sáb', Sunday: 'Dom'
+                                    };
+                                    const isActive = settings.cron_days?.includes(day);
+                                    return (
+                                        <button
+                                            key={day}
+                                            type="button"
+                                            onClick={() => {
+                                                const currentDays = settings.cron_days || [];
+                                                const newDays = isActive
+                                                    ? currentDays.filter(d => d !== day)
+                                                    : [...currentDays, day];
+                                                setSettings({ ...settings, cron_days: newDays });
+                                            }}
+                                            className={`py-3 rounded-xl font-bold text-xs transition-all border-2 ${isActive
+                                                ? 'bg-indigo-600 border-indigo-600 text-white'
+                                                : 'bg-white border-border/40 text-muted-foreground hover:border-indigo-400'
+                                                }`}
+                                        >
+                                            {dayNames[day]}
+                                        </button>
+                                    );
+                                })}
+                            </div>
+
+                            <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-4">
+                                <p className="text-[10px] text-muted-foreground leading-relaxed max-w-sm italic">
+                                    * La hora configurada es aproximada y depende del despachador de tareas de Vercel Cron.
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        if (!confirm("¿Deseas ejecutar la revisión de vencimientos manualmente ahora? Se enviarán mensajes a los jugadores correspondientes.")) return;
+                                        try {
+                                            setSaving(true);
+                                            const res = await fetch('/api/cron/check-vencimientos?manual=true', {
+                                                headers: {
+                                                    'Authorization': `Bearer ${process.env.NEXT_PUBLIC_CRON_SECRET || 'development_secret'}`
+                                                }
+                                            });
+
+                                            if (res.status === 401) {
+                                                alert("Error de Autorización (401): No se pudo verificar el CRON_SECRET. Revisa las variables de entorno NEXT_PUBLIC_CRON_SECRET.");
+                                                return;
                                             }
-                                        });
 
-                                        if (res.status === 401) {
-                                            alert("Error de Autorización (401): No se pudo verificar el CRON_SECRET. Revisa las variables de entorno NEXT_PUBLIC_CRON_SECRET.");
-                                            return;
+                                            const data = await res.json();
+                                            if (data.success) {
+                                                alert(`Revisión completada.\nProcesados: ${data.processed}\nNotificaciones enviadas: ${data.notifications_sent}`);
+                                                fetchLogs();
+                                            } else {
+                                                alert(`Error del Servidor: ${data.error}`);
+                                            }
+                                        } catch (err) {
+                                            console.error(err);
+                                            alert("Error al ejecutar la revisión manual.");
+                                        } finally {
+                                            setSaving(false);
                                         }
-
-                                        const data = await res.json();
-                                        if (data.success) {
-                                            alert(`Revisión completada.\nProcesados: ${data.processed}\nNotificaciones enviadas: ${data.notifications_sent}`);
-                                        } else {
-                                            alert(`Error del Servidor: ${data.error}`);
-                                        }
-                                    } catch (err) {
-                                        console.error(err);
-                                        alert("Error al ejecutar la revisión manual.");
-                                    } finally {
-                                        setSaving(false);
-                                    }
-                                }}
-                                disabled={saving}
-                                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center gap-2 shrink-0"
-                            >
-                                <BellRing className="h-4 w-4" />
-                                Ejecutar Revisión Manual
-                            </button>
+                                    }}
+                                    disabled={saving}
+                                    className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-sm transition-all shadow-md hover:shadow-lg disabled:opacity-50 flex items-center gap-2 shrink-0"
+                                >
+                                    <BellRing className="h-4 w-4" />
+                                    Ejecutar Revisión Manual
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -474,14 +548,26 @@ export default function SettingsPage() {
                             <p className="text-sm text-muted-foreground">Últimos mensajes enviados automáticamente por el sistema.</p>
                         </div>
                     </div>
-                    <button
-                        onClick={fetchLogs}
-                        disabled={loadingLogs}
-                        className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
-                        title="Actualizar historial"
-                    >
-                        <Loader2 className={`h-5 w-5 ${loadingLogs ? 'animate-spin' : ''} text-muted-foreground`} />
-                    </button>
+                    <div className="flex items-center gap-2">
+                        {logs.length > 0 && (
+                            <button
+                                onClick={handleDeleteAllLogs}
+                                className="flex items-center gap-2 px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-red-200"
+                                title="Vaciar historial"
+                            >
+                                <Trash className="h-4 w-4" />
+                                Borrar Todo
+                            </button>
+                        )}
+                        <button
+                            onClick={fetchLogs}
+                            disabled={loadingLogs}
+                            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                            title="Actualizar historial"
+                        >
+                            <Loader2 className={`h-5 w-5 ${loadingLogs ? 'animate-spin' : ''} text-muted-foreground`} />
+                        </button>
+                    </div>
                 </div>
 
                 <div className="overflow-x-auto">
@@ -492,6 +578,7 @@ export default function SettingsPage() {
                                 <th className="pb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Jugador</th>
                                 <th className="pb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Teléfono</th>
                                 <th className="pb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground">Estado</th>
+                                <th className="pb-4 text-[10px] font-black uppercase tracking-widest text-muted-foreground text-right"></th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border/5">
@@ -545,6 +632,15 @@ export default function SettingsPage() {
                                                     )}
                                                 </div>
                                             )}
+                                        </td>
+                                        <td className="py-4 text-right">
+                                            <button
+                                                onClick={() => handleDeleteLog(log.id)}
+                                                className="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all opacity-0 group-hover:opacity-100"
+                                                title="Eliminar del historial"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </button>
                                         </td>
                                     </tr>
                                 ))

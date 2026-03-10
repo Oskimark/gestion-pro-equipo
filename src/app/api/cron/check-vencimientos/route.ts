@@ -16,10 +16,37 @@ export async function GET(request: Request) {
     try {
         // 2. Get Settings
         const settings = await settingsService.getSettings();
+
+        // 2.5 Check Schedule (Unless manual override)
+        const url = new URL(request.url);
+        const isManual = url.searchParams.get('manual') === 'true';
+
+        if (!isManual) {
+            const nowUy = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Montevideo" }));
+            const currentDay = nowUy.toLocaleString("en-US", { weekday: 'long' }); // Monday, Tuesday...
+            const currentHour = nowUy.getHours();
+            const currentMinute = nowUy.getMinutes();
+
+            const configDays = settings.cron_days || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+            const [configHour, configMinute] = (settings.cron_hour || '09:00').split(':').map(Number);
+
+            const isDayActive = configDays.includes(currentDay);
+            const isHourActive = currentHour === configHour;
+
+            // Allow a small window (e.g., 59 minutes) since cron might run once an hour
+            if (!isDayActive || !isHourActive) {
+                return NextResponse.json({
+                    success: true,
+                    skipped: true,
+                    reason: `Not scheduled for ${currentDay} at ${currentHour}:${currentMinute}. Config: ${configDays.join(',')} at ${configHour}:${configMinute} (UY Time)`
+                });
+            }
+        }
+
         const alertDays = {
             id_card: settings.id_card_alert_days || 30,
             health_card: settings.health_card_alert_days || 30,
-            permit: 30 // Default for permit if not in settings
+            permit: 30
         };
 
         // 3. Fetch Players with their notification preferences
