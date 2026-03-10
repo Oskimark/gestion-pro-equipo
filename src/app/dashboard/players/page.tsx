@@ -168,8 +168,7 @@ export default function PlayersPage() {
                         <table className="w-full text-left">
                             <thead className="sticky top-0 z-30">
                                 <tr className="border-b border-border/40 bg-slate-50  shadow-sm">
-                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50  min-w-[180px] max-w-[180px]">Jugador</th>
-                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-[180px] z-40 bg-slate-50  border-r border-border/40 sm:border-transparent sm:static sm:z-30 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.05)] sm:shadow-none">Dorsal</th>
+                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50  min-w-[200px] max-w-[200px]">Jugador</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
                                     <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Cédula</th>
@@ -180,28 +179,30 @@ export default function PlayersPage() {
                             <tbody className="divide-y divide-border/20">
                                 {filteredPlayers.map((player) => (
                                     <tr key={player.id} className="hover:bg-slate-50  transition-colors group">
-                                        <td className="px-4 py-4 whitespace-nowrap sticky left-0 z-20 bg-white  sm:static sm:bg-transparent min-w-[180px] max-w-[180px] overflow-hidden group-hover:bg-slate-50  transition-colors">
+                                        <td className="px-4 py-4 whitespace-nowrap sticky left-0 z-20 bg-white  sm:static sm:bg-transparent min-w-[200px] max-w-[200px] overflow-hidden group-hover:bg-slate-50  transition-colors">
                                             <div className="flex items-center gap-3">
-                                                {player.photo_url ? (
-                                                    <Image
-                                                        src={player.photo_url}
-                                                        alt={player.full_name}
-                                                        width={40}
-                                                        height={40}
-                                                        className="h-10 w-10 rounded-full object-cover shrink-0 border border-border"
-                                                    />
-                                                ) : (
-                                                    <div className="h-10 w-10 rounded-full bg-slate-100  flex items-center justify-center border border-border text-slate-400 shrink-0 group-hover:border-secondary transition-colors">
-                                                        <User className="h-6 w-6" />
-                                                    </div>
-                                                )}
+                                                <div className="relative shrink-0">
+                                                    {player.photo_url ? (
+                                                        <Image
+                                                            src={player.photo_url}
+                                                            alt={player.full_name}
+                                                            width={48}
+                                                            height={48}
+                                                            className="h-12 w-12 rounded-full object-cover border-2 border-white shadow-sm"
+                                                        />
+                                                    ) : (
+                                                        <div className="h-12 w-12 rounded-full bg-slate-100  flex items-center justify-center border-2 border-white text-slate-400 shadow-sm group-hover:border-secondary transition-colors">
+                                                            <User className="h-7 w-7" />
+                                                        </div>
+                                                    )}
+                                                    {player.shirt_number && (
+                                                        <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-lg bg-secondary flex items-center justify-center font-black text-[10px] text-primary border-2 border-white shadow-md">
+                                                            {player.shirt_number}
+                                                        </div>
+                                                    )}
+                                                </div>
                                                 <span className="font-bold text-foreground  truncate">{player.full_name}</span>
                                             </div>
-                                        </td>
-                                        <td className="px-4 py-4 whitespace-nowrap sticky left-[180px] z-20 bg-white  border-r border-border/40 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)] sm:shadow-none sm:border-transparent sm:static sm:bg-transparent group-hover:bg-slate-50  transition-colors">
-                                            <span className="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-secondary/10 text-secondary font-extrabold border border-secondary/20 flex-shrink-0">
-                                                {player.shirt_number || "-"}
-                                            </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700  ">
