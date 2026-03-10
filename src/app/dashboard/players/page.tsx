@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Search,
     Plus,
@@ -34,6 +34,7 @@ export default function PlayersPage() {
     const [players, setPlayers] = useState<Player[]>([]);
     const [loading, setLoading] = useState(true);
     const [reportPlayer, setReportPlayer] = useState<Player | null>(null);
+    const [expandedPlayerId, setExpandedPlayerId] = useState<string | null>(null);
     const [showPrintModal, setShowPrintModal] = useState(false);
     const [printColumns, setPrintColumns] = useState({
         shirt_number: true,
@@ -202,132 +203,137 @@ export default function PlayersPage() {
                             <p className="font-medium">Cargando jugadores...</p>
                         </div>
                     ) : (
-                        <table className="w-full text-left">
+                        <table className="w-full text-left border-separate border-spacing-0">
                             <thead className="sticky top-0 z-30">
-                                <tr className="border-b border-border/40 bg-slate-50  shadow-sm">
-                                    <th className="px-4 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50  min-w-[200px] max-w-[200px]">Jugador</th>
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Habilitado</th>
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Cédula</th>
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Carnet</th>
-                                    <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Acciones</th>
+                                <tr className="border-b border-border/40 bg-slate-50 shadow-sm">
+                                    <th className="px-3 sm:px-4 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground sticky left-0 z-40 bg-slate-50 min-w-[140px] sm:min-w-[200px]">Jugador</th>
+                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Habilitado</th>
+                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground">Posición</th>
+                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Edad</th>
+                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Cédula</th>
+                                    <th className="px-2 sm:px-6 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">Carnet</th>
+                                    <th className="px-4 py-4 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground hidden sm:table-cell">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border/20">
                                 {filteredPlayers.map((player) => (
-                                    <tr key={player.id} className="hover:bg-slate-50  transition-colors group">
-                                        <td className="px-4 py-4 whitespace-nowrap sticky left-0 z-20 bg-white  sm:static sm:bg-transparent min-w-[200px] max-w-[200px] overflow-hidden group-hover:bg-slate-50  transition-colors">
-                                            <div className="flex items-center gap-3">
-                                                <div className="relative shrink-0">
-                                                    {player.photo_url ? (
-                                                        <Image
-                                                            src={player.photo_url}
-                                                            alt={player.full_name}
-                                                            width={48}
-                                                            height={48}
-                                                            className="h-12 w-12 rounded-full object-cover border-2 border-white shadow-sm"
-                                                        />
-                                                    ) : (
-                                                        <div className="h-12 w-12 rounded-full bg-slate-100  flex items-center justify-center border-2 border-white text-slate-400 shadow-sm group-hover:border-secondary transition-colors">
-                                                            <User className="h-7 w-7" />
-                                                        </div>
-                                                    )}
-                                                    {player.shirt_number && (
-                                                        <div className="absolute -bottom-1 -right-1 h-6 w-6 rounded-lg bg-secondary flex items-center justify-center font-black text-[10px] text-primary border-2 border-white shadow-md">
-                                                            {player.shirt_number}
-                                                        </div>
-                                                    )}
+                                    <React.Fragment key={player.id}>
+                                        <tr
+                                            onClick={() => setExpandedPlayerId(expandedPlayerId === player.id ? null : player.id)}
+                                            className={`hover:bg-slate-50 transition-colors group cursor-pointer sm:cursor-default ${expandedPlayerId === player.id ? 'bg-slate-50/80' : ''}`}
+                                        >
+                                            <td className="p-2 sm:px-4 py-4 whitespace-normal sticky left-0 z-20 bg-white sm:static sm:bg-transparent min-w-[130px] sm:min-w-[200px] group-hover:bg-slate-50 transition-colors border-r border-border/10 sm:border-r-0">
+                                                <div className="flex items-center gap-2 sm:gap-3">
+                                                    <div className="relative shrink-0">
+                                                        {player.photo_url ? (
+                                                            <Image
+                                                                src={player.photo_url}
+                                                                alt={player.full_name}
+                                                                width={44}
+                                                                height={44}
+                                                                className="h-9 w-9 sm:h-12 sm:w-12 rounded-full object-cover border-2 border-white shadow-sm"
+                                                            />
+                                                        ) : (
+                                                            <div className="h-9 w-9 sm:h-12 sm:w-12 rounded-full bg-slate-100 flex items-center justify-center border-2 border-white text-slate-400 shadow-sm group-hover:border-secondary transition-colors">
+                                                                <User className="h-5 w-5 sm:h-7 sm:w-7" />
+                                                            </div>
+                                                        )}
+                                                        {player.shirt_number && (
+                                                            <div className="absolute -bottom-1 -right-1 h-4 w-4 sm:h-6 sm:w-6 rounded-lg bg-secondary flex items-center justify-center font-black text-[8px] sm:text-[10px] text-primary border-2 border-white shadow-md">
+                                                                {player.shirt_number}
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                    <span className="font-bold text-foreground text-[10px] sm:text-sm leading-tight sm:truncate line-clamp-3 sm:line-clamp-none whitespace-normal uppercase italic tracking-tight flex-1">
+                                                        {player.full_name}
+                                                    </span>
                                                 </div>
-                                                <span className="font-bold text-foreground  truncate">{player.full_name}</span>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                                            {(() => {
-                                                const idStatus = getDocStatus(player.id_card_expiry, 30, player.id_card_rev_status);
-                                                const healthStatus = getDocStatus(player.health_card_expiry, 30, player.health_card_rev_status);
+                                            </td>
+                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center">
+                                                {(() => {
+                                                    const idStatus = getDocStatus(player.id_card_expiry, 30, player.id_card_rev_status);
+                                                    const healthStatus = getDocStatus(player.health_card_expiry, 30, player.health_card_rev_status);
 
-                                                const isOk = idStatus.label === 'Al día' && healthStatus.label === 'Al día';
-                                                const isVencido = idStatus.label === 'Vencido' || healthStatus.label === 'Vencido' || idStatus.label === 'Faltante' || healthStatus.label === 'Faltante';
+                                                    const isOk = idStatus.label === 'Al día' && healthStatus.label === 'Al día';
+                                                    const isVencido = idStatus.label === 'Vencido' || healthStatus.label === 'Vencido' || idStatus.label === 'Faltante' || healthStatus.label === 'Faltante';
 
-                                                let icon = Check;
-                                                let color = "text-green-500 bg-green-500/10";
-                                                let label = "Habilitado";
+                                                    let icon = Check;
+                                                    let color = "text-green-500 bg-green-500/10";
+                                                    let label = "Habilitado";
 
-                                                if (isVencido) {
-                                                    icon = X;
-                                                    color = "text-red-500 bg-red-500/10";
-                                                    label = "No Habilitado";
-                                                } else if (!isOk) {
-                                                    icon = AlertTriangle;
-                                                    color = "text-amber-500 bg-amber-500/10";
-                                                    label = "Por vencer";
-                                                }
+                                                    if (isVencido) {
+                                                        icon = X;
+                                                        color = "text-red-500 bg-red-500/10";
+                                                        label = "No Habilitado";
+                                                    } else if (!isOk) {
+                                                        icon = AlertTriangle;
+                                                        color = "text-amber-500 bg-amber-500/10";
+                                                        label = "Por vencer";
+                                                    }
 
-                                                const Icon = icon;
-                                                return (
-                                                    <div className={`inline-flex items-center justify-center p-1.5 rounded-full ${color}`} title={label}>
-                                                        <Icon className="h-4 w-4" />
-                                                    </div>
-                                                );
-                                            })()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700  ">
-                                                {player.position || "N/A"}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-center font-medium text-muted-foreground">
-                                            {calculateAge(player.birth_date)}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                                            {(() => {
-                                                const status = getDocStatus(player.id_card_expiry);
-                                                return (
-                                                    <div className={`inline-flex items-center justify-center p-1.5 rounded-full ${status.color}`} title={status.label}>
-                                                        <status.icon className="h-4 w-4" />
-                                                    </div>
-                                                );
-                                            })()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-center">
-                                            {(() => {
-                                                const status = getDocStatus(player.health_card_expiry);
-                                                return (
-                                                    <div className={`inline-flex items-center justify-center p-1.5 rounded-full ${status.color}`} title={status.label}>
-                                                        <status.icon className="h-4 w-4" />
-                                                    </div>
-                                                );
-                                            })()}
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="flex items-center gap-2">
+                                                    const Icon = icon;
+                                                    return (
+                                                        <div className={`inline-flex items-center justify-center p-1 sm:p-1.5 rounded-full ${color}`} title={label}>
+                                                            <Icon className="h-3 w-3 sm:h-4 sm:w-4" />
+                                                        </div>
+                                                    );
+                                                })()}
+                                            </td>
+                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap">
+                                                <span className="px-1.5 sm:px-3 py-1 rounded-full text-[9px] sm:text-xs font-bold bg-blue-100 text-blue-700">
+                                                    {player.position || "N/A"}
+                                                </span>
+                                            </td>
+                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center font-medium text-muted-foreground text-[10px] sm:text-sm">
+                                                {calculateAge(player.birth_date)}
+                                            </td>
+                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center">
+                                                {(() => {
+                                                    const status = getDocStatus(player.id_card_expiry);
+                                                    return (
+                                                        <div className={`inline-flex items-center justify-center p-1 sm:p-1.5 rounded-full ${status.color}`} title={status.label}>
+                                                            <status.icon className="h-3 w-3 sm:h-4 sm:w-4" />
+                                                        </div>
+                                                    );
+                                                })()}
+                                            </td>
+                                            <td className="px-2 sm:px-6 py-4 whitespace-nowrap text-center">
+                                                {(() => {
+                                                    const status = getDocStatus(player.health_card_expiry);
+                                                    return (
+                                                        <div className={`inline-flex items-center justify-center p-1 sm:p-1.5 rounded-full ${status.color}`} title={status.label}>
+                                                            <status.icon className="h-3 w-3 sm:h-4 sm:w-4" />
+                                                        </div>
+                                                    );
+                                                })()}
+                                            </td>
+                                            <td className="px-6 py-4 whitespace-nowrap hidden sm:table-cell">
                                                 <div className="flex items-center gap-2">
-                                                    <Link href={`/dashboard/players/detail/${player.id}`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-accent transition-colors" title="Ver Detalles">
+                                                    <Link href={`/dashboard/players/detail/${player.id}`} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-accent transition-colors" title="Ver Detalles">
                                                         <Eye className="h-5 w-5" />
                                                     </Link>
                                                     {!isVisitor && (
                                                         <>
-                                                            <Link href={`/dashboard/players/detail/${player.id}?edit=true`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-green-500 transition-colors" title="Editar">
+                                                            <Link href={`/dashboard/players/detail/${player.id}?edit=true`} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-green-500 transition-colors" title="Editar">
                                                                 <Edit2 className="h-5 w-5" />
                                                             </Link>
                                                             <button
-                                                                onClick={() => setReportPlayer(player)}
-                                                                className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-blue-500 transition-colors"
+                                                                onClick={(e) => { e.stopPropagation(); setReportPlayer(player); }}
+                                                                className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-blue-500 transition-colors"
                                                                 title="Generar Reporte"
                                                             >
                                                                 <FileDown className="h-5 w-5" />
                                                             </button>
                                                             <button
-                                                                onClick={() => handleNotifyPlayer(player)}
-                                                                className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-indigo-500 transition-colors"
+                                                                onClick={(e) => { e.stopPropagation(); handleNotifyPlayer(player); }}
+                                                                className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-indigo-500 transition-colors"
                                                                 title="Notificar Automáticamente"
                                                             >
                                                                 <BellRing className="h-5 w-5" />
                                                             </button>
                                                             <button
-                                                                onClick={() => handleDelete(player.id, player.full_name)}
-                                                                className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-red-500 transition-colors"
+                                                                onClick={(e) => { e.stopPropagation(); handleDelete(player.id, player.full_name); }}
+                                                                className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-red-500 transition-colors"
                                                                 title="Eliminar"
                                                             >
                                                                 <Trash2 className="h-5 w-5" />
@@ -335,9 +341,49 @@ export default function PlayersPage() {
                                                         </>
                                                     )}
                                                 </div>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                        {/* Mobile Expandable Actions Row */}
+                                        <tr className={`sm:hidden bg-slate-50/50 ${expandedPlayerId === player.id ? '' : 'hidden'}`}>
+                                            <td colSpan={7} className="px-4 py-3 border-b border-border/20">
+                                                <div className="flex items-center justify-around gap-2 py-1">
+                                                    <Link href={`/dashboard/players/detail/${player.id}`} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-white border border-border/40 shadow-sm text-slate-600 active:scale-95 transition-all outline-none">
+                                                        <Eye className="h-5 w-5 text-accent" />
+                                                        <span className="text-[9px] font-black uppercase tracking-tighter">Ver</span>
+                                                    </Link>
+                                                    {!isVisitor && (
+                                                        <>
+                                                            <Link href={`/dashboard/players/detail/${player.id}?edit=true`} className="flex flex-col items-center gap-1 p-2 rounded-xl bg-white border border-border/40 shadow-sm text-slate-600 active:scale-95 transition-all outline-none">
+                                                                <Edit2 className="h-5 w-5 text-green-500" />
+                                                                <span className="text-[9px] font-black uppercase tracking-tighter">Editar</span>
+                                                            </Link>
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); setReportPlayer(player); }}
+                                                                className="flex flex-col items-center gap-1 p-2 rounded-xl bg-white border border-border/40 shadow-sm text-slate-600 active:scale-95 transition-all outline-none"
+                                                            >
+                                                                <FileDown className="h-5 w-5 text-blue-500" />
+                                                                <span className="text-[9px] font-black uppercase tracking-tighter">Reporte</span>
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); handleNotifyPlayer(player); }}
+                                                                className="flex flex-col items-center gap-1 p-2 rounded-xl bg-white border border-border/40 shadow-sm text-slate-600 active:scale-95 transition-all outline-none"
+                                                            >
+                                                                <BellRing className="h-5 w-5 text-indigo-500" />
+                                                                <span className="text-[9px] font-black uppercase tracking-tighter">Aviso</span>
+                                                            </button>
+                                                            <button
+                                                                onClick={(e) => { e.stopPropagation(); handleDelete(player.id, player.full_name); }}
+                                                                className="flex flex-col items-center gap-1 p-2 rounded-xl bg-white border border-border/40 shadow-sm text-slate-600 active:scale-95 transition-all outline-none"
+                                                            >
+                                                                <Trash2 className="h-5 w-5 text-red-500" />
+                                                                <span className="text-[9px] font-black uppercase tracking-tighter">Borrar</span>
+                                                            </button>
+                                                        </>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </React.Fragment>
                                 ))}
                             </tbody>
                         </table>

@@ -22,6 +22,7 @@ import {
     MessageCircle
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { paymentService } from "@/services/paymentService";
 import { playerService } from "@/services/playerService";
 import { settingsService } from "@/services/settingsService";
@@ -343,7 +344,13 @@ export default function PaymentsPage() {
                                                     <div className="flex items-center gap-4">
                                                         <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center border border-border text-slate-400 shrink-0 group-hover:scale-110 transition-transform overflow-hidden shadow-inner uppercase">
                                                             {p.photo_url ? (
-                                                                <img src={p.photo_url} alt="" className="h-full w-full object-cover" />
+                                                                <Image
+                                                                    src={p.photo_url}
+                                                                    alt={p.full_name}
+                                                                    width={40}
+                                                                    height={40}
+                                                                    className="h-full w-full object-cover"
+                                                                />
                                                             ) : (
                                                                 <User className="h-6 w-6" />
                                                             )}

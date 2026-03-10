@@ -139,3 +139,12 @@ export type NotificationLog = {
   error_message?: string;
   created_at: string;
 };
+
+export type MatchResponse = {
+  id: string;
+  match_id: string;
+  player_id: string;
+  status: 'asiste' | 'no_asiste' | 'pendiente';
+  confirmed_at?: string;
+  updated_at: string;
+};

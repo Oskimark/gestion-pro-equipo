@@ -10,7 +10,9 @@
     - Implementación de columna "Habilitado" en tabla de jugadores y Dashboard (Cédula + Ficha Médica al día).
     - Botón de notificación individual (Campana) directo desde la gestión de jugadores.
     - Implementación de "Lista de Buena Fe" imprimible desde el Dashboard con filtros de habilitación/disponibilidad.
+    - **Optimización UI/Mobile**: Layout de jugadores rediseñado para celulares (nombres envolventes y fila de acciones deslizable). Imágenes optimizadas en Pagos.
 
 ## Próximos Pasos
-- **Módulo de Convocatorias**: Sistema para iniciar partidos, convocar jugadores y registrar confirmaciones de asistencia.
+- **Módulo de Convocatorias**: Implementar sistema para iniciar partidos y enviar convocatorias. Padres confirmarán asistencia (Sí/No) mediante el link de autogestión.
+- **Cálculo de Disponibilidad**: Automatizar el contador de "Disponibles" del Dashboard usando las confirmaciones de asistencia (cruzando datos con jugadores habilitados).
 - **Integración Final**: Sincronización de variables de entorno en Vercel.
