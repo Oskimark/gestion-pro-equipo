@@ -23,6 +23,7 @@ import Link from "next/link";
 
 export default function DashboardPage() {
     const { profile, loading: profileLoading } = useProfile();
+    const isVisitor = profile?.role === 'visitante';
     const [players, setPlayers] = useState<Player[]>([]);
     const [counts, setCounts] = useState({ players: 0, enabled: 0, available: 0, payments: 0, goals: 0 });
     const [nextMatch, setNextMatch] = useState<Match | null>(null);
@@ -106,9 +107,6 @@ export default function DashboardPage() {
                 }
             });
             setAlerts(docAlerts);
-
-            const upcoming = matches.find(m => m.status === "Próximo");
-            setNextMatch(upcoming || null);
         } catch (error) {
             console.error("Error loading dashboard data:", error);
         } finally {
