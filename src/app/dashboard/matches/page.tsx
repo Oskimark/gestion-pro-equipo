@@ -9,7 +9,8 @@ import {
     Loader2,
     Edit2,
     Trash2,
-    Plus
+    Plus,
+    Users
 } from "lucide-react";
 import Link from "next/link";
 
@@ -105,6 +106,9 @@ export default function MatchesPage() {
                                         </div>
                                         {!isVisitor && (
                                             <div className="flex flex-col gap-2">
+                                                <Link href={`/dashboard/matches/detail/${nextMatch.id}`} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors" title="Ver Detalles">
+                                                    <ChevronRight className="h-6 w-6" />
+                                                </Link>
                                                 <Link href={`/dashboard/matches/edit/${nextMatch.id}`} className="p-2 rounded-xl bg-white/10 hover:bg-white/20 transition-colors" title="Editar">
                                                     <Edit2 className="h-5 w-5" />
                                                 </Link>
@@ -164,11 +168,14 @@ export default function MatchesPage() {
 
                                             {!isVisitor && (
                                                 <div className="flex items-center gap-2">
+                                                    <Link href={`/dashboard/matches/detail/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-accent transition-colors" title="Ver Convocatoria">
+                                                        <Users className="h-5 w-5" />
+                                                    </Link>
                                                     <Link href={`/dashboard/matches/edit/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-green-500 transition-colors" title="Editar">
                                                         <Edit2 className="h-5 w-5" />
                                                     </Link>
                                                     <button
-                                                        onClick={() => handleDelete(match.id, match.rival)}
+                                                        onClick={(e) => { e.stopPropagation(); handleDelete(match.id, match.rival); }}
                                                         className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-red-500 transition-colors"
                                                         title="Eliminar"
                                                     >

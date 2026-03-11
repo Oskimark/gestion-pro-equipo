@@ -31,6 +31,9 @@ export default function DashboardPage() {
     const [alerts, setAlerts] = useState<{ id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[]>([]);
     const [loading, setLoading] = useState(true);
     const [isLaunching, setIsLaunching] = useState(false);
+    const [showSelectionModal, setShowSelectionModal] = useState(false);
+    const [enabledPlayers, setEnabledPlayers] = useState<Player[]>([]);
+    const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
 
     useEffect(() => {
         loadDashboardData();
@@ -52,8 +55,13 @@ export default function DashboardPage() {
 
             let responses: MatchResponse[] = [];
             if (upcoming) {
-                responses = await matchService.getMatchResponses(upcoming.id);
-                setMatchResponses(responses);
+                try {
+                    responses = await matchService.getMatchResponses(upcoming.id);
+                    setMatchResponses(responses);
+                } catch (err) {
+                    console.error("Error fetching match responses:", err);
+                    // Continue without responses
+                }
             }
 
             // Calculate Enabled Players
@@ -64,7 +72,9 @@ export default function DashboardPage() {
             }).length;
 
             // Calculate Available (Those who confirmed attendance)
-            const availableCount = responses.filter(r => r.status === 'asiste').length;
+            // Fallback to enabledCount if no responses found (convocatoria not started)
+            const confirmedCount = responses.filter(r => r.status === 'asiste').length;
+            const availableCount = responses.length > 0 ? confirmedCount : enabledCount;
 
             setCounts({
                 players: playersData.length,
@@ -76,7 +86,7 @@ export default function DashboardPage() {
 
             // Calculate Alerts
             const docAlerts: { id: string; name: string; type: string; status: string; phone?: string; photo_url?: string; count: number; token?: string }[] = [];
-            players.forEach(p => {
+            playersData.forEach(p => {
                 const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
                 const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
                 const phone = p.mother_phone || p.father_phone || p.referent_phone;
@@ -263,28 +273,29 @@ export default function DashboardPage() {
         }
     };
 
-    const handleStartConvocatoria = async () => {
+    const handleOpenSelection = async () => {
         if (!nextMatch) return;
-        if (!confirm(`¿Estás seguro de iniciar la convocatoria para el partido vs ${nextMatch.rival}? Se enviarán enlaces de confirmación.`)) return;
+        const settings = await settingsService.getSettings();
+
+        const enabled = players.filter(p => {
+            const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
+            const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
+            return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
+        });
+
+        setEnabledPlayers(enabled);
+        setSelectedPlayerIds(enabled.map(p => p.id));
+        setShowSelectionModal(true);
+    };
+
+    const handleConfirmConvocatoria = async () => {
+        if (!nextMatch || selectedPlayerIds.length === 0) return;
 
         try {
             setIsLaunching(true);
-            const settings = await settingsService.getSettings();
-
-            // 1. Filter enabled players
-            const enabledPlayers = players.filter(p => {
-                const idStatus = getDocStatus(p.id_card_expiry, settings.id_card_alert_days, p.id_card_rev_status);
-                const healthStatus = getDocStatus(p.health_card_expiry, settings.health_card_alert_days, p.health_card_rev_status);
-                return idStatus.label === 'Al día' && healthStatus.label === 'Al día';
-            });
-
-            // 2. Initialize responses in DB
-            await matchService.initializeMatchResponses(nextMatch.id, enabledPlayers.map(p => p.id));
-
-            // 3. Generate batch message logic (Simulated for now, would open WhatsApp for each or use API)
-            alert(`Convocatoria iniciada para ${enabledPlayers.length} jugadores. En una versión real, esto dispararía notificaciones automáticas vía Twilio/WhatsApp.`);
-
-            // Reload to show current status
+            await matchService.initializeMatchResponses(nextMatch.id, selectedPlayerIds);
+            alert(`Convocatoria iniciada para ${selectedPlayerIds.length} jugadores.`);
+            setShowSelectionModal(false);
             loadDashboardData();
         } catch (error) {
             console.error("Error starting convocatoria:", error);
@@ -500,7 +511,7 @@ export default function DashboardPage() {
 
                             {!isVisitor && (
                                 <button
-                                    onClick={handleStartConvocatoria}
+                                    onClick={handleOpenSelection}
                                     disabled={isLaunching}
                                     className="w-full mt-4 btn-primary py-3 flex items-center justify-center gap-2 group/conv"
                                 >
@@ -531,6 +542,79 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Selection Modal */}
+            {showSelectionModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+                    <div className="bg-white rounded-[32px] shadow-2xl border border-border/40 w-full max-w-lg p-8 space-y-6 animate-in zoom-in-95 duration-300 flex flex-col max-h-[90vh]">
+                        <div className="flex items-center justify-between shrink-0">
+                            <div>
+                                <h2 className="text-xl font-black text-foreground uppercase italic tracking-tighter">Seleccionar Plantel</h2>
+                                <p className="text-xs text-muted-foreground font-medium">Solo jugadores habilitados (Documentos al día)</p>
+                            </div>
+                            <button onClick={() => setShowSelectionModal(false)} className="p-2 rounded-xl hover:bg-slate-100 transition-colors">
+                                <Check className="h-5 w-5 text-muted-foreground" />
+                            </button>
+                        </div>
+
+                        <div className="overflow-y-auto flex-1 space-y-2 pr-2 custom-scrollbar">
+                            {enabledPlayers.map((p) => {
+                                const isSelected = selectedPlayerIds.includes(p.id);
+                                return (
+                                    <label key={p.id} className={`flex items-center gap-4 p-3 rounded-2xl border-2 cursor-pointer transition-all ${isSelected ? 'border-accent bg-accent/5' : 'border-border/40 hover:border-accent/20'}`}>
+                                        <input
+                                            type="checkbox"
+                                            checked={isSelected}
+                                            onChange={() => {
+                                                setSelectedPlayerIds(prev =>
+                                                    isSelected ? prev.filter(id => id !== p.id) : [...prev, p.id]
+                                                );
+                                            }}
+                                            className="sr-only"
+                                        />
+                                        <div className={`shrink-0 h-6 w-6 rounded-lg flex items-center justify-center transition-colors ${isSelected ? 'bg-accent' : 'bg-slate-100 border border-border/40'}`}>
+                                            {isSelected && <Check className="h-4 w-4 text-white" />}
+                                        </div>
+                                        {p.photo_url ? (
+                                            <Image src={p.photo_url} alt={p.full_name} width={40} height={40} className="h-10 w-10 rounded-full object-cover border border-white shadow-sm" />
+                                        ) : (
+                                            <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 border border-white shadow-sm">
+                                                <User className="h-6 w-6" />
+                                            </div>
+                                        )}
+                                        <div className="flex-1">
+                                            <p className="font-black text-sm uppercase italic tracking-tighter text-foreground truncate">
+                                                {p.shirt_number ? `#${p.shirt_number} ` : ''}
+                                                {p.full_name}
+                                            </p>
+                                            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{p.position || 'N/A'}</p>
+                                        </div>
+                                    </label>
+                                );
+                            })}
+                        </div>
+
+                        <div className="pt-2 shrink-0 space-y-3">
+                            <div className="flex justify-between text-xs font-black uppercase tracking-widest px-1">
+                                <span className="text-muted-foreground">Seleccionados:</span>
+                                <span className="text-accent">{selectedPlayerIds.length} / {enabledPlayers.length}</span>
+                            </div>
+                            <button
+                                onClick={handleConfirmConvocatoria}
+                                disabled={isLaunching || selectedPlayerIds.length === 0}
+                                className="w-full btn-primary py-4 flex items-center justify-center gap-2 group/confirm"
+                            >
+                                {isLaunching ? (
+                                    <Loader2 className="h-6 w-6 animate-spin" />
+                                ) : (
+                                    <MessageCircle className="h-6 w-6 group-hover/confirm:scale-110 transition-transform" />
+                                )}
+                                Confirmar e Iniciar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
