@@ -68,43 +68,27 @@ export async function POST(request: Request) {
 
             let variables;
             const mapsLink = match.google_maps_link || "A confirmar";
+            let messageBody: string;
 
             if (settings?.wa_match_template_enabled && settings.wa_match_template) {
-                // If custom template is enabled, we map our dynamic variables to the 4 fixed slots of the Twilio template
-                // slot 1: $JUGADOR
-                // slot 2: $RIVAL ($FECHA) + Mapa
-                // slot 3: (status)
-                // slot 4: $LINK
-
-                // We'll replace our custom placeholders in the user's template and then distribute them
-                let customMsg = settings.wa_match_template
+                // Use custom template from settings
+                messageBody = settings.wa_match_template
                     .replace('$JUGADOR', player.full_name)
                     .replace('$RIVAL', match.rival)
                     .replace('$FECHA', fullDateStr)
                     .replace('$MAPA', mapsLink)
                     .replace('$LINK', confirmLink);
-
-                // Since we MUST use the 4-slot template (HX01f0bc7cd60a15ec3d3fb845aa4ac9c2), 
-                // we'll try to fit as much info as possible into the slots we have.
-                // Alternative: mapping them to slots to maintain the template flow.
-                variables = {
-                    "1": player.full_name,
-                    "2": `vs ${match.rival} (${fullDateStr}) - Mapa: ${mapsLink}`,
-                    "3": `¡Estás convocado!`,
-                    "4": confirmLink
-                };
             } else {
-                // Default variables
-                variables = {
-                    "1": player.full_name,
-                    "2": `vs ${match.rival} (${fullDateStr}) - Mapa: ${mapsLink}`,
-                    "3": `¡Estás convocado!`,
-                    "4": confirmLink
-                };
+                // Default invitation message
+                messageBody = `¡Hola! Te escribimos de CLUB 33. Te avisamos que ${player.full_name} ha sido convocado para el próximo encuentro: vs ${match.rival} (${fullDateStr}) (¡Estás convocado!).\n\nTe pedimos que confirmes por SI o NO aquí: ${confirmLink}`;
+                if (match.google_maps_link) {
+                    messageBody += `\n\nUbicación: ${match.google_maps_link}`;
+                }
             }
 
             try {
-                await twilioService.sendWhatsApp(phone, undefined, templateSid, variables);
+                // Send as free-form message (body) instead of template
+                await twilioService.sendWhatsApp(phone, messageBody);
                 results.push({ player: player.full_name, status: 'sent', phone });
 
                 // Log to database
@@ -113,8 +97,8 @@ export async function POST(request: Request) {
                     player_name: player.full_name,
                     phone,
                     message_type: 'convocatoria',
-                    content_sid: templateSid,
-                    variables,
+                    content_sid: null, // No template SID for free-form
+                    body: messageBody,
                     status: 'sent'
                 });
             } catch (err: any) {
@@ -126,8 +110,8 @@ export async function POST(request: Request) {
                     player_name: player.full_name,
                     phone,
                     message_type: 'convocatoria',
-                    content_sid: templateSid,
-                    variables,
+                    content_sid: null,
+                    body: messageBody,
                     status: 'error',
                     error_message: err.message
                 });

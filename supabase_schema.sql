@@ -166,6 +166,7 @@ CREATE TABLE notification_logs (
     message_type TEXT, -- 'expiracion'
     content_sid TEXT,
     variables JSONB,
+    body TEXT,
     status TEXT DEFAULT 'sent', -- 'sent', 'error'
     error_message TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
