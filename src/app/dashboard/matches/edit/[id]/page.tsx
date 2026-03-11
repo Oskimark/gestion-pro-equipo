@@ -14,8 +14,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { matchService } from "@/services/matchService";
 import { Match } from "@/types";
+
+const MapPicker = dynamic(() => import("@/components/MapPicker"), {
+    ssr: false,
+    loading: () => <div className="fixed inset-0 z-[9999] bg-primary/20 backdrop-blur-sm flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-accent" /></div>
+});
 
 interface EditMatchPageProps {
     params: Promise<{ id: string }>;
@@ -26,6 +32,7 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [showMapPicker, setShowMapPicker] = useState(false);
     const [formData, setFormData] = useState({
         rival: "",
         date: "",
@@ -132,6 +139,13 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
 
     return (
         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {showMapPicker && (
+                <MapPicker
+                    onSelect={(url) => setFormData(prev => ({ ...prev, google_maps_link: url }))}
+                    onClose={() => setShowMapPicker(false)}
+                />
+            )}
+
             <div className="flex items-center justify-between gap-4">
                 <div className="flex items-center gap-4">
                     <Link href="/dashboard/matches" className="p-2 rounded-full hover:bg-white text-muted-foreground hover:text-foreground transition-all shadow-sm">
@@ -218,7 +232,17 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
                                 </div>
 
                                 <div>
-                                    <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Enlace Google Maps (Opcional)</label>
+                                    <div className="flex items-center justify-between mb-2">
+                                        <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider">Enlace Google Maps (Opcional)</label>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowMapPicker(true)}
+                                            className="text-[10px] font-black uppercase tracking-widest text-accent hover:text-accent/80 transition-colors flex items-center gap-1"
+                                        >
+                                            <MapPin className="h-3 w-3" />
+                                            Seleccionar en Mapa
+                                        </button>
+                                    </div>
                                     <div className="relative">
                                         <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                         <input

@@ -70,6 +70,7 @@ CREATE TABLE matches (
     score_home INTEGER,
     score_away INTEGER,
     status TEXT DEFAULT 'Próximo', -- 'Próximo', 'Finalizado'
+    google_maps_link TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -147,6 +148,8 @@ CREATE TABLE IF NOT EXISTS club_settings (
     gear_price INTEGER DEFAULT 5000,
     cron_hour TEXT DEFAULT '09:00',
     cron_days TEXT[] DEFAULT ARRAY['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    wa_match_template_enabled BOOLEAN DEFAULT false,
+    wa_match_template TEXT,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
