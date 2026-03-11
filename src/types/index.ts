@@ -79,6 +79,7 @@ export type Match = {
   date: string;
   rival: string;
   venue?: string;
+  google_maps_link?: string;
   score_home?: number;
   score_away?: number;
   status: 'Próximo' | 'Finalizado';
@@ -113,6 +114,8 @@ export type ClubSettings = {
   wa_custom_text_enabled?: boolean;
   wa_custom_text?: string;
   wa_payment_text?: string;
+  wa_match_template_enabled?: boolean;
+  wa_match_template?: string;
 
   // Payments Config
   monthly_fee: number;

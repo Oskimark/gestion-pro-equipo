@@ -517,6 +517,54 @@ export default function SettingsPage() {
                         </div>
                     </div>
 
+                    {/* WA Match Invitation Template */}
+                    <div className="p-8 border-t border-border/10">
+                        <div className="flex items-center justify-between mb-6">
+                            <div className="flex items-center gap-3">
+                                <div className="h-10 w-10 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-500">
+                                    <BellRing className="h-5 w-5" />
+                                </div>
+                                <div>
+                                    <h3 className="font-black text-foreground uppercase tracking-tighter italic text-lg">WhatsApp – Convocatoria</h3>
+                                    <p className="text-xs text-muted-foreground font-medium">Plantilla del mensaje enviado al iniciar una convocatoria.</p>
+                                </div>
+                            </div>
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={settings.wa_match_template_enabled}
+                                    onChange={(e) => setSettings({ ...settings, wa_match_template_enabled: e.target.checked })}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer  peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all  peer-checked:bg-indigo-600"></div>
+                            </label>
+                        </div>
+
+                        <div className={`space-y-4 transition-all duration-300 ${settings.wa_match_template_enabled ? 'opacity-100' : 'opacity-50 pointer-events-none grayscale'}`}>
+                            <div className="space-y-3">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Mensaje Personalizado de Convocatoria</label>
+                                <textarea
+                                    rows={4}
+                                    value={settings.wa_match_template || ''}
+                                    onChange={(e) => setSettings({ ...settings, wa_match_template: e.target.value })}
+                                    placeholder="¡Hola! Te avisamos que $JUGADOR ha sido convocado..."
+                                    className="w-full border border-border/40 rounded-2xl p-4 text-sm font-medium outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition-all resize-none bg-white "
+                                />
+                                <div className="flex items-start gap-2 p-3 bg-indigo-50 rounded-xl border border-indigo-100">
+                                    <BellRing className="h-4 w-4 text-indigo-500 mt-0.5 shrink-0" />
+                                    <div>
+                                        <p className="text-[10px] text-indigo-700 font-medium leading-relaxed">
+                                            Variables: <span className="font-bold">$JUGADOR</span>, <span className="font-bold">$RIVAL</span>, <span className="font-bold">$FECHA</span>, <span className="font-bold">$MAPA</span>, <span className="font-bold">$LINK</span>.
+                                        </p>
+                                        <p className="text-[9px] text-indigo-600 mt-1 italic">
+                                            Ej: Hola! Te escribimos del CLUB 33. $JUGADOR convocado vs $RIVAL ($FECHA). Mapa: $MAPA. Confirma aquí: $LINK
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="mt-8 pt-6 border-t border-border/10 flex items-center justify-end gap-4">
                         {saved && (
                             <span className="text-green-600  flex items-center gap-2 text-sm font-bold animate-in fade-in slide-in-from-right-4">

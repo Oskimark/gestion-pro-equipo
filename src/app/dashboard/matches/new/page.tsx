@@ -8,7 +8,8 @@ import {
     Trophy,
     Save,
     Loader2,
-    Clock
+    Clock,
+    Link2
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -23,6 +24,7 @@ export default function NewMatchPage() {
         date: "",
         time: "15:30",
         venue: "Cancha Local",
+        google_maps_link: "",
         status: "Próximo" as Match['status'],
         score_home: undefined as number | undefined,
         score_away: undefined as number | undefined
@@ -51,6 +53,7 @@ export default function NewMatchPage() {
                 rival: formData.rival,
                 date: matchDateTime,
                 venue: formData.venue,
+                google_maps_link: formData.google_maps_link,
                 status: formData.status,
                 score_home: formData.status === "Finalizado" ? formData.score_home : undefined,
                 score_away: formData.status === "Finalizado" ? formData.score_away : undefined
@@ -142,6 +145,21 @@ export default function NewMatchPage() {
                                             onChange={handleChange}
                                             className="w-full bg-slate-50  border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
                                             placeholder="Ej: Cancha Local, Estadio Parque Alzaga..."
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Enlace Google Maps (Opcional)</label>
+                                    <div className="relative">
+                                        <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                        <input
+                                            type="url"
+                                            name="google_maps_link"
+                                            value={formData.google_maps_link}
+                                            onChange={handleChange}
+                                            className="w-full bg-slate-50  border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                            placeholder="https://maps.app.goo.gl/..."
                                         />
                                     </div>
                                 </div>

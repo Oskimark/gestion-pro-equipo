@@ -9,7 +9,8 @@ import {
     Save,
     Loader2,
     Clock,
-    Trash2
+    Trash2,
+    Link2
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -30,6 +31,7 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
         date: "",
         time: "",
         venue: "",
+        google_maps_link: "",
         status: "Próximo" as Match['status'],
         score_home: 0 as number,
         score_away: 0 as number
@@ -58,6 +60,7 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
                     date: `${year}-${month}-${day}`,
                     time: `${hours}:${minutes}`,
                     venue: match.venue || "",
+                    google_maps_link: match.google_maps_link || "",
                     status: match.status,
                     score_home: match.score_home || 0,
                     score_away: match.score_away || 0
@@ -88,6 +91,7 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
                 rival: formData.rival,
                 date: matchDateTime,
                 venue: formData.venue,
+                google_maps_link: formData.google_maps_link,
                 status: formData.status,
                 score_home: formData.status === "Finalizado" ? formData.score_home : null,
                 score_away: formData.status === "Finalizado" ? formData.score_away : null
@@ -209,6 +213,21 @@ export default function EditMatchPage({ params }: EditMatchPageProps) {
                                             value={formData.venue}
                                             onChange={handleChange}
                                             className="w-full bg-slate-50 border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">Enlace Google Maps (Opcional)</label>
+                                    <div className="relative">
+                                        <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                                        <input
+                                            type="url"
+                                            name="google_maps_link"
+                                            value={formData.google_maps_link}
+                                            onChange={handleChange}
+                                            className="w-full bg-slate-50 border border-border rounded-xl p-3 pl-10 outline-none focus:ring-2 focus:ring-accent/40 transition-all font-medium"
+                                            placeholder="https://maps.app.goo.gl/..."
                                         />
                                     </div>
                                 </div>

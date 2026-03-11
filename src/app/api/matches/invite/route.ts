@@ -27,11 +27,16 @@ export async function POST(request: Request) {
 
         if (playersError) throw playersError;
 
-        const results = [];
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://gestion-pro-equipo.vercel.app';
+        // 3. Get Settings for Custom Template
+        const { data: settings } = await supabase
+            .from('club_settings')
+            .select('*')
+            .single();
 
-        // Template SID for Convocatoria (Assuming same structure or dynamic)
-        // Note: Using a fixed template for now or a generic one if authorized.
+        const results = [];
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://gestion33churrinches-h94g6ufdb-elnona-gmailcoms-projects.vercel.app');
+
+        // Twilio Template (Default or Custom mapping)
         const templateSid = 'HX01f0bc7cd60a15ec3d3fb845aa4ac9c2';
 
         for (const player of players) {
@@ -42,20 +47,61 @@ export async function POST(request: Request) {
             }
 
             const confirmLink = `${appUrl}/public/convocatoria/${player.access_token}`;
-            const dateStr = new Date(match.date).toLocaleDateString('es-UY', { weekday: 'long', day: 'numeric', month: 'long' });
-            const timeStr = new Date(match.date).toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit' });
 
-            // Variables for Convocatoria Template
-            // 1: Player Name
-            // 2: Match Details (vs Rival, Date, Time)
-            // 3: Status/Action (Convocatoria)
-            // 4: Confirmation Link
-            const variables = {
-                "1": player.full_name,
-                "2": `vs ${match.rival} (${dateStr} - ${timeStr} HS)`,
-                "3": `¡Estás convocado!`,
-                "4": confirmLink
+            // Format match date for Uruguay (GMT-3)
+            const matchDate = new Date(match.date);
+            const dateOptions: any = {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                timeZone: 'America/Montevideo'
             };
+            const timeOptions: any = {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'America/Montevideo'
+            };
+
+            const dateStr = matchDate.toLocaleDateString('es-UY', dateOptions);
+            const timeStr = matchDate.toLocaleTimeString('es-UY', timeOptions);
+            const fullDateStr = `${dateStr} ${timeStr} HS`;
+
+            let variables;
+            const mapsLink = match.google_maps_link || "A confirmar";
+
+            if (settings?.wa_match_template_enabled && settings.wa_match_template) {
+                // If custom template is enabled, we map our dynamic variables to the 4 fixed slots of the Twilio template
+                // slot 1: $JUGADOR
+                // slot 2: $RIVAL ($FECHA) + Mapa
+                // slot 3: (status)
+                // slot 4: $LINK
+
+                // We'll replace our custom placeholders in the user's template and then distribute them
+                let customMsg = settings.wa_match_template
+                    .replace('$JUGADOR', player.full_name)
+                    .replace('$RIVAL', match.rival)
+                    .replace('$FECHA', fullDateStr)
+                    .replace('$MAPA', mapsLink)
+                    .replace('$LINK', confirmLink);
+
+                // Since we MUST use the 4-slot template (HX01f0bc7cd60a15ec3d3fb845aa4ac9c2), 
+                // we'll try to fit as much info as possible into the slots we have.
+                // Alternative: mapping them to slots to maintain the template flow.
+                variables = {
+                    "1": player.full_name,
+                    "2": `vs ${match.rival} (${fullDateStr}) - Mapa: ${mapsLink}`,
+                    "3": `¡Estás convocado!`,
+                    "4": confirmLink
+                };
+            } else {
+                // Default variables
+                variables = {
+                    "1": player.full_name,
+                    "2": `vs ${match.rival} (${fullDateStr}) - Mapa: ${mapsLink}`,
+                    "3": `¡Estás convocado!`,
+                    "4": confirmLink
+                };
+            }
 
             try {
                 await twilioService.sendWhatsApp(phone, undefined, templateSid, variables);

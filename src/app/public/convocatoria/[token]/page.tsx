@@ -187,7 +187,7 @@ export default function ConvocatoriaPublicPage({ params }: { params: Promise<{ t
                             </h3>
                             <p className="text-sm text-muted-foreground font-medium mt-1">
                                 {response?.status === 'asiste'
-                                    ? '¡Te esperamos en la cancha!'
+                                    ? '¡Te esperamos en la cancha! Recuerda llegar media hora antes del encuentro, traer tu equipo completo y agua en botella individual.'
                                     : '¡Gracias por avisar! Nos vemos en la próxima.'}
                             </p>
 

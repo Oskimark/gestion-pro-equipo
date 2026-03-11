@@ -23,7 +23,9 @@ export const settingsService = {
                     annual_discount_percent: 15,
                     gear_price: 5000,
                     cron_hour: '09:00',
-                    cron_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                    cron_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                    wa_match_template_enabled: false,
+                    wa_match_template: '¡Hola! Te avisamos que $JUGADOR ha sido convocado para el próximo encuentro: vs $RIVAL ($FECHA). Confirma aquí: $LINK'
                 };
             }
             console.error('Error fetching settings:', error);
@@ -39,7 +41,9 @@ export const settingsService = {
                 annual_discount_percent: 15,
                 gear_price: 5000,
                 cron_hour: '09:00',
-                cron_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+                cron_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                wa_match_template_enabled: false,
+                wa_match_template: '¡Hola! Te avisamos que $JUGADOR ha sido convocado para el próximo encuentro: vs $RIVAL ($FECHA). Confirma aquí: $LINK'
             };
         }
 
