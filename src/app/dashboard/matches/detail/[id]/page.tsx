@@ -226,18 +226,22 @@ export default function MatchDetailPage({ params }: { params: Promise<{ id: stri
                                         </tr>
                                     ) : (
                                         filteredResponses.map((res) => (
-                                            <tr key={res.id} className="hover:bg-slate-50/50 transition-colors">
+                                            <tr
+                                                key={res.id}
+                                                className="hover:bg-slate-50/50 transition-colors cursor-pointer group/row"
+                                                onClick={() => router.push(`/dashboard/players?id=${res.player_id}`)}
+                                            >
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
                                                         {res.player?.photo_url ? (
-                                                            <Image src={res.player.photo_url} alt={res.player.full_name} width={40} height={40} className="h-10 w-10 rounded-full object-cover border border-border" />
+                                                            <Image src={res.player.photo_url} alt={res.player.full_name} width={40} height={40} className="h-10 w-10 rounded-full object-cover border border-border group-hover/row:border-accent transition-colors" />
                                                         ) : (
-                                                            <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 border border-border">
+                                                            <div className="h-10 w-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-400 border border-border group-hover/row:border-accent transition-colors">
                                                                 <User className="h-6 w-6" />
                                                             </div>
                                                         )}
                                                         <div>
-                                                            <p className="text-sm font-black text-foreground uppercase italic tracking-tighter leading-tight">
+                                                            <p className="text-sm font-black text-foreground uppercase italic tracking-tighter leading-tight group-hover/row:text-accent transition-colors">
                                                                 {res.player?.shirt_number ? `#${res.player.shirt_number} ` : ''}
                                                                 {res.player?.full_name}
                                                             </p>

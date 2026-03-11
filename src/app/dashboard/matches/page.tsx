@@ -133,10 +133,14 @@ export default function MatchesPage() {
                                 </div>
                             ) : (
                                 matches.map((match) => (
-                                    <div key={match.id} className={`p-4 sm:p-6 rounded-3xl border transition-all group relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${match.status === "Finalizado"
-                                        ? "bg-slate-50/50  border-border/20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100"
-                                        : "bg-white  border-border/40 hover:border-secondary/40 shadow-sm"
-                                        }`}>
+                                    <Link
+                                        key={match.id}
+                                        href={`/dashboard/matches/detail/${match.id}`}
+                                        className={`p-4 sm:p-6 rounded-3xl border transition-all group relative overflow-hidden flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:scale-[1.01] active:scale-[0.99] ${match.status === "Finalizado"
+                                            ? "bg-slate-50/50  border-border/20 opacity-60 grayscale hover:grayscale-0 hover:opacity-100 hover:border-slate-300"
+                                            : "bg-white  border-border/40 hover:border-accent shadow-sm"
+                                            }`}
+                                    >
                                         <div className="flex items-center gap-4 sm:gap-6">
                                             <div className={`flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-xl border border-border/20 shrink-0 ${match.status === "Finalizado" ? "bg-slate-100/50 " : "bg-slate-100 "
                                                 }`}>
@@ -168,14 +172,24 @@ export default function MatchesPage() {
 
                                             {!isVisitor && (
                                                 <div className="flex items-center gap-2">
-                                                    <Link href={`/dashboard/matches/detail/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-accent transition-colors" title="Ver Convocatoria">
-                                                        <Users className="h-5 w-5" />
-                                                    </Link>
-                                                    <Link href={`/dashboard/matches/edit/${match.id}`} className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-green-500 transition-colors" title="Editar">
-                                                        <Edit2 className="h-5 w-5" />
-                                                    </Link>
                                                     <button
-                                                        onClick={(e) => { e.stopPropagation(); handleDelete(match.id, match.rival); }}
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            // Navigate to edit
+                                                            window.location.href = `/dashboard/matches/edit/${match.id}`;
+                                                        }}
+                                                        className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-green-500 transition-colors"
+                                                        title="Editar"
+                                                    >
+                                                        <Edit2 className="h-5 w-5" />
+                                                    </button>
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            handleDelete(match.id, match.rival);
+                                                        }}
                                                         className="p-2 rounded-lg hover:bg-slate-100  text-slate-500 hover:text-red-500 transition-colors"
                                                         title="Eliminar"
                                                     >
@@ -185,7 +199,7 @@ export default function MatchesPage() {
                                                 </div>
                                             )}
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))
                             )}
                         </div>

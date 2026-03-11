@@ -291,21 +291,35 @@ export default function DashboardPage() {
     const handleConfirmConvocatoria = async () => {
         if (!nextMatch || selectedPlayerIds.length === 0) return;
 
+        setIsLaunching(true);
+        await matchService.initializeMatchResponses(nextMatch.id, selectedPlayerIds);
+
+        // Send WhatsApp invitations
         try {
-            setIsLaunching(true);
-            await matchService.initializeMatchResponses(nextMatch.id, selectedPlayerIds);
-            alert(`Convocatoria iniciada para ${selectedPlayerIds.length} jugadores.`);
-            setShowSelectionModal(false);
-            loadDashboardData();
-        } catch (error) {
-            console.error("Error starting convocatoria:", error);
-            alert("Error al iniciar la convocatoria.");
-        } finally {
-            setIsLaunching(false);
+            const response = await fetch('/api/matches/invite', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    matchId: nextMatch.id,
+                    playerIds: selectedPlayerIds
+                })
+            });
+            const result = await response.json();
+            if (result.success) {
+                alert(`Convocatoria iniciada y notificaciones enviadas a ${selectedPlayerIds.length} jugadores.`);
+            } else {
+                alert(`Convocatoria iniciada en base de datos, pero hubo un error al enviar las notificaciones.`);
+            }
+        } catch (err) {
+            console.error("Error calling invite API:", err);
+            alert("Convocatoria iniciada, pero no se pudieron enviar los mensajes automáticos.");
         }
+
+        setShowSelectionModal(false);
+        loadDashboardData();
     };
 
-    const stats = [
+    const dashboardStats = [
         {
             name: "Total Jugadores",
             value: `${counts.players} / ${counts.enabled}`,
@@ -345,7 +359,7 @@ export default function DashboardPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                {stats.map((stat) => {
+                {dashboardStats.map((stat) => {
                     const CardContent = (
                         <div className="bg-white  h-full p-6 rounded-3xl border border-border/40 hover:border-secondary/50 transition-all hover:translate-y-[-4px] group relative overflow-hidden">
                             <div className="flex items-center justify-between">
@@ -475,20 +489,25 @@ export default function DashboardPage() {
                     </h3>
                     {nextMatch ? (
                         <div className="space-y-4">
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-border/20">
-                                <div className="flex flex-col">
-                                    <span className="font-bold text-lg text-foreground ">vs {nextMatch.rival}</span>
-                                    <span className="text-sm text-muted-foreground ">
-                                        {new Date(nextMatch.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
-                                    </span>
+                            <Link href={`/dashboard/matches/detail/${nextMatch.id}`} className="block group/card hover:scale-[1.01] transition-transform">
+                                <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-border/20 group-hover/card:border-accent group-hover/card:bg-slate-100 transition-all shadow-sm">
+                                    <div className="flex flex-col">
+                                        <span className="font-bold text-lg text-foreground group-hover/card:text-accent transition-colors">vs {nextMatch.rival}</span>
+                                        <span className="text-sm text-muted-foreground ">
+                                            {new Date(nextMatch.date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                                        </span>
+                                    </div>
+                                    <div className="text-right flex items-center gap-3">
+                                        <div>
+                                            <span className="block font-black text-xl text-primary">
+                                                {new Date(nextMatch.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+                                            </span>
+                                            <span className="text-[10px] font-bold text-muted-foreground uppercase">{nextMatch.venue}</span>
+                                        </div>
+                                        <ChevronRight className="h-5 w-5 text-muted-foreground group-hover/card:translate-x-1 transition-transform" />
+                                    </div>
                                 </div>
-                                <div className="text-right">
-                                    <span className="block font-black text-xl text-primary">
-                                        {new Date(nextMatch.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                                    </span>
-                                    <span className="text-[10px] font-bold text-muted-foreground uppercase">{nextMatch.venue}</span>
-                                </div>
-                            </div>
+                            </Link>
 
                             <div className="grid grid-cols-2 gap-3">
                                 <button
