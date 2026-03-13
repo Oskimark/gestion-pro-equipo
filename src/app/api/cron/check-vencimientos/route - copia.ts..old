@@ -96,25 +96,21 @@ export async function GET(request: Request) {
             if (notificationsToSend.length > 0) {
                 const phone = player.referent_phone || player.father_phone || player.mother_phone;
                 if (phone) {
-	       const docText = notificationsToSend.map(n => n.type).join(', ');
-	       const statusText = notificationsToSend.map(n => n.status).join(', ');
+                    const docText = notificationsToSend.map(n => n.type).join(', ');
+                    const statusText = notificationsToSend.map(n => n.status).join(', ');
+                    const appUrl = process.env.NEXT_PUBLIC_APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://gestion-pro-equipo.vercel.app';
+                    if (!process.env.NEXT_PUBLIC_APP_URL) {
+                        console.warn('NEXT_PUBLIC_APP_URL not set, using fallback:', appUrl);
+                    }
+                    const formLink = `${appUrl}/public/docs/${player.access_token}`;
 
-		// Corregido: Si existe tu variable, usa esa. Si no, busca la de Vercel.
-	       let appUrl = process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://gestion-pro-equipo.vercel.app');
-	       if (appUrl.endsWith('/')) appUrl = appUrl.slice(0, -1);
-
-	       if (!process.env.NEXT_PUBLIC_APP_URL) {
-	           console.warn('NEXT_PUBLIC_APP_URL not set, using fallback:', appUrl);
-	       }
-	       const formLink = `${appUrl}/public/docs/${player.access_token}`;
-
-	       const templateSid = 'HX01f0bc7cd60a15ec3d3fb845aa4ac9c2';
-	       const variables = {
-	           "1": player.full_name,
-	           "2": docText,
-	           "3": statusText,
-	           "4": formLink
-	       };
+                    const templateSid = 'HX01f0bc7cd60a15ec3d3fb845aa4ac9c2';
+                    const variables = {
+                        "1": player.full_name,
+                        "2": docText,
+                        "3": statusText,
+                        "4": formLink
+                    };
 
                     try {
                         await twilioService.sendWhatsApp(phone, undefined, templateSid, variables);

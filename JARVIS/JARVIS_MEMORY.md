@@ -15,11 +15,13 @@
 ## Estado Actual: Módulo de Convocatorias
 - **Meta**: Gestionar invitaciones a partidos y tracking de disponibilidad en tiempo real.
 - **Logros**: 
-    - Implementada tabla `match_responses` y lógica de servicios.
-    - Dashboard: Botón "Iniciar Convocatoria" y contador dinámico de "Disponibles".
-    - Portal Público: Página `/public/convocatoria/[token]` para confirmación de padres.
-    - Impresión: "Lista de Buena Fe" ahora filtra por jugadores que confirmaron asistencia.
+    - **Custom WhatsApp Templates**: Implementada sección en Configuración para editar el mensaje de convocatoria con variables dinámicas ($JUGADOR, $RIVAL, $FECHA, $MAPA, $LINK).
+    - **Map Picker Integration**: Selector visual de mapas (Leaflet) integrado en los formularios de Nuevo/Editar Partido para generar automáticamente el enlace de Google Maps.
+    - **Free-form API**: La API de invitación (`/api/matches/invite`) ahora envía mensajes de texto libre, permitiendo personalización total sin depender de plantillas pre-aprobadas de Twilio.
+    - **Uruguay Timezone**: Formateo automático de fechas y horas para Uruguay (GMT-3) en todas las notificaciones.
+    - **Portal Público**: Página `/public/convocatoria/[token]` con instrucciones adicionales para confirmación de asistencia.
 
 ## Próximos Pasos
-- **WhatsApp Masivo**: Integrar el botón "Iniciar Convocatoria" con la API de Twilio para enviar mensajes automáticos.
-- **Sincronización Final**: Validar flujos con datos reales en el entorno de producción.
+- **Control de Respuestas**: Mejorar la visualización del listado de respuestas en el detalle del partido.
+- **Estadísticas**: Vincular los resultados de los partidos con el desempeño individual de los jugadores automáticamente.
+- **Validación Final**: Asegurar que los mensajes de texto libre no superen los límites de caracteres de WhatsApp.
