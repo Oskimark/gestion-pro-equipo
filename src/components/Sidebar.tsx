@@ -60,7 +60,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
                 />
             )}
 
-            <div className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-primary text-white transition-transform duration-300 lg:static lg:translate-x-0 ${isOpen ? "translate-x-0" : "-translate-x-full"
+            <div className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-primary text-white transition-transform duration-300 lg:static lg:translate-x-0 print:hidden ${isOpen ? "translate-x-0" : "-translate-x-full"
                 }`}>
                 <div className="flex h-20 items-center justify-between border-b border-white/10 px-6">
                     <Link href="/dashboard" className="flex items-center gap-3 group">

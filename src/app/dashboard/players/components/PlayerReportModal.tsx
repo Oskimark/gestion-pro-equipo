@@ -97,9 +97,11 @@ export default function PlayerReportModal({ isOpen, onClose, player }: PlayerRep
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 print:bg-white print:p-0 print:static print:block overflow-y-auto">
             <style jsx global>{`
                 @media print {
-                    @page { margin: 1cm; size: auto; }
+                    @page { margin: 0.5cm; size: auto; }
                     body { background: white !important; }
                     .print-break-inside-avoid { break-inside: avoid; }
+                    nav, header, footer, button:not(.print-visible) { display: none !important; }
+                    .no-print { display: none !important; }
                 }
             `}</style>
 
