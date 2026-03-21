@@ -94,18 +94,47 @@ export default function PlayerReportModal({ isOpen, onClose, player }: PlayerRep
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 print:bg-white print:p-0 print:static print:block overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200 print:bg-white print:p-0 print:static print:block print:overflow-visible overflow-y-auto">
             <style jsx global>{`
                 @media print {
-                    @page { margin: 0.5cm; size: auto; }
-                    body { background: white !important; }
-                    .print-break-inside-avoid { break-inside: avoid; }
-                    nav, header, footer, button:not(.print-visible) { display: none !important; }
-                    .no-print { display: none !important; }
+                    @page { 
+                        margin: 1cm; 
+                        size: A4 portrait; 
+                    }
+                    * {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                        color-adjust: exact !important;
+                    }
+                    html, body { 
+                        background: white !important; 
+                        margin: 0 !important;
+                        padding: 0 !important;
+                        height: auto !important;
+                        overflow: visible !important;
+                    }
+                    .print-break-inside-avoid { 
+                        break-inside: avoid; 
+                    }
+                    nav, header, footer, button:not(.print-visible) { 
+                        display: none !important; 
+                    }
+                    .no-print { 
+                        display: none !important; 
+                    }
+                    /* Forzado de layout de escritorio en impresión */
+                    .fixed { 
+                        position: relative !important; 
+                        display: block !important;
+                    }
+                    .overflow-y-auto { 
+                        overflow: visible !important; 
+                        max-height: none !important; 
+                    }
                 }
             `}</style>
 
-            <div className="bg-white  rounded-3xl w-full max-w-3xl flex flex-col shadow-2xl overflow-hidden border border-border/50 print:border-none print:shadow-none print:max-w-none print:h-auto print:rounded-none my-auto">
+            <div className="bg-white  rounded-3xl w-full max-w-3xl flex flex-col shadow-2xl overflow-hidden border border-border/50 print:border-none print:shadow-none print:max-w-none print:h-auto print:rounded-none my-auto print:static print:m-0">
 
                 {/* Header (Hidden in Print) */}
                 <div className="flex items-center justify-between p-6 border-b border-border/10 bg-slate-50  print:hidden">
@@ -186,7 +215,7 @@ export default function PlayerReportModal({ isOpen, onClose, player }: PlayerRep
                             ) : (
                                 <div className="bg-white text-black p-0 sm:p-4 print:p-0">
                                     {/* Printable Layout */}
-                                    <div className="border-[3px] border-primary p-8 rounded-[40px] print:border-none print:p-0">
+                                    <div className="border-[3px] border-primary p-8 rounded-[40px] print:rounded-[24px] print:p-10 print:m-0 print:border-primary print:w-[190mm] mx-auto">
                                         {/* Logo and Header */}
                                         <div className="flex justify-between items-start mb-8 border-b-2 border-slate-100 pb-8">
                                             <div className="flex items-center gap-4">
@@ -205,7 +234,7 @@ export default function PlayerReportModal({ isOpen, onClose, player }: PlayerRep
                                         </div>
 
                                         {/* Player Profile Header */}
-                                        <div className="flex flex-col md:flex-row gap-8 mb-10 items-center md:items-start print-break-inside-avoid">
+                                        <div className="flex flex-col md:flex-row print:flex-row gap-8 mb-10 items-center md:items-start print:items-start print-break-inside-avoid">
                                             <div className="h-48 w-48 rounded-[32px] overflow-hidden bg-slate-100 border-4 border-slate-50 shrink-0 shadow-xl">
                                                 {player.photo_url ? (
                                                     <img src={player.photo_url} alt={player.full_name} className="w-full h-full object-cover" />
@@ -241,7 +270,7 @@ export default function PlayerReportModal({ isOpen, onClose, player }: PlayerRep
                                         </div>
 
                                         {/* Sections Grid */}
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-8">
                                             {sections.contact && (
                                                 <div className="space-y-4 print-break-inside-avoid shadow-sm rounded-3xl p-6 border border-slate-50">
                                                     <h4 className="text-xs font-black uppercase tracking-[0.2em] text-secondary border-b pb-2">Información de Contacto</h4>
@@ -306,7 +335,7 @@ export default function PlayerReportModal({ isOpen, onClose, player }: PlayerRep
                                                     <span className="text-[10px] font-bold text-slate-300">Impedimentos o alertas</span>
                                                 </h4>
 
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-10">
+                                                <div className="grid grid-cols-1 md:grid-cols-2 print:grid-cols-2 gap-6 pb-10">
                                                     {/* Document Entry */}
                                                     <div className="print-break-inside-avoid">
                                                         <div className="flex items-center justify-between mb-3 px-2">
